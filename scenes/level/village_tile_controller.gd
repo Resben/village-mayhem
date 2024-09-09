@@ -3,7 +3,10 @@ extends TileMap
 @export var display_map : TileMap
 
 var id_to_atlas = {
-	"house" : Vector2i(0, 0)
+	"house" : Vector2i(0, 0),
+	"crop" : Vector2i(1, 0),
+	"mine" : Vector2i(0, 1),
+	"tree" : Vector2i(1, 1)
 }
 
 func place_building(id : String, pos : Vector2i):
