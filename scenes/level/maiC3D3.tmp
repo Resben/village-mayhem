@@ -57,13 +57,12 @@ display_map = NodePath("../DisplayTileMap")
 atlas_id = 1
 available_atlas = Vector2i(2, 1)
 
-[node name="Cursor" type="AnimatedSprite2D" parent="." node_paths=PackedStringArray("village_map")]
+[node name="Cursor" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_lay0s")
 autoplay = "default"
 frame_progress = 0.0234924
 script = ExtResource("6_5ykgd")
-village_map = NodePath("../VillageTileMap")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(510, 360)

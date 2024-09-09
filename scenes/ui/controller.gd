@@ -10,6 +10,7 @@ func _ready():
 	$Startup.visible = true
 	$HUD.visible = false
 	$Paused.visible = false
+	get_tree().paused = true
 
 func _input(event):
 	if Input.is_action_just_pressed("pause") && !$Startup.visible:
@@ -23,3 +24,4 @@ func switch_to_game():
 func to_game_callback():
 	$Startup.visible = false
 	$HUD.visible = true
+	get_tree().paused = false
