@@ -9,10 +9,29 @@ var id_to_atlas = {
 	"tree" : Vector2i(1, 1)
 }
 
+var atlas_to_id = {
+	Vector2i(0, 0) : "house",
+	Vector2i(1, 0) : "crop",
+	Vector2i(0, 1) : "mine",
+	Vector2i(1, 1) : "tree"
+}
+
+var id_to_scene = {
+	"house" : preload("res://scenes/level/house.tscn"),
+	"crop" : preload("res://scenes/level/house.tscn"),
+	"mine" : preload("res://scenes/level/house.tscn"),
+	"tree" : preload("res://scenes/level/house.tscn")
+}
+
+func _ready():
+	for vec in get_used_cells(0):
+		place_building(atlas_to_id[get_cell_atlas_coords(0, vec)], vec)
+
 func place_building(id : String, pos : Vector2i):
-	match id:
-		"house":
-			pass
+	var local = map_to_local(pos)
+	var scene = id_to_scene[id].instantiate()
+	scene.position = local
+	add_child(scene)
 
 func check_availablity(raw_position) -> bool:
 	var display_position = display_map.local_to_map(raw_position)

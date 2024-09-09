@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://ds0lpe8titpqh"]
+[gd_scene load_steps=13 format=3 uid="uid://ds0lpe8titpqh"]
 
 [ext_resource type="TileSet" uid="uid://djp1po2qnkljk" path="res://resources/tileset.tres" id="1_i6dnq"]
 [ext_resource type="Script" path="res://scenes/level/main.gd" id="1_n61w2"]
@@ -8,23 +8,24 @@
 [ext_resource type="Texture2D" uid="uid://cdkursenn8klt" path="res://assets/temp/SelectionIndicator.png" id="5_as2h4"]
 [ext_resource type="Script" path="res://scenes/level/village_tile_controller.gd" id="5_iu43c"]
 [ext_resource type="Script" path="res://scenes/level/cursor.gd" id="6_5ykgd"]
+[ext_resource type="Script" path="res://scenes/level/CPU.gd" id="9_lrpbx"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_nbyrp"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_wvhs6"]
 atlas = ExtResource("5_as2h4")
-region = Rect2(0, 0, 17, 17)
+region = Rect2(0, 0, 34, 34)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_mbes6"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_13dld"]
 atlas = ExtResource("5_as2h4")
-region = Rect2(17, 0, 17, 17)
+region = Rect2(34, 0, 34, 34)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_lay0s"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_nbyrp")
+"texture": SubResource("AtlasTexture_wvhs6")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_mbes6")
+"texture": SubResource("AtlasTexture_13dld")
 }],
 "loop": true,
 "name": &"default",
@@ -52,16 +53,18 @@ format = 2
 [node name="VillageTileMap" type="TileMap" parent="." node_paths=PackedStringArray("display_map")]
 tile_set = ExtResource("4_y4t7t")
 format = 2
+layer_0/tile_data = PackedInt32Array(720908, 0, 0, 720909, 0, 0, 720910, 0, 0)
 script = ExtResource("5_iu43c")
 display_map = NodePath("../DisplayTileMap")
 
-[node name="Cursor" type="AnimatedSprite2D" parent="." node_paths=PackedStringArray("village_map")]
+[node name="Cursor" type="AnimatedSprite2D" parent="." node_paths=PackedStringArray("village_map", "cpu")]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_lay0s")
 autoplay = "default"
 frame_progress = 0.0234924
 script = ExtResource("6_5ykgd")
 village_map = NodePath("../VillageTileMap")
+cpu = NodePath("../CPU")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(510, 360)
@@ -71,3 +74,11 @@ limit_right = 2000
 limit_bottom = 1500
 editor_draw_limits = true
 script = ExtResource("4_crpwy")
+
+[node name="CPU" type="Node2D" parent="."]
+script = ExtResource("9_lrpbx")
+
+[node name="ActionTimer" type="Timer" parent="CPU"]
+
+[node name="Node2D" type="Node2D" parent="."]
+position = Vector2(488, 304)
