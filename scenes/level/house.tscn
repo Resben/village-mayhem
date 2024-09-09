@@ -1,9 +1,22 @@
-[gd_scene load_steps=2 format=3 uid="uid://dkm7f7jggkwyg"]
+[gd_scene load_steps=3 format=3 uid="uid://dkm7f7jggkwyg"]
 
+[ext_resource type="Script" path="res://scenes/level/house.gd" id="1_rwma6"]
 [ext_resource type="Texture2D" uid="uid://bauo0k8ih1wl3" path="res://assets/temp/house.png" id="1_tnlkl"]
 
 [node name="House" type="Node2D"]
+script = ExtResource("1_rwma6")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
 texture = ExtResource("1_tnlkl")
+
+[node name="Door" type="Node2D" parent="."]
+position = Vector2(14, 17)
+
+[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
+vertices = PackedVector2Array(-30, 26, 4, 27, 4, 3, 22, 3, 22, 27, 30, 27, 30, -21, -3, -40, -33, -22, -32, 26)
+
+[node name="LeaveHouse" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="LeaveHouse" to="." method="_on_leave_house_timeout"]

@@ -1,5 +1,7 @@
 extends Node
 
+var cpu
+
 var villagers = [
 	preload("res://assets/temp/villager_1_sheet.png")
 ]

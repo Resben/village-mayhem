@@ -50,6 +50,11 @@ position = Vector2(-8, -8)
 tile_set = ExtResource("1_i6dnq")
 format = 2
 
+[node name="CPU" type="Node2D" parent="."]
+script = ExtResource("9_lrpbx")
+
+[node name="ActionTimer" type="Timer" parent="CPU"]
+
 [node name="VillageTileMap" type="TileMap" parent="." node_paths=PackedStringArray("display_map")]
 tile_set = ExtResource("4_y4t7t")
 format = 2
@@ -74,11 +79,3 @@ limit_right = 2000
 limit_bottom = 1500
 editor_draw_limits = true
 script = ExtResource("4_crpwy")
-
-[node name="CPU" type="Node2D" parent="."]
-script = ExtResource("9_lrpbx")
-
-[node name="ActionTimer" type="Timer" parent="CPU"]
-
-[node name="Node2D" type="Node2D" parent="."]
-position = Vector2(488, 304)
