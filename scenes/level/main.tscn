@@ -60,7 +60,7 @@ one_shot = true
 [node name="VillageTileMap" type="TileMap" parent="." node_paths=PackedStringArray("display_map")]
 tile_set = ExtResource("4_y4t7t")
 format = 2
-layer_0/tile_data = PackedInt32Array(589839, 0, 2)
+layer_0/tile_data = PackedInt32Array(589839, 0, 2, 589837, 65536, 0, 589836, 65536, 0)
 script = ExtResource("5_iu43c")
 display_map = NodePath("../DisplayTileMap")
 

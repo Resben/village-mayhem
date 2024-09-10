@@ -35,7 +35,10 @@ func exit_house(pos):
 func work(id):
 	match id:
 		"food":
-			pass
+			var task = find_best_slot(Global.farm_references)
+			if task != null:
+				nav.target_position = task.global_position
+				task.add_worker()
 		"wood":
 			pass
 		"mine":
@@ -48,6 +51,20 @@ func work(id):
 			pass
 		"new_mine":
 			pass
+
+func find_best_slot(array_of_workplaces : Array[Workable]) -> Workable:
+	var num_spots = 0
+	var index = -1
+	var i = 0
+	for w in array_of_workplaces:
+		if w.available_work_slots > num_spots:
+			index = i
+			num_spots = w.available_work_slots
+			i += 1
+	if index == -1:
+		return null
+	else:
+		return array_of_workplaces[index]
 
 func _physics_process(delta):
 	if in_house:

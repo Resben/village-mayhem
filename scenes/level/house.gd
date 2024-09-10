@@ -1,4 +1,4 @@
-extends Node2D
+extends Workable
 class_name House
 
 var residents = []

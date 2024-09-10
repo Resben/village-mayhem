@@ -20,7 +20,7 @@ var atlas_to_id = {
 
 var id_to_scene = {
 	"house" : preload("res://scenes/level/house.tscn"),
-	"crop" : preload("res://scenes/level/house.tscn"),
+	"crop" : preload("res://scenes/level/farm.tscn"),
 	"mine" : preload("res://scenes/level/house.tscn"),
 	"tree" : preload("res://scenes/level/house.tscn"),
 	"town_hall" : preload("res://scenes/level/town_hall.tscn")

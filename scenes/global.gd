@@ -1,9 +1,9 @@
 extends Node
 
-var villager_references = []
-var house_references = []
-var farm_references = []
-var mine_references = []
+var villager_references : Array
+var house_references : Array[Workable]
+var farm_references : Array[Workable]
+var mine_references : Array[Workable]
 
 var cpu
 var population = 0

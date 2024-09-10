@@ -1,8 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://c30jksr0b3pns"]
+[gd_scene load_steps=3 format=3 uid="uid://c30jksr0b3pns"]
 
 [ext_resource type="Script" path="res://scenes/level/farm.gd" id="1_qe5d3"]
+[ext_resource type="Texture2D" uid="uid://c44mf2j1x3lge" path="res://icon.svg" id="2_g25ic"]
 
 [node name="Farm" type="Node2D"]
 script = ExtResource("1_qe5d3")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.205117, 0.205117, 0.205117, 1)
+position = Vector2(-19.5, 24.5)
+scale = Vector2(0.695312, 0.617188)
+texture = ExtResource("2_g25ic")

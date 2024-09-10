@@ -4,8 +4,8 @@ class_name CPU
 @export var village_map : TileMap
 
 var resources = {
-	"food" : 250,
-	"wood" : 200,
+	"food" : 0,
+	"wood" : 0,
 	"materials" : 0
 }
 
@@ -28,6 +28,7 @@ func _on_action_timeout():
 			available_villagers.push_back(v)
 	
 	var priorities = calculate_priorities(available_villagers.size())
+	assign_workers(priorities, available_villagers)
 	
 	$ActionTimer.start()
 
@@ -103,5 +104,5 @@ func assign_workers(priorities, villagers):
 	var i = 0
 	for p in priorities:
 		for v in priorities[p]:
-			villagers[i].work[p]
+			villagers[i].work(p)
 			i += 1
