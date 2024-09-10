@@ -1,10 +1,12 @@
-[gd_scene load_steps=8 format=3 uid="uid://di5rphm7njuh8"]
+[gd_scene load_steps=10 format=3 uid="uid://di5rphm7njuh8"]
 
 [ext_resource type="Script" path="res://scenes/ui/controller.gd" id="1_0b8cs"]
 [ext_resource type="Script" path="res://scenes/ui/startup.gd" id="2_3b7cw"]
+[ext_resource type="Theme" uid="uid://cbh8r1lpvqme5" path="res://resources/main_theme.tres" id="2_o4um2"]
 [ext_resource type="PackedScene" uid="uid://ds0lpe8titpqh" path="res://scenes/level/main.tscn" id="3_fdg15"]
 [ext_resource type="Texture2D" uid="uid://c44mf2j1x3lge" path="res://icon.svg" id="3_vp72e"]
 [ext_resource type="Script" path="res://scenes/ui/transition_player.gd" id="4_uiov0"]
+[ext_resource type="Script" path="res://scenes/ui/HUD.gd" id="5_2nu4n"]
 
 [sub_resource type="Animation" id="Animation_5848y"]
 resource_name = "transition"
@@ -52,6 +54,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_o4um2")
 script = ExtResource("2_3b7cw")
 main = ExtResource("3_fdg15")
 
@@ -80,11 +83,25 @@ grow_vertical = 2
 text = "Start"
 
 [node name="HUD" type="Control" parent="."]
-visible = false
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_o4um2")
+script = ExtResource("5_2nu4n")
+
+[node name="Population" type="Label" parent="HUD"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -56.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 39.0
+grow_horizontal = 0
 
 [node name="Paused" type="Control" parent="."]
 visible = false
@@ -94,6 +111,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_o4um2")
 
 [node name="TextureRect" type="TextureRect" parent="Paused"]
 layout_mode = 1

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://c30jksr0b3pns"]
+
+[ext_resource type="Script" path="res://scenes/level/farm.gd" id="1_qe5d3"]
+
+[node name="Farm" type="Node2D"]
+script = ExtResource("1_qe5d3")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]

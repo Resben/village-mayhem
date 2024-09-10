@@ -8,6 +8,7 @@ var house : House
 
 var in_house = false
 var is_returning = false
+var is_working = false
 
 func _ready():
 	$Sprite2D.texture = Global.get_random_villager()
@@ -30,6 +31,23 @@ func exit_house(pos):
 	visible = true
 	in_house = false
 	is_returning = false
+
+func work(id):
+	match id:
+		"food":
+			pass
+		"wood":
+			pass
+		"mine":
+			pass
+		"repair":
+			pass
+		"build":
+			pass
+		"farm":
+			pass
+		"new_mine":
+			pass
 
 func _physics_process(delta):
 	if in_house:

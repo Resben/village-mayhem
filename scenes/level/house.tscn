@@ -1,10 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://dkm7f7jggkwyg"]
+[gd_scene load_steps=4 format=3 uid="uid://dkm7f7jggkwyg"]
 
 [ext_resource type="Script" path="res://scenes/level/house.gd" id="1_rwma6"]
 [ext_resource type="Texture2D" uid="uid://bauo0k8ih1wl3" path="res://assets/temp/house.png" id="1_tnlkl"]
+[ext_resource type="Texture2D" uid="uid://c44mf2j1x3lge" path="res://icon.svg" id="2_ehpia"]
 
 [node name="House" type="Node2D"]
 script = ExtResource("1_rwma6")
+underconstruction = ExtResource("2_ehpia")
+built = ExtResource("1_tnlkl")
+destroyed = ExtResource("2_ehpia")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1

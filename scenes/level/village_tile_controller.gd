@@ -6,21 +6,24 @@ var id_to_atlas = {
 	"house" : Vector2i(0, 0),
 	"crop" : Vector2i(1, 0),
 	"mine" : Vector2i(0, 1),
-	"tree" : Vector2i(1, 1)
+	"tree" : Vector2i(1, 1),
+	"town_hall" : Vector2i(0, 2)
 }
 
 var atlas_to_id = {
 	Vector2i(0, 0) : "house",
 	Vector2i(1, 0) : "crop",
 	Vector2i(0, 1) : "mine",
-	Vector2i(1, 1) : "tree"
+	Vector2i(1, 1) : "tree",
+	Vector2i(0, 2) : "town_hall"
 }
 
 var id_to_scene = {
 	"house" : preload("res://scenes/level/house.tscn"),
 	"crop" : preload("res://scenes/level/house.tscn"),
 	"mine" : preload("res://scenes/level/house.tscn"),
-	"tree" : preload("res://scenes/level/house.tscn")
+	"tree" : preload("res://scenes/level/house.tscn"),
+	"town_hall" : preload("res://scenes/level/town_hall.tscn")
 }
 
 func _ready():
