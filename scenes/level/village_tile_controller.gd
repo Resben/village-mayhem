@@ -28,12 +28,13 @@ var id_to_scene = {
 
 func _ready():
 	for vec in get_used_cells(0):
-		place_building(atlas_to_id[get_cell_atlas_coords(0, vec)], vec)
+		place_building(atlas_to_id[get_cell_atlas_coords(0, vec)], vec, false)
 
-func place_building(id : String, pos : Vector2i):
+func place_building(id : String, pos : Vector2i, should_construct : bool):
 	var local = map_to_local(pos)
 	var scene = id_to_scene[id].instantiate()
 	scene.position = local
+	scene.is_under_construction = should_construct
 	add_child(scene)
 
 func check_availablity(raw_position) -> bool:

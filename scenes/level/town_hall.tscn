@@ -15,13 +15,13 @@ destroyed = ExtResource("1_sx8o4")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(-13.5, -14.5)
 scale = Vector2(0.789063, 0.773438)
-texture = ExtResource("1_sx8o4")
+texture = ExtResource("3_5iv38")
 
 [node name="Door" type="Node2D" parent="."]
-position = Vector2(21, 16)
+position = Vector2(-4, -2)
 
 [node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
-vertices = PackedVector2Array(-74, -50, -69, 39, 10, 40, 9, -4, 33, -5, 33, 41, 44, 42, 45, -70, -76, -69)
+vertices = PackedVector2Array(-34, 5, -35, -39, 12, -39, 12, 6, 4, 6, 4, -13, -13, -13, -13, 6, -34, 6)
 
 [node name="LeaveHouse" type="Timer" parent="."]
 

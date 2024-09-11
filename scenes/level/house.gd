@@ -6,27 +6,18 @@ var residents = []
 @export var is_townhall : bool
 @onready var door_pos = $Door.global_position
 
-@export var underconstruction : Texture2D
-@export var built : Texture2D
-@export var destroyed : Texture2D
-
 var villagers_left = 0
-var is_under_construction = true
-var construction_percentage = 0
 
 func _ready():
+	Global.setup_complete.connect(_on_world_setup)
+
+func _on_world_setup():
 	if is_townhall:
 		is_under_construction = false
 		spawn_villagers()
 		$Sprite2D.texture = built
 	else:
 		$Sprite2D.texture = underconstruction
-
-func build():
-	construction_percentage += 1
-	if construction_percentage == 100:
-		is_under_construction = false
-		$Sprite2D.texture = built
 
 func leave_house():
 	$LeaveHouse.start()

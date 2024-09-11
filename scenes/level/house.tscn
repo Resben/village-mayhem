@@ -19,7 +19,7 @@ texture = ExtResource("1_tnlkl")
 position = Vector2(14, 17)
 
 [node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
-vertices = PackedVector2Array(-30, 26, 4, 27, 4, 3, 22, 3, 22, 27, 30, 27, 30, -21, -3, -40, -33, -22, -32, 26)
+vertices = PackedVector2Array(-38, -37, 33, -33, 34, -20)
 
 [node name="LeaveHouse" type="Timer" parent="."]
 one_shot = true

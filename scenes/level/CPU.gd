@@ -3,12 +3,6 @@ class_name CPU
 
 @export var village_map : TileMap
 
-var resources = {
-	"food" : 0,
-	"wood" : 0,
-	"materials" : 0
-}
-
 func _ready():
 	Global.cpu = self
 	$ActionTimer.start()
@@ -19,7 +13,7 @@ func add_villager(villager : Villager):
 
 func on_disaster():
 	for v in Global.villager_references:
-		v.return_to_house()
+		v.on_disaster()
 
 func _on_action_timeout():
 	var available_villagers = []
@@ -30,34 +24,36 @@ func _on_action_timeout():
 	var priorities = calculate_priorities(available_villagers.size())
 	assign_workers(priorities, available_villagers)
 	
+	print(priorities)
+	
 	$ActionTimer.start()
 
 func calculate_priorities(num_available_villagers) -> Dictionary:
 	var total_villagers = Global.villager_references.size()
 	
-	if resources["food"] < 1:
-		resources["food"] = 1
-	if resources["wood"] < 1:
-		resources["wood"] = 1
-	if resources["materials"] < 1:
-		resources["materials"] = 1
+	if Global.resources["food"] < 1:
+		Global.resources["food"] = 1
+	if Global.resources["wood"] < 1:
+		Global.resources["wood"] = 1
+	if Global.resources["materials"] < 1:
+		Global.resources["materials"] = 1
 	
-	var food_priority = float(total_villagers * 30 / resources["food"])
-	var wood_priority = float(50 / resources["wood"])
+	var food_priority = float(total_villagers * 30 / Global.resources["food"])
+	var wood_priority = float(50 / Global.resources["wood"])
 	var mine_priority = 0.0
 	if Global.mine_references.size() != 0:
-		mine_priority = float(50 / resources["materials"])
+		mine_priority = float(50 / Global.resources["materials"])
 	
 	var num_broken_buildings = Global.get_broken_buildings().size()
 	var num_farms = Global.farm_references.size()
 	
 	var repair_priority = 0.0
-	if num_broken_buildings > 0 and resources["wood"] >= 25: # 25 cost to repair
-		repair_priority = float(num_broken_buildings * 25 / resources["wood"])
+	if num_broken_buildings > 0 and Global.resources["wood"] >= 25: # 25 cost to repair
+		repair_priority = float(num_broken_buildings * 25 / Global.resources["wood"])
 	
 	var build_priority = 0.0
-	if num_broken_buildings == 0 and resources["wood"] >= 50:
-		build_priority = float(resources["wood"] / 50)
+	if num_broken_buildings == 0 and Global.resources["wood"] >= 50:
+		build_priority = float(Global.resources["wood"] / 50)
 	
 	var new_farm_priority = 0.0
 	if num_farms == 0:
@@ -66,7 +62,7 @@ func calculate_priorities(num_available_villagers) -> Dictionary:
 		new_farm_priority = float(total_villagers * 10 / Global.farm_references.size())
 	
 	var new_mine_priority = 0.0
-	if resources["wood"] >= 100:
+	if Global.resources["wood"] >= 100:
 		var required_mines = Global.farm_references.size() / 5
 		if Global.mine_references.size() < required_mines:
 			new_mine_priority = float(required_mines - Global.mine_references.size())

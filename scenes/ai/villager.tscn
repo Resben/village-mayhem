@@ -62,3 +62,8 @@ autoplay = "walk"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_habms")
+
+[node name="ActionComplete" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="ActionComplete" to="." method="_on_action_complete_timeout"]
