@@ -15,6 +15,10 @@ func on_disaster():
 	for v in Global.villager_references:
 		v.on_disaster()
 
+func disaster_over():
+	for v in Global.villager_references:
+		v.disaster_over()
+
 func _on_action_timeout():
 	var available_villagers = []
 	for v in Global.villager_references:

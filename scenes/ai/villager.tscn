@@ -1,7 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://5ax878tfs7j0"]
+[gd_scene load_steps=9 format=3 uid="uid://5ax878tfs7j0"]
 
 [ext_resource type="Script" path="res://scenes/ai/villager.gd" id="1_o06ye"]
 [ext_resource type="Texture2D" uid="uid://3hgk31bfs8b3" path="res://assets/temp/villager_1_sheet.png" id="1_s0pjq"]
+[ext_resource type="Texture2D" uid="uid://b4sy0ajaq4k0u" path="res://assets/temp/backbar.png" id="3_dk856"]
+[ext_resource type="Texture2D" uid="uid://jasf1b8ejdpy" path="res://assets/temp/frontbar.png" id="4_hij7v"]
 
 [sub_resource type="Animation" id="Animation_kaiik"]
 length = 0.001
@@ -65,5 +67,13 @@ shape = SubResource("RectangleShape2D_habms")
 
 [node name="ActionComplete" type="Timer" parent="."]
 one_shot = true
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="."]
+offset_left = -5.0
+offset_top = 10.0
+offset_right = 6.0
+offset_bottom = 11.0
+texture_under = ExtResource("3_dk856")
+texture_progress = ExtResource("4_hij7v")
 
 [connection signal="timeout" from="ActionComplete" to="." method="_on_action_complete_timeout"]

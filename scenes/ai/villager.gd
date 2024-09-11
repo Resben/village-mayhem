@@ -4,6 +4,7 @@ class_name Villager
 enum { WORKING, IDLING, SCARED }
 var state = IDLING
 var last_state = IDLING
+var last_working_state = IDLING
 
 var panic_locations = []
 
@@ -33,12 +34,17 @@ func go_to(pos):
 func on_disaster():
 	state = SCARED
 
+func disaster_over():
+	state = last_working_state
+	exit_house()
+
 func enter_house():
 	in_house = true
 	visible = false
 
-func exit_house(pos):
-	nav.target_position = pos
+func exit_house(pos = null):
+	if pos != null:
+		nav.target_position = pos
 	visible = true
 	in_house = false
 	is_returning = false
@@ -133,11 +139,11 @@ func _on_navigation_agent_2d_velocity_computed(safe_velocity):
 func exit_state(state):
 	match state:
 		WORKING:
-			pass
+			last_working_state = WORKING
 		IDLING:
-			pass
+			last_working_state = IDLING
 		SCARED:
-			pass
+			last_working_state = SCARED
 
 func enter_state(state):
 	match state:
@@ -167,8 +173,6 @@ func run_state(delta, state):
 			if nav.is_navigation_finished():
 				nav.target_position = Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position
 		SCARED:
-			# Run around panicking
-			# Enter house when reached
 			if panic_locations.size() > 0 && nav.is_navigation_finished():
 				nav.target_position = panic_locations[0]
 				panic_locations.remove_at(0)
@@ -184,3 +188,6 @@ func _on_action_complete_timeout():
 	if job_points == require_job_points:
 		job_complete()
 		job_points = 0
+	
+	$TextureProgressBar.value = float(job_points) / require_job_points * 100.0
+	

@@ -17,4 +17,5 @@ func _input(event):
 		Global.cpu.on_disaster()
 		
 	if Input.is_action_just_pressed("right_mouse"):
-		Global.villager_references[0].go_to(position)
+		#Global.villager_references[0].go_to(position)
+		Global.cpu.disaster_over()
