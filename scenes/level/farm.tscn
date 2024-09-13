@@ -1,22 +1,22 @@
 [gd_scene load_steps=7 format=3 uid="uid://c30jksr0b3pns"]
 
 [ext_resource type="Script" path="res://scenes/level/farm.gd" id="1_qe5d3"]
-[ext_resource type="Texture2D" uid="uid://c44mf2j1x3lge" path="res://icon.svg" id="2_g25ic"]
+[ext_resource type="Texture2D" uid="uid://cthfk8yd6c1g2" path="res://assets/environment/farm_single.png" id="2_0ga8o"]
 [ext_resource type="Texture2D" uid="uid://15bvc28oda6i" path="res://assets/ui/construction_back.png" id="3_hgteb"]
 [ext_resource type="Texture2D" uid="uid://dudprl7k45l5g" path="res://assets/ui/construction_front.png" id="4_ivgma"]
 [ext_resource type="Script" path="res://scenes/level/hitbox.gd" id="5_y8nv3"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ar0mm"]
-radius = 50.01
+radius = 23.0
 
 [node name="Farm" type="Node2D"]
 script = ExtResource("1_qe5d3")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(0.205117, 0.205117, 0.205117, 1)
+texture_filter = 1
 position = Vector2(0.500003, 0.499995)
 scale = Vector2(0.695312, 0.617188)
-texture = ExtResource("2_g25ic")
+texture = ExtResource("2_0ga8o")
 
 [node name="TextureProgressBar" type="TextureProgressBar" parent="."]
 offset_left = -22.0

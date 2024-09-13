@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://ds0lpe8titpqh"]
+[gd_scene load_steps=13 format=3 uid="uid://ds0lpe8titpqh"]
 
 [ext_resource type="TileSet" uid="uid://djp1po2qnkljk" path="res://resources/tileset.tres" id="1_i6dnq"]
 [ext_resource type="Script" path="res://scenes/level/main.gd" id="1_n61w2"]
@@ -9,7 +9,6 @@
 [ext_resource type="Script" path="res://scenes/level/village_tile_controller.gd" id="5_iu43c"]
 [ext_resource type="Script" path="res://scenes/level/cursor.gd" id="6_5ykgd"]
 [ext_resource type="Script" path="res://scenes/level/CPU.gd" id="9_lrpbx"]
-[ext_resource type="PackedScene" uid="uid://bdtit0flpgvth" path="res://scenes/ai/storm.tscn" id="10_85h1v"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wvhs6"]
 atlas = ExtResource("5_as2h4")
@@ -83,10 +82,5 @@ limit_right = 2000
 limit_bottom = 1500
 editor_draw_limits = true
 script = ExtResource("4_crpwy")
-
-[node name="Storm" parent="." instance=ExtResource("10_85h1v")]
-
-[node name="Node2D" type="Node2D" parent="."]
-position = Vector2(1064, 656)
 
 [connection signal="timeout" from="CPU/ActionTimer" to="CPU" method="_on_action_timeout"]

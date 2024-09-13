@@ -14,8 +14,10 @@ func get_world_pos_tile(world_pos):
 func _input(event):
 	if Input.is_action_just_pressed("left_mouse"):
 		#village_map.check_availablity(position) #testing availability
-		Global.cpu.on_disaster()
+		#Global.cpu.on_disaster()
+		pass
 		
 	if Input.is_action_just_pressed("right_mouse"):
 		#Global.villager_references[0].go_to(position)
-		Global.cpu.disaster_over()
+		#Global.cpu.disaster_over()
+		pass

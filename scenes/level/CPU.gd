@@ -58,7 +58,7 @@ func get_next_house_in_cluster(pos : Vector2i, max_cluster : int):
 			for n in neighbours:
 				if is_house(village_map.get_cell_atlas_coords(0, n)) and !visited_positions.has(n):
 					queue.append(n)
-				elif next_location == null && village_map.get_cell_atlas_coords(0, n) == Vector2i(-1, -1):
+				elif next_location == null && village_map.get_cell_atlas_coords(0, n) == Vector2i(-1, -1): # IMPORTANT NEED TO CHECK AVAILABILITY DONT WANT STUFF ON OCEAN
 					village_map.set_cell(0, n, 0, Vector2i(0, 0))
 					next_location = n
 	

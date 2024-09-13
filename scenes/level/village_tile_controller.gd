@@ -59,5 +59,4 @@ func check_availablity(raw_position) -> bool:
 	else:
 		return false
 	
-	print("was true")
 	return true

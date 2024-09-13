@@ -2,7 +2,7 @@ extends Node2D
 class_name Workable
 
 var available_work_slots = 3
-var work_radius = 45
+var work_radius = 30
 
 @export var underconstruction : Texture2D
 @export var built : Texture2D
