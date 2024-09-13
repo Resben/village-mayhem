@@ -2,6 +2,7 @@ extends Workable
 class_name MineResource
 
 func _ready():
+	super._ready()
 	Global.mine_references.push_back(self)
 	required_points = 100
 

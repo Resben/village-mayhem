@@ -33,7 +33,7 @@ func construct_house():
 			if new_location != null:
 				break
 	
-	village_map.place_building("house", new_location, true)
+	return village_map.place_building("house", new_location, true)
 
 func get_next_house_in_cluster(pos : Vector2i, max_cluster : int):
 	var visited_positions = {}
@@ -59,6 +59,7 @@ func get_next_house_in_cluster(pos : Vector2i, max_cluster : int):
 				if is_house(village_map.get_cell_atlas_coords(0, n)) and !visited_positions.has(n):
 					queue.append(n)
 				elif next_location == null && village_map.get_cell_atlas_coords(0, n) == Vector2i(-1, -1):
+					village_map.set_cell(0, n, 0, Vector2i(0, 0))
 					next_location = n
 	
 	return next_location
@@ -146,8 +147,8 @@ func calculate_priorities(current_jobs, num_available_villagers) -> Dictionary:
 	var new_mine_priority = 0.0
 	if wood >= 100:
 		var required_mines = Global.farm_references.size() / 5
-		if Global.mine_references.size() < required_mines:
-			new_mine_priority = float(required_mines - Global.mine_references.size())
+		if Global.active_mine_references.size() < required_mines:
+			new_mine_priority = float(required_mines - Global.active_mine_references.size())
 	
 	var total_priority = food_priority + wood_priority + mine_priority + repair_priority + build_priority + new_farm_priority + new_mine_priority + construction_priority
 	

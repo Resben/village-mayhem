@@ -36,7 +36,7 @@ func place_building(id : String, pos : Vector2i, should_construct : bool):
 	scene.position = local
 	scene.is_under_construction = should_construct
 	add_child(scene)
-	Global.house_references.push_back(scene)
+	return scene
 
 func check_availablity(raw_position) -> bool:
 	var display_position = display_map.local_to_map(raw_position)

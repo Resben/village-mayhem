@@ -14,6 +14,7 @@ var job_type
 var require_job_points = 0
 var job_points = 0
 
+@export var village_map : TileMap
 @onready var nav = $NavigationAgent2D
 var direction
 var texture : Texture2D
@@ -67,9 +68,11 @@ func work(id):
 		"repair":
 			pass
 		"build":
-			var job = Global.cpu.construct_house()
-			if job != null:
-				set_job(job)
+			if Global.resources["wood"] > 50:
+				var job = Global.cpu.construct_house()
+				if job != null:
+					Global.resources["wood"] -= 50
+					set_job(job)
 		"farm":
 			pass
 		"new_mine":
@@ -103,6 +106,8 @@ func job_complete():
 		"logging":
 			set_idle()
 			Global.add_resource("wood", 10)
+		"construction":
+			set_idle()
 
 func find_best_slot(array_of_workplaces : Array[Workable]) -> Workable:
 	var num_spots = 0
@@ -200,9 +205,9 @@ func run_state(delta, state):
 
 func _on_action_complete_timeout():
 	job_reference.add_work_point(self)
-	if job_points == require_job_points:
-		job_complete()
-		job_points = 0
-	
-	$TextureProgressBar.value = float(job_points) / require_job_points * 100.0
+	if job_type != "construction":
+		if job_points == require_job_points:
+			job_complete()
+			job_points = 0
+		$TextureProgressBar.value = float(job_points) / require_job_points * 100.0
 	

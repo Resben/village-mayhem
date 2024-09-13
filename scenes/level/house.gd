@@ -9,6 +9,7 @@ var residents = []
 var villagers_left = 0
 
 func _ready():
+	super._ready()
 	Global.setup_complete.connect(_on_world_setup)
 
 func get_job_type():
@@ -35,10 +36,15 @@ func _on_leave_house_timeout():
 		villagers_left += 1
 
 func on_house_destroyed():
-	Global.remove_population(residents.size())
+	Global.hud.remove_population(residents.size())
+	for r in residents:
+		r.queue_free()
 
-func on_house_repaired():
-	Global.add_population(residents.size())
+func on_construction_complete():
+	spawn_villagers()
+
+func on_repair_complete():
+	spawn_villagers()
 
 func spawn_villagers():
 	var rand_villagers

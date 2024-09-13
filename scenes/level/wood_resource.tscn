@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://b31napmf2sfek"]
+[gd_scene load_steps=5 format=3 uid="uid://b31napmf2sfek"]
 
 [ext_resource type="Script" path="res://scenes/level/wood_resource.gd" id="1_0c7rg"]
 [ext_resource type="Texture2D" uid="uid://c44mf2j1x3lge" path="res://icon.svg" id="2_vpq8m"]
+[ext_resource type="Texture2D" uid="uid://15bvc28oda6i" path="res://assets/ui/construction_back.png" id="3_n7k4v"]
+[ext_resource type="Texture2D" uid="uid://dudprl7k45l5g" path="res://assets/ui/construction_front.png" id="4_l3q8v"]
 
 [node name="WoodResource" type="Node2D"]
 script = ExtResource("1_0c7rg")
@@ -13,3 +15,11 @@ destroyed = ExtResource("2_vpq8m")
 texture_filter = 1
 scale = Vector2(0.554688, 0.617188)
 texture = ExtResource("2_vpq8m")
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="."]
+offset_left = -22.0
+offset_top = 34.0
+offset_right = 22.0
+offset_bottom = 74.0
+texture_under = ExtResource("3_n7k4v")
+texture_progress = ExtResource("4_l3q8v")
