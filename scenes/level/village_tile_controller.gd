@@ -22,7 +22,7 @@ var id_to_scene = {
 	"house" : preload("res://scenes/level/house.tscn"),
 	"crop" : preload("res://scenes/level/farm.tscn"),
 	"mine" : preload("res://scenes/level/house.tscn"),
-	"tree" : preload("res://scenes/level/house.tscn"),
+	"tree" : preload("res://scenes/level/wood_resource.tscn"),
 	"town_hall" : preload("res://scenes/level/town_hall.tscn")
 }
 
@@ -32,10 +32,11 @@ func _ready():
 
 func place_building(id : String, pos : Vector2i, should_construct : bool):
 	var local = map_to_local(pos)
-	var scene = id_to_scene[id].instantiate()
+	var scene = id_to_scene[id].instantiate() as Workable
 	scene.position = local
 	scene.is_under_construction = should_construct
 	add_child(scene)
+	Global.house_references.push_back(scene)
 
 func check_availablity(raw_position) -> bool:
 	var display_position = display_map.local_to_map(raw_position)

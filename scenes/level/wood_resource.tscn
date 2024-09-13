@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://b31napmf2sfek"]
+
+[ext_resource type="Script" path="res://scenes/level/wood_resource.gd" id="1_0c7rg"]
+[ext_resource type="Texture2D" uid="uid://c44mf2j1x3lge" path="res://icon.svg" id="2_vpq8m"]
+
+[node name="WoodResource" type="Node2D"]
+script = ExtResource("1_0c7rg")
+underconstruction = ExtResource("2_vpq8m")
+built = ExtResource("2_vpq8m")
+destroyed = ExtResource("2_vpq8m")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(0.554688, 0.617188)
+texture = ExtResource("2_vpq8m")

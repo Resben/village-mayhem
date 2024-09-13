@@ -1,7 +1,7 @@
 [gd_resource type="TileSet" load_steps=20 format=3 uid="uid://djp1po2qnkljk"]
 
-[ext_resource type="Texture2D" uid="uid://b61grxo4c60cw" path="res://assets/temp/TilemapDemo.png" id="1_ifs7x"]
 [ext_resource type="Texture2D" uid="uid://bycptb66p82f6" path="res://assets/temp/TilemapPlaceholders.png" id="2_h7vjk"]
+[ext_resource type="Texture2D" uid="uid://cywknnlv8xvlt" path="res://assets/environment/Tilemap.png" id="2_rydy1"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_afpvt"]
 texture = ExtResource("2_h7vjk")
@@ -115,7 +115,7 @@ source_geometry_group_name = &"navigation_polygon_source_group"
 agent_radius = 0.0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5g4sr"]
-texture = ExtResource("1_ifs7x")
+texture = ExtResource("2_rydy1")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 0:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_gcnvv")

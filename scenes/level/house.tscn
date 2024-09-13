@@ -6,7 +6,6 @@
 
 [node name="House" type="Node2D"]
 script = ExtResource("1_rwma6")
-is_townhall = null
 underconstruction = ExtResource("2_ehpia")
 built = ExtResource("1_tnlkl")
 destroyed = ExtResource("2_ehpia")
@@ -16,10 +15,10 @@ texture_filter = 1
 texture = ExtResource("1_tnlkl")
 
 [node name="Door" type="Node2D" parent="."]
-position = Vector2(14, 17)
+position = Vector2(0, 19)
 
 [node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
-vertices = PackedVector2Array(-38, -37, 33, -33, 34, -20)
+vertices = PackedVector2Array(-31, -30, 33, -29, 33, 28, 13, 28, 13, 6, -13, 6, -13, 28, -31, 28)
 
 [node name="LeaveHouse" type="Timer" parent="."]
 one_shot = true

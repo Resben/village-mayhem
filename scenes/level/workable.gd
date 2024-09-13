@@ -8,19 +8,18 @@ var work_radius = 45
 @export var built : Texture2D
 @export var destroyed : Texture2D
 
-var work_id = "not_set"
 var work_points = 0
 var required_points = 0
 
 var is_under_construction = true
 var construction_percentage = 0
+var is_broken = false
 
 func add_worker():
 	available_work_slots -= 1
-	if is_under_construction:
-		return "construction"
-	else:
-		return work_id
+
+func get_job_type():
+	pass
 
 func get_random_edge_location():
 	var angle = randf_range(0, TAU)
@@ -36,7 +35,7 @@ func add_work_point(reference : Villager):
 			$Sprite2D.texture = built
 			reference.job_complete()
 	else:
-		reference.job_points += 1
+		reference.job_points += 10
 
 func was_destroyed():
 	is_under_construction = true

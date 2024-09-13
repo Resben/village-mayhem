@@ -11,6 +11,11 @@ var villagers_left = 0
 func _ready():
 	Global.setup_complete.connect(_on_world_setup)
 
+func get_job_type():
+	if !is_under_construction:
+		push_error("You tried to get a job type on a built house?")
+	return "construction"
+
 func _on_world_setup():
 	if is_townhall:
 		is_under_construction = false

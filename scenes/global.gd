@@ -3,9 +3,13 @@ extends Node
 signal setup_complete
 
 var villager_references : Array
+
+var wood_references : Array[Workable]
 var house_references : Array[Workable]
 var farm_references : Array[Workable]
-var mine_references : Array[Workable]
+
+var inactive_mine_references : Array[Workable]
+var active_mine_references : Array[Workable]
 
 var cpu
 var population = 0
@@ -51,6 +55,14 @@ func get_broken_buildings():
 	var refs = []
 	for h in house_references:
 		if h.is_broken:
+			refs.push_back(h)
+	
+	return refs
+
+func get_construction_buildings() -> Array[Workable]:
+	var refs : Array[Workable]
+	for h in house_references:
+		if h.is_under_construction:
 			refs.push_back(h)
 	
 	return refs

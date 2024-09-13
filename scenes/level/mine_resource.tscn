@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bm2agf8wqfqjb"]
+
+[ext_resource type="Script" path="res://scenes/level/mine_resource.gd" id="1_3yfvb"]
+
+[node name="MineResource" type="Node2D"]
+script = ExtResource("1_3yfvb")

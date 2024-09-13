@@ -44,7 +44,10 @@ func enter_house():
 
 func exit_house(pos = null):
 	if pos != null:
-		nav.target_position = pos
+		if is_working:
+			nav.target_position = job_location
+		else:
+			nav.target_position = pos
 	visible = true
 	in_house = false
 	is_returning = false
@@ -55,24 +58,33 @@ func work(id):
 			var job = find_best_slot(Global.farm_references)
 			if job != null:
 				set_job(job)
-		"wood":
-			pass
+		"logging":
+			var job = find_best_slot(Global.wood_references)
+			if job != null:
+				set_job(job)
 		"mine":
 			pass
 		"repair":
 			pass
 		"build":
-			pass
+			var job = Global.cpu.construct_house()
+			if job != null:
+				set_job(job)
 		"farm":
 			pass
 		"new_mine":
 			pass
+		"construction":
+			var job = find_best_slot(Global.get_construction_buildings())
+			if job != null:
+				set_job(job)
 
 func set_job(job):
 	state = WORKING
 	job_location = job.get_random_edge_location()
 	job_reference = job
-	job_type = job.add_worker()
+	job_type = job.get_job_type() 
+	job.add_worker()
 	require_job_points = job.required_points
 	is_working = true
 
@@ -83,11 +95,14 @@ func set_idle():
 func job_complete():
 	job_reference.available_work_slots += 1
 	match job_type:
-		"construction":
+		"build":
 			set_idle()
-		"farming":
+		"food":
 			set_idle()
 			Global.add_resource("food", 10)
+		"logging":
+			set_idle()
+			Global.add_resource("wood", 10)
 
 func find_best_slot(array_of_workplaces : Array[Workable]) -> Workable:
 	var num_spots = 0
