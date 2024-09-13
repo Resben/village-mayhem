@@ -76,4 +76,5 @@ offset_bottom = 11.0
 texture_under = ExtResource("3_dk856")
 texture_progress = ExtResource("4_hij7v")
 
+[connection signal="velocity_computed" from="NavigationAgent2D" to="." method="_on_navigation_agent_2d_velocity_computed"]
 [connection signal="timeout" from="ActionComplete" to="." method="_on_action_complete_timeout"]

@@ -1,9 +1,13 @@
-[gd_scene load_steps=5 format=3 uid="uid://c30jksr0b3pns"]
+[gd_scene load_steps=7 format=3 uid="uid://c30jksr0b3pns"]
 
 [ext_resource type="Script" path="res://scenes/level/farm.gd" id="1_qe5d3"]
 [ext_resource type="Texture2D" uid="uid://c44mf2j1x3lge" path="res://icon.svg" id="2_g25ic"]
 [ext_resource type="Texture2D" uid="uid://15bvc28oda6i" path="res://assets/ui/construction_back.png" id="3_hgteb"]
 [ext_resource type="Texture2D" uid="uid://dudprl7k45l5g" path="res://assets/ui/construction_front.png" id="4_ivgma"]
+[ext_resource type="Script" path="res://scenes/level/hitbox.gd" id="5_y8nv3"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ar0mm"]
+radius = 50.01
 
 [node name="Farm" type="Node2D"]
 script = ExtResource("1_qe5d3")
@@ -21,3 +25,11 @@ offset_right = 22.0
 offset_bottom = 74.0
 texture_under = ExtResource("3_hgteb")
 texture_progress = ExtResource("4_ivgma")
+
+[node name="Hitbox" type="Area2D" parent="."]
+script = ExtResource("5_y8nv3")
+health = 25
+type = "farm"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("CircleShape2D_ar0mm")

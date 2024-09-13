@@ -72,5 +72,6 @@ func add_resource(id : String, amount : int):
 	hud.update_resources()
 
 func remove_resources(id : String, amount : int):
-	resources[id] -= amount
-	hud.update_resources()
+	if resources[id] > 0:
+		resources[id] -= amount
+		hud.update_resources()

@@ -62,14 +62,14 @@ func add_work_point(reference : Villager):
 	else:
 		reference.job_points += 5
 
+func _on_destroyed():
+	is_broken = true
+	repair_percentage = 0
+	$Sprite2D.texture = destroyed
+	$TextureProgressBar.visible = true
+
 func on_construction_complete():
 	pass
 
 func on_repair_complete():
 	pass
-
-func was_destroyed():
-	is_broken = true
-	repair_percentage = 0
-	$Sprite2D.texture = destroyed
-	$TextureProgressBar.visible = true

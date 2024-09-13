@@ -35,10 +35,15 @@ func _on_leave_house_timeout():
 		$LeaveHouse.start()
 		villagers_left += 1
 
-func on_house_destroyed():
-	Global.hud.remove_population(residents.size())
+func _on_destroyed():
+	if is_broken:
+		return
+	super._on_destroyed()
+	Global.remove_population(residents.size())
 	for r in residents:
+		Global.villager_references.erase(r)
 		r.queue_free()
+	residents.clear()
 
 func on_construction_complete():
 	spawn_villagers()

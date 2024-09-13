@@ -1,10 +1,14 @@
-[gd_scene load_steps=6 format=3 uid="uid://dkm7f7jggkwyg"]
+[gd_scene load_steps=8 format=3 uid="uid://dkm7f7jggkwyg"]
 
 [ext_resource type="Script" path="res://scenes/level/house.gd" id="1_rwma6"]
 [ext_resource type="Texture2D" uid="uid://bauo0k8ih1wl3" path="res://assets/temp/house.png" id="1_tnlkl"]
 [ext_resource type="Texture2D" uid="uid://c44mf2j1x3lge" path="res://icon.svg" id="2_ehpia"]
 [ext_resource type="Texture2D" uid="uid://15bvc28oda6i" path="res://assets/ui/construction_back.png" id="4_yko8o"]
 [ext_resource type="Texture2D" uid="uid://dudprl7k45l5g" path="res://assets/ui/construction_front.png" id="5_roiiy"]
+[ext_resource type="Script" path="res://scenes/level/hitbox.gd" id="6_50nhw"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_umwap"]
+radius = 30.0
 
 [node name="House" type="Node2D"]
 script = ExtResource("1_rwma6")
@@ -32,5 +36,13 @@ offset_right = 22.0
 offset_bottom = 36.0
 texture_under = ExtResource("4_yko8o")
 texture_progress = ExtResource("5_roiiy")
+
+[node name="Hitbox" type="Area2D" parent="."]
+script = ExtResource("6_50nhw")
+health = 30
+type = "house"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("CircleShape2D_umwap")
 
 [connection signal="timeout" from="LeaveHouse" to="." method="_on_leave_house_timeout"]
