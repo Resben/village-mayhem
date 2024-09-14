@@ -1,7 +1,7 @@
 extends CharacterBody2D
 class_name Villager
 
-enum { WORKING, IDLING, SCARED }
+enum { WORKING, IDLING, SCARED, DEMO }
 var state = IDLING
 var last_state = IDLING
 var last_working_state = IDLING
@@ -14,6 +14,7 @@ var job_type
 var require_job_points = 0
 var job_points = 0
 
+@export var is_demo : bool
 @export var village_map : TileMap
 @onready var nav = $NavigationAgent2D
 var direction
@@ -28,6 +29,9 @@ func _ready():
 	$Sprite2D.texture = Global.get_random_villager()
 	if in_house:
 		visible = false
+	
+	if is_demo:
+		state = DEMO
 
 func go_to(pos):
 	nav.target_position = pos
@@ -138,7 +142,7 @@ func _physics_process(delta):
 		return
 	
 	var next_path_position = nav.get_next_path_position()
-	var new_velocity = global_position.direction_to(next_path_position) * 100
+	var new_velocity = global_position.direction_to(next_path_position) * 50
 	direction = new_velocity
 	
 	if nav.avoidance_enabled:
@@ -173,6 +177,9 @@ func enter_state(state):
 		IDLING:
 			nav.target_position = Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position
 			$AnimationPlayer.play("walk")
+		DEMO:
+			nav.target_position = Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position
+			$AnimationPlayer.play("walk")
 		SCARED:
 			#$AnimationPlayer.play("scared")
 			var direction = (house.door_pos - global_position).normalized()
@@ -192,6 +199,9 @@ func run_state(delta, state):
 		IDLING:
 			if nav.is_navigation_finished():
 				nav.target_position = Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position
+		DEMO:
+			if nav.is_navigation_finished():
+				nav.target_position = Vector2(randf_range(-100, 100), randf_range(-100, 100)) + global_position
 		SCARED:
 			if panic_locations.size() > 0 && nav.is_navigation_finished():
 				nav.target_position = panic_locations[0]
