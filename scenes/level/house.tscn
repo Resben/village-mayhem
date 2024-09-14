@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://dkm7f7jggkwyg"]
 
 [ext_resource type="Script" path="res://scenes/level/house.gd" id="1_rwma6"]
-[ext_resource type="Texture2D" uid="uid://bauo0k8ih1wl3" path="res://assets/temp/house.png" id="1_tnlkl"]
+[ext_resource type="Texture2D" uid="uid://bauo0k8ih1wl3" path="res://assets/buildings/house/house.png" id="1_tnlkl"]
 [ext_resource type="Texture2D" uid="uid://c44mf2j1x3lge" path="res://icon.svg" id="2_ehpia"]
 [ext_resource type="Texture2D" uid="uid://15bvc28oda6i" path="res://assets/ui/construction_back.png" id="4_yko8o"]
 [ext_resource type="Texture2D" uid="uid://dudprl7k45l5g" path="res://assets/ui/construction_front.png" id="5_roiiy"]

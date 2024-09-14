@@ -6,6 +6,7 @@ var work_radius = 30
 
 @export var underconstruction : Texture2D
 @export var built : Texture2D
+@export var damaged : Texture2D
 @export var destroyed : Texture2D
 
 var work_points = 0
@@ -72,4 +73,10 @@ func on_construction_complete():
 	pass
 
 func on_repair_complete():
+	pass
+
+func is_windy():
+	pass
+
+func not_windy():
 	pass

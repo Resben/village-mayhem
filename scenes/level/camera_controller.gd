@@ -17,8 +17,8 @@ func _input(event):
 	
 	if event.is_action("zoom_in"):
 		if zoom.x < 3:
-			zoom += Vector2(0.1, 0.1)
+			zoom += Vector2(0.025, 0.025)
 	if event.is_action("zoom_out"):
-		if zoom.x > 0.4:
-			zoom -= Vector2(0.1, 0.1)
+		if zoom.x > 0.25:
+			zoom -= Vector2(0.025, 0.025)
 		

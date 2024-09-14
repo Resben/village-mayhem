@@ -1,10 +1,12 @@
-[gd_scene load_steps=17 format=3 uid="uid://bdtit0flpgvth"]
+[gd_scene load_steps=18 format=3 uid="uid://bdtit0flpgvth"]
 
 [ext_resource type="Script" path="res://scenes/ai/storm.gd" id="1_u85mp"]
+[ext_resource type="Texture2D" uid="uid://drvq6765g6ww7" path="res://assets/environment/shadow.png" id="2_6ptx6"]
 [ext_resource type="Texture2D" uid="uid://cm6ee0hi4mohs" path="res://assets/environment/storm-Sheet.png" id="2_o1mj0"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_56jp1"]
-radius = 91.2688
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_my4m8"]
+radius = 59.0
+height = 242.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vdt8i"]
 atlas = ExtResource("2_o1mj0")
@@ -102,14 +104,23 @@ animations = [{
 script = ExtResource("1_u85mp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_56jp1")
+position = Vector2(0, 41)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_my4m8")
+
+[node name="Shadow" type="Sprite2D" parent="."]
+self_modulate = Color(1, 1, 1, 0.145098)
+texture_filter = 1
+position = Vector2(0, 40)
+scale = Vector2(2, 2)
+texture = ExtResource("2_6ptx6")
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
 scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_jvd6q")
 autoplay = "default"
-frame_progress = 0.175075
+frame_progress = 0.525618
 
 [node name="DamageTick" type="Timer" parent="."]
 one_shot = true
