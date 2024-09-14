@@ -14,12 +14,12 @@ func get_world_pos_tile(world_pos):
 	var y = floori(world_pos.y / 32) * 32
 	return Vector2(x, y)
 
-func _input(event):
+func _unhandled_input(event):
 	if Global.hud.current_selection != -1:
 		if Input.is_action_just_pressed("left_mouse"):
 			if first_point == null:
 				first_point = get_global_mouse_position()
-			elif second_point == null:
+			elif second_point == null && first_point != get_global_mouse_position():
 				second_point = get_global_mouse_position()
 			
 			if first_point != null && second_point != null:

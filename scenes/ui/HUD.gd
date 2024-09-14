@@ -2,6 +2,7 @@ extends Control
 
 var ui_shown = false
 var current_selection = -1
+@onready var ui_rect = $Control.get_global_rect()
 
 func _ready():
 	$Control/TextureRect2/ItemList.set_item_tooltip_enabled(0, false)

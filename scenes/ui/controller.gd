@@ -15,6 +15,10 @@ func _ready():
 func _input(event):
 	if Input.is_action_just_pressed("pause") && !$Startup.visible:
 		$Paused.visible = !$Paused.visible
+		if $Paused.visible:
+			$Paused.mouse_filter = Control.MOUSE_FILTER_STOP
+		else:
+			$Paused.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		get_tree().paused = $Paused.visible
 
 func switch_to_game():
@@ -23,6 +27,7 @@ func switch_to_game():
 
 func to_game_callback():
 	$Startup.visible = false
+	$Startup.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	$HUD.visible = true
 	get_tree().paused = false
 
