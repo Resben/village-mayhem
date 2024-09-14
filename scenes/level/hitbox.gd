@@ -19,7 +19,7 @@ func take_damage():
 		"farm":
 			Global.remove_resources("food", 1)
 		"town_hall":
-			health -= 100
+			health -= 1
 			Global.remove_resources("wood", 1)
 	
 	if health <= 0:

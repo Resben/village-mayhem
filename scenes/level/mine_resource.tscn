@@ -1,8 +1,40 @@
-[gd_scene load_steps=4 format=3 uid="uid://bm2agf8wqfqjb"]
+[gd_scene load_steps=12 format=3 uid="uid://bm2agf8wqfqjb"]
 
 [ext_resource type="Script" path="res://scenes/level/mine_resource.gd" id="1_3yfvb"]
 [ext_resource type="Texture2D" uid="uid://15bvc28oda6i" path="res://assets/ui/construction_back.png" id="2_cdvkn"]
 [ext_resource type="Texture2D" uid="uid://dudprl7k45l5g" path="res://assets/ui/construction_front.png" id="3_iq2wf"]
+
+[sub_resource type="Animation" id="Animation_ugfgr"]
+resource_name = "windy_broken"
+
+[sub_resource type="Animation" id="Animation_fqwl8"]
+resource_name = "windy_damaged"
+
+[sub_resource type="Animation" id="Animation_ihghj"]
+resource_name = "windy_fixed"
+
+[sub_resource type="Animation" id="Animation_6ep72"]
+resource_name = "fixed"
+
+[sub_resource type="Animation" id="Animation_rdipq"]
+resource_name = "damaged"
+
+[sub_resource type="Animation" id="Animation_1a78d"]
+resource_name = "broken"
+
+[sub_resource type="Animation" id="Animation_0mn8m"]
+resource_name = "underconstruction"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_4arjq"]
+_data = {
+"broken": SubResource("Animation_1a78d"),
+"damaged": SubResource("Animation_rdipq"),
+"fixed": SubResource("Animation_6ep72"),
+"underconstruction": SubResource("Animation_0mn8m"),
+"windy_broken": SubResource("Animation_ugfgr"),
+"windy_damaged": SubResource("Animation_fqwl8"),
+"windy_fixed": SubResource("Animation_ihghj")
+}
 
 [node name="MineResource" type="Node2D"]
 script = ExtResource("1_3yfvb")
@@ -14,3 +46,8 @@ offset_right = 22.0
 offset_bottom = 74.0
 texture_under = ExtResource("2_cdvkn")
 texture_progress = ExtResource("3_iq2wf")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_4arjq")
+}

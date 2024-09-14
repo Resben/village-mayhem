@@ -30,4 +30,3 @@ func to_game_callback():
 	$Startup.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	$HUD.visible = true
 	get_tree().paused = false
-

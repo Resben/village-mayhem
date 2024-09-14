@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ddd5hsj1074rs"
-path="res://.godot/imported/house_hit_damaged_wind_sheet.png-998511f7a19b5b08c6741e165ad33500.ctex"
+uid="uid://bp37s8mfetvvr"
+path="res://.godot/imported/house_construction.png-e465f6805ea0757ca92a364a6f0051c6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/buildings/house/house_hit_damaged_wind_sheet.png"
-dest_files=["res://.godot/imported/house_hit_damaged_wind_sheet.png-998511f7a19b5b08c6741e165ad33500.ctex"]
+source_file="res://assets/buildings/house/house_construction.png"
+dest_files=["res://.godot/imported/house_construction.png-e465f6805ea0757ca92a364a6f0051c6.ctex"]
 
 [params]
 

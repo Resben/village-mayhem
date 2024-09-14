@@ -21,9 +21,6 @@ func _on_world_setup():
 	if is_townhall:
 		is_under_construction = false
 		spawn_villagers()
-		$Sprite2D.texture = built
-	else:
-		$Sprite2D.texture = underconstruction
 
 func leave_house():
 	$LeaveHouse.start()

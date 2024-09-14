@@ -1,25 +1,60 @@
-[gd_scene load_steps=5 format=3 uid="uid://b31napmf2sfek"]
+[gd_scene load_steps=13 format=3 uid="uid://b31napmf2sfek"]
 
 [ext_resource type="Script" path="res://scenes/level/wood_resource.gd" id="1_0c7rg"]
-[ext_resource type="Texture2D" uid="uid://c44mf2j1x3lge" path="res://icon.svg" id="2_vpq8m"]
+[ext_resource type="Texture2D" uid="uid://ciqbu2cok60nc" path="res://assets/environment/tree.png" id="3_78yov"]
 [ext_resource type="Texture2D" uid="uid://15bvc28oda6i" path="res://assets/ui/construction_back.png" id="3_n7k4v"]
 [ext_resource type="Texture2D" uid="uid://dudprl7k45l5g" path="res://assets/ui/construction_front.png" id="4_l3q8v"]
 
+[sub_resource type="Animation" id="Animation_ugfgr"]
+resource_name = "windy_broken"
+
+[sub_resource type="Animation" id="Animation_fqwl8"]
+resource_name = "windy_damaged"
+
+[sub_resource type="Animation" id="Animation_ihghj"]
+resource_name = "windy_fixed"
+
+[sub_resource type="Animation" id="Animation_6ep72"]
+resource_name = "fixed"
+
+[sub_resource type="Animation" id="Animation_rdipq"]
+resource_name = "damaged"
+
+[sub_resource type="Animation" id="Animation_1a78d"]
+resource_name = "broken"
+
+[sub_resource type="Animation" id="Animation_0mn8m"]
+resource_name = "underconstruction"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_4arjq"]
+_data = {
+"broken": SubResource("Animation_1a78d"),
+"damaged": SubResource("Animation_rdipq"),
+"fixed": SubResource("Animation_6ep72"),
+"underconstruction": SubResource("Animation_0mn8m"),
+"windy_broken": SubResource("Animation_ugfgr"),
+"windy_damaged": SubResource("Animation_fqwl8"),
+"windy_fixed": SubResource("Animation_ihghj")
+}
+
 [node name="WoodResource" type="Node2D"]
+scale = Vector2(2, 2)
 script = ExtResource("1_0c7rg")
-underconstruction = ExtResource("2_vpq8m")
-built = ExtResource("2_vpq8m")
-destroyed = ExtResource("2_vpq8m")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
 scale = Vector2(0.554688, 0.617188)
-texture = ExtResource("2_vpq8m")
+texture = ExtResource("3_78yov")
 
 [node name="TextureProgressBar" type="TextureProgressBar" parent="."]
 offset_left = -22.0
-offset_top = 34.0
+offset_top = 22.0
 offset_right = 22.0
-offset_bottom = 74.0
+offset_bottom = 24.0
 texture_under = ExtResource("3_n7k4v")
 texture_progress = ExtResource("4_l3q8v")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_4arjq")
+}
