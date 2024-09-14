@@ -4,3 +4,7 @@
 
 [node name="Global" type="Node"]
 script = ExtResource("1_xueuv")
+
+[node name="BGM" type="AudioStreamPlayer2D" parent="."]
+
+[node name="SFX" type="AudioStreamPlayer2D" parent="."]

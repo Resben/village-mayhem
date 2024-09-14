@@ -11,6 +11,12 @@ var farm_references : Array[Workable]
 var inactive_mine_references : Array[Workable]
 var active_mine_references : Array[Workable]
 
+var disaster_references = []
+
+var current_bgm = "peaceful"
+var bgm_volume = 1.0
+var sfx_volume = 1.0
+
 var cpu
 var population = 0
 var hud
@@ -31,6 +37,11 @@ var resources = {
 }
 
 func _process(delta):
+	if disaster_references.size() > 0:
+		switch_bgm("chaos")
+	else:
+		switch_bgm("peaceful")
+	
 	if is_setup:
 		return
 	
@@ -76,3 +87,24 @@ func remove_resources(id : String, amount : int):
 	if resources[id] > 0:
 		resources[id] -= amount
 		hud.update_resources()
+
+func switch_bgm(id):
+	if id == current_bgm:
+		return
+	
+	current_bgm = id
+	var tween = get_tree().create_tween()
+	tween.tween_property($BGM, "volume_db", linear_to_db(0.0), 7.5)
+	tween.tween_callback(next_track)
+
+func next_track():
+	if current_bgm == "peaceful":
+		pass #$BGM.play("peaceful")
+	else:
+		pass #BGM.play("chaos")
+	
+	var tween = get_tree().create_tween()
+	tween.tween_property($BGM, "volume_db", linear_to_db(bgm_volume), 7.5)
+
+func play_SFX(id):
+	pass
