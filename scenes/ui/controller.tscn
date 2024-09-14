@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://di5rphm7njuh8"]
+[gd_scene load_steps=26 format=3 uid="uid://di5rphm7njuh8"]
 
 [ext_resource type="Script" path="res://scenes/ui/controller.gd" id="1_0b8cs"]
 [ext_resource type="Script" path="res://scenes/ui/startup.gd" id="2_3b7cw"]
@@ -17,6 +17,7 @@
 [ext_resource type="Texture2D" uid="uid://cthfk8yd6c1g2" path="res://assets/environment/farm_single.png" id="9_e06tq"]
 [ext_resource type="Texture2D" uid="uid://crkwt71i22ycg" path="res://assets/ui/god_ui.png" id="9_or2kj"]
 [ext_resource type="PackedScene" uid="uid://5ax878tfs7j0" path="res://scenes/ai/villager.tscn" id="10_20pqs"]
+[ext_resource type="Script" path="res://scenes/ui/paused.gd" id="16_tsk5n"]
 
 [sub_resource type="Animation" id="Animation_jbtq1"]
 length = 0.001
@@ -370,6 +371,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("2_o4um2")
+script = ExtResource("16_tsk5n")
 
 [node name="TextureRect" type="TextureRect" parent="Paused"]
 layout_mode = 1
@@ -386,7 +388,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_vp72e")
 
-[node name="Button" type="Button" parent="Paused/TextureRect"]
+[node name="Continue" type="Button" parent="Paused/TextureRect"]
 layout_mode = 1
 offset_left = 120.0
 offset_top = 96.0
@@ -394,7 +396,7 @@ offset_right = 128.0
 offset_bottom = 104.0
 text = "Continue"
 
-[node name="Button2" type="Button" parent="Paused/TextureRect"]
+[node name="ToMenu" type="Button" parent="Paused/TextureRect"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -465,3 +467,5 @@ color = Color(0, 0, 0, 1)
 [connection signal="pressed" from="HUD/Control/TextureButton" to="HUD" method="_on_show_ui_pressed"]
 [connection signal="item_clicked" from="HUD/Control/TextureRect2/ItemList" to="HUD" method="_on_item_clicked"]
 [connection signal="animation_finished" from="HUD/AnimationPlayer" to="HUD" method="_on_animation_player_finished"]
+[connection signal="pressed" from="Paused/TextureRect/Continue" to="Paused" method="_on_continue_pressed"]
+[connection signal="pressed" from="Paused/TextureRect/ToMenu" to="Paused" method="_on_to_menu_pressed"]
