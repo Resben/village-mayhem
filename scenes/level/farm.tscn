@@ -7,7 +7,7 @@
 [ext_resource type="Script" path="res://scenes/level/hitbox.gd" id="5_y8nv3"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ar0mm"]
-radius = 23.0
+radius = 21.0238
 
 [node name="Farm" type="Node2D"]
 script = ExtResource("1_qe5d3")
@@ -32,4 +32,5 @@ health = 25
 type = "farm"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+position = Vector2(0, 8)
 shape = SubResource("CircleShape2D_ar0mm")

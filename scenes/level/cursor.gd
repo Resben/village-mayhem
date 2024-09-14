@@ -3,6 +3,9 @@ extends AnimatedSprite2D
 @export var village_map : TileMap
 @export var cpu : CPU
 
+var first_point = null
+var second_point = null
+
 func _physics_process(delta):
 	global_position = get_world_pos_tile(get_global_mouse_position() + Vector2(16, 16))
 	
@@ -12,12 +15,15 @@ func get_world_pos_tile(world_pos):
 	return Vector2(x, y)
 
 func _input(event):
-	if Input.is_action_just_pressed("left_mouse"):
-		#village_map.check_availablity(position) #testing availability
-		#Global.cpu.on_disaster()
-		pass
-		
-	if Input.is_action_just_pressed("right_mouse"):
-		#Global.villager_references[0].go_to(position)
-		#Global.cpu.disaster_over()
-		pass
+	if Global.hud.current_selection != -1:
+		if Input.is_action_just_pressed("left_mouse"):
+			if first_point == null:
+				first_point = get_global_mouse_position()
+			elif second_point == null:
+				second_point = get_global_mouse_position()
+			
+			if first_point != null && second_point != null:
+				Global.disaster_controller.place_storm(first_point, second_point)
+				first_point = null
+				second_point = null
+				Global.hud.deselect()

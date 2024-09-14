@@ -1,10 +1,102 @@
-[gd_scene load_steps=4 format=3 uid="uid://bdtit0flpgvth"]
+[gd_scene load_steps=17 format=3 uid="uid://bdtit0flpgvth"]
 
 [ext_resource type="Script" path="res://scenes/ai/storm.gd" id="1_u85mp"]
-[ext_resource type="Texture2D" uid="uid://c44mf2j1x3lge" path="res://icon.svg" id="2_0uphp"]
+[ext_resource type="Texture2D" uid="uid://cm6ee0hi4mohs" path="res://assets/environment/storm-Sheet.png" id="2_o1mj0"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_56jp1"]
 radius = 91.2688
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vdt8i"]
+atlas = ExtResource("2_o1mj0")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_myl6o"]
+atlas = ExtResource("2_o1mj0")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lnrjg"]
+atlas = ExtResource("2_o1mj0")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fy6ar"]
+atlas = ExtResource("2_o1mj0")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tbkvp"]
+atlas = ExtResource("2_o1mj0")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ijjy1"]
+atlas = ExtResource("2_o1mj0")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ntb0i"]
+atlas = ExtResource("2_o1mj0")
+region = Rect2(384, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p1o2g"]
+atlas = ExtResource("2_o1mj0")
+region = Rect2(448, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ruomm"]
+atlas = ExtResource("2_o1mj0")
+region = Rect2(512, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a4sl7"]
+atlas = ExtResource("2_o1mj0")
+region = Rect2(576, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w3sqs"]
+atlas = ExtResource("2_o1mj0")
+region = Rect2(640, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1fikr"]
+atlas = ExtResource("2_o1mj0")
+region = Rect2(704, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jvd6q"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vdt8i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_myl6o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lnrjg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fy6ar")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tbkvp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ijjy1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ntb0i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p1o2g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ruomm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a4sl7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w3sqs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1fikr")
+}],
+"loop": true,
+"name": &"default",
+"speed": 10.0
+}]
 
 [node name="Storm" type="Area2D"]
 script = ExtResource("1_u85mp")
@@ -12,8 +104,12 @@ script = ExtResource("1_u85mp")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_56jp1")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("2_0uphp")
+[node name="Sprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_jvd6q")
+autoplay = "default"
+frame_progress = 0.175075
 
 [node name="DamageTick" type="Timer" parent="."]
 one_shot = true

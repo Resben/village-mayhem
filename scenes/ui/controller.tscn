@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://di5rphm7njuh8"]
+[gd_scene load_steps=19 format=3 uid="uid://di5rphm7njuh8"]
 
 [ext_resource type="Script" path="res://scenes/ui/controller.gd" id="1_0b8cs"]
 [ext_resource type="Script" path="res://scenes/ui/startup.gd" id="2_3b7cw"]
@@ -9,34 +9,8 @@
 [ext_resource type="Script" path="res://scenes/ui/HUD.gd" id="5_2nu4n"]
 [ext_resource type="Texture2D" uid="uid://bdrv2oexn73l" path="res://assets/ui/ui.png" id="6_jwi1n"]
 [ext_resource type="Texture2D" uid="uid://baev0kk8v5oe4" path="res://assets/ui/ui_button.png" id="7_08pkq"]
-
-[sub_resource type="Animation" id="Animation_rf4rq"]
-resource_name = "show_ui"
-length = 1.5
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Control:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 1.5),
-"transitions": PackedFloat32Array(0.25, 1),
-"update": 0,
-"values": [Vector2(640, 0), Vector2(460, 0)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Control/TextureButton:flip_h")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 1),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [false, true]
-}
+[ext_resource type="Texture2D" uid="uid://b32giri26rleh" path="res://assets/ui/storm_ui.png" id="8_1m3p2"]
+[ext_resource type="Texture2D" uid="uid://crkwt71i22ycg" path="res://assets/ui/god_ui.png" id="9_or2kj"]
 
 [sub_resource type="Animation" id="Animation_jbtq1"]
 length = 0.001
@@ -95,6 +69,34 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
 "values": [Vector2(-26, 159), Vector2(-29, 159), Vector2(-26, 159)]
+}
+
+[sub_resource type="Animation" id="Animation_rf4rq"]
+resource_name = "show_ui"
+length = 1.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Control:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.5),
+"transitions": PackedFloat32Array(0.25, 1),
+"update": 0,
+"values": [Vector2(640, 0), Vector2(456, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Control/TextureButton:flip_h")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_3shi6"]
@@ -194,15 +196,17 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_right = 180.0
+offset_right = 184.0
 offset_bottom = 350.0
 grow_horizontal = 0
 
 [node name="TextureRect" type="TextureRect" parent="HUD/Control"]
 texture_filter = 1
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = -2.0
+offset_top = 2.0
+offset_right = 178.0
+offset_bottom = 152.0
 texture = ExtResource("6_jwi1n")
 
 [node name="Population" type="Label" parent="HUD/Control"]
@@ -210,10 +214,10 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -168.0
-offset_top = 29.0
-offset_right = -126.0
-offset_bottom = 44.0
+offset_left = -171.0
+offset_top = 33.0
+offset_right = -129.0
+offset_bottom = 48.0
 grow_horizontal = 0
 text = "1000"
 horizontal_alignment = 1
@@ -223,10 +227,10 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -68.0
-offset_top = 53.0
-offset_right = -28.0
-offset_bottom = 68.0
+offset_left = -71.0
+offset_top = 58.0
+offset_right = -31.0
+offset_bottom = 73.0
 grow_horizontal = 0
 text = "1000"
 horizontal_alignment = 1
@@ -236,10 +240,10 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -53.0
-offset_top = 112.0
-offset_right = -13.0
-offset_bottom = 127.0
+offset_left = -56.0
+offset_top = 122.0
+offset_right = -16.0
+offset_bottom = 137.0
 grow_horizontal = 0
 text = "1000"
 horizontal_alignment = 1
@@ -249,10 +253,10 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -106.0
-offset_top = 112.0
-offset_right = -66.0
-offset_bottom = 127.0
+offset_left = -109.0
+offset_top = 117.0
+offset_right = -69.0
+offset_bottom = 132.0
 grow_horizontal = 0
 text = "1000"
 horizontal_alignment = 1
@@ -263,12 +267,44 @@ layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = -28.9683
+offset_left = -26.7065
 offset_top = -16.0
-offset_right = 11.0317
+offset_right = 13.2935
 offset_bottom = 16.0
 grow_vertical = 2
 texture_normal = ExtResource("7_08pkq")
+
+[node name="TextureRect2" type="TextureRect" parent="HUD/Control"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -186.0
+offset_top = -194.0
+grow_horizontal = 0
+grow_vertical = 0
+texture = ExtResource("9_or2kj")
+
+[node name="ItemList" type="ItemList" parent="HUD/Control/TextureRect2"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 9.0
+offset_right = -9.0
+offset_bottom = -9.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_o4um2")
+allow_search = false
+item_count = 1
+item_0/text = "Storm"
+item_0/icon = ExtResource("8_1m3p2")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="HUD"]
 libraries = {
@@ -378,4 +414,5 @@ color = Color(0, 0, 0, 1)
 
 [connection signal="pressed" from="Startup/Button" to="Startup" method="_on_button_pressed"]
 [connection signal="pressed" from="HUD/Control/TextureButton" to="HUD" method="_on_show_ui_pressed"]
+[connection signal="item_clicked" from="HUD/Control/TextureRect2/ItemList" to="HUD" method="_on_item_clicked"]
 [connection signal="animation_finished" from="HUD/AnimationPlayer" to="HUD" method="_on_animation_player_finished"]

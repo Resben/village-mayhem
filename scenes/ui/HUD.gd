@@ -1,8 +1,11 @@
 extends Control
 
 var ui_shown = false
+var current_selection = -1
 
 func _ready():
+	$Control/TextureRect2/ItemList.set_item_tooltip_enabled(0, false)
+	
 	Global.hud = self
 	$Control/TextureButton.flip_h = true
 	$Control.position.x = 640
@@ -25,3 +28,13 @@ func _on_show_ui_pressed():
 
 func _on_animation_player_finished(anim_name):
 	$AnimationPlayer.play("idle")
+
+func _on_item_clicked(index, at_position, mouse_button_index):
+	if current_selection == index:
+		deselect()
+	else:
+		current_selection = index
+
+func deselect():
+	$Control/TextureRect2/ItemList.deselect_all()
+	current_selection = -1

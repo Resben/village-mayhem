@@ -25,3 +25,4 @@ func to_game_callback():
 	$Startup.visible = false
 	$HUD.visible = true
 	get_tree().paused = false
+

@@ -14,6 +14,7 @@ var active_mine_references : Array[Workable]
 var cpu
 var population = 0
 var hud
+var disaster_controller
 
 var is_setup = false
 
@@ -51,8 +52,8 @@ func remove_population(num):
 	population -= num
 	hud.update_population()
 
-func get_broken_buildings():
-	var refs = []
+func get_broken_buildings() -> Array[Workable]:
+	var refs : Array[Workable]
 	for h in house_references:
 		if h.is_broken:
 			refs.push_back(h)
