@@ -32,6 +32,9 @@ func _ready():
 	if in_house:
 		visible = false
 	
+	if Global.is_in_disaster:
+		on_disaster()
+	
 	if is_demo:
 		state = DEMO
 	else:
@@ -46,6 +49,7 @@ func on_disaster():
 
 func disaster_over():
 	state = last_working_state
+	print(last_working_state)
 	exit_house()
 
 func enter_house():
@@ -170,11 +174,11 @@ func _on_navigation_agent_2d_velocity_computed(safe_velocity):
 func exit_state(state):
 	match state:
 		WORKING:
-			last_working_state = WORKING
+			pass
 		IDLING:
-			last_working_state = IDLING
+			pass
 		SCARED:
-			last_working_state = SCARED
+			pass
 
 func enter_state(state):
 	match state:
@@ -188,6 +192,7 @@ func enter_state(state):
 			nav.target_position = Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position
 			$AnimationPlayer.play("walk")
 		SCARED:
+			last_working_state = last_state
 			#$AnimationPlayer.play("scared")
 			var direction = (house.door_pos - global_position).normalized()
 			var perpendicular = Vector2(-direction.y, direction.x)

@@ -157,6 +157,10 @@ func get_neighbours(pos):
 #################################################################################
 
 func _on_action_timeout():
+	if Global.is_in_disaster:
+		$ActionTimer.start()
+		return
+	
 	var available_villagers = []
 	var current_jobs = {
 		"food" : 0,

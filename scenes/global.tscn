@@ -8,3 +8,9 @@ script = ExtResource("1_xueuv")
 [node name="BGM" type="AudioStreamPlayer2D" parent="."]
 
 [node name="SFX" type="AudioStreamPlayer2D" parent="."]
+
+[node name="DisasterTimer" type="Timer" parent="."]
+wait_time = 9.0
+one_shot = true
+
+[connection signal="timeout" from="DisasterTimer" to="." method="_on_disaster_timer_timeout"]

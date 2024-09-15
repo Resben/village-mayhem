@@ -23,10 +23,14 @@ func _on_world_setup():
 		spawn_villagers()
 
 func leave_house():
-	$LeaveHouse.start()
-	villagers_left = 0
+	if !Global.is_in_disaster:
+		$LeaveHouse.start()
+		villagers_left = 0
 
 func _on_leave_house_timeout():
+	if Global.is_in_disaster:
+		return
+	
 	if villagers_left < residents.size():
 		residents[villagers_left].exit_house(Vector2(randi_range(40, 80), randi_range(40, 80)) + global_position)
 		$LeaveHouse.start()

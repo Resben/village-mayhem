@@ -263,8 +263,7 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = 640.0
-offset_right = 824.0
+offset_right = 184.0
 offset_bottom = 350.0
 grow_horizontal = 0
 
@@ -336,9 +335,9 @@ anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
 offset_left = -26.7065
-offset_top = 1384.0
+offset_top = 1559.0
 offset_right = 13.2935
-offset_bottom = 1416.0
+offset_bottom = 1591.0
 grow_vertical = 2
 texture_normal = ExtResource("7_08pkq")
 
@@ -489,6 +488,14 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
+[node name="BGM" type="AudioStreamPlayer2D" parent="."]
+
+[node name="SFX" type="AudioStreamPlayer2D" parent="."]
+
+[node name="DisasterTimer" type="Timer" parent="."]
+wait_time = 9.0
+one_shot = true
+
 [connection signal="pressed" from="Startup/Button" to="Startup" method="_on_button_pressed"]
 [connection signal="pressed" from="HUD/Control/TextureButton" to="HUD" method="_on_show_ui_pressed"]
 [connection signal="item_clicked" from="HUD/Control/TextureRect2/ItemList" to="HUD" method="_on_item_clicked"]
@@ -496,3 +503,4 @@ color = Color(0, 0, 0, 1)
 [connection signal="pressed" from="HUD/Playback" to="HUD" method="_on_playback_pressed"]
 [connection signal="pressed" from="Paused/TextureRect/Continue" to="Paused" method="_on_continue_pressed"]
 [connection signal="pressed" from="Paused/TextureRect/ToMenu" to="Paused" method="_on_to_menu_pressed"]
+[connection signal="timeout" from="DisasterTimer" to="." method="_on_disaster_timer_timeout"]

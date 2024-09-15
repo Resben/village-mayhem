@@ -20,6 +20,12 @@ func get_world_pos_tile(world_pos):
 	return Vector2(x, y)
 
 func _unhandled_input(event):
+	
+	#if Input.is_action_just_pressed("left_mouse"):
+		#Global.on_disaster()
+	#if Input.is_action_just_pressed("right_mouse"):
+		#Global.disaster_over()
+	
 	if Global.hud.current_selection != -1:
 		
 		if first_point == null && second_point == null:

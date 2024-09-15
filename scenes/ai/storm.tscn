@@ -123,9 +123,15 @@ autoplay = "default"
 frame_progress = 0.525618
 
 [node name="DamageTick" type="Timer" parent="."]
+wait_time = 0.25
 one_shot = true
 autostart = true
+
+[node name="TimeOnScreen" type="Timer" parent="."]
+wait_time = 80.0
+one_shot = true
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]
 [connection signal="area_exited" from="." to="." method="_on_area_exited"]
 [connection signal="timeout" from="DamageTick" to="." method="_on_damage_tick_timeout"]
+[connection signal="timeout" from="TimeOnScreen" to="." method="_on_time_on_screen_timeout"]
