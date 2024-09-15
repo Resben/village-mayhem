@@ -23,12 +23,29 @@ func _ready():
 
 func _input(event):
 	if Input.is_action_just_pressed("pause") && !$Startup.visible:
+		toggle_pause()
+
+func toggle_pause():
 		$Paused.visible = !$Paused.visible
 		if $Paused.visible:
 			$Paused.mouse_filter = Control.MOUSE_FILTER_STOP
+			$Paused.when_shown()
 		else:
 			$Paused.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		get_tree().paused = $Paused.visible
+
+func switch_to_menu():
+	state = MENU
+	$TransitionPlayer.play_transition(to_menu_callback)
+	Global.bye_bye()
+
+func to_menu_callback():
+	$Startup.visible = true
+	$Startup.mouse_filter = Control.MOUSE_FILTER_STOP
+	$HUD.visible = false
+	$Paused.visible = false
+	get_tree().paused = true
+	get_node("/root/Main").queue_free()
 
 func switch_to_game():
 	state = GAME
@@ -85,10 +102,8 @@ func _on_disaster_timer_timeout():
 func set_speed(value):
 	$DisasterTimer.wait_time = disaster_time_out_original / value
 
-
 func _on_bgm_finished():
 	$BGM.play()
-
 
 func _on_h_slider_value_changed(value):
 	bgm_volume = value

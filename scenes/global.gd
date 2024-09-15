@@ -33,8 +33,8 @@ var villagers = [
 var villager = preload("res://scenes/ai/villager.tscn") as PackedScene
 
 var resources = {
-	"food" : 200,
-	"wood" : 1000,
+	"food" : 50,
+	"wood" : 50,
 	"materials" : 0
 }
 
@@ -47,6 +47,25 @@ func _process(delta):
 		is_setup = true
 		hud.update_resources()
 		hud.update_population()
+
+func bye_bye():
+	wood_references.clear()
+	house_references.clear()
+	farm_references.clear()
+	inactive_mine_references.clear()
+	active_mine_references.clear()
+	disaster_references.clear()
+	villager_references.clear()
+	resources = {
+		"food" : 50,
+		"wood" : 50,
+		"materials" : 0
+	}
+	population = 0
+	is_in_disaster = false
+	cpu = null
+	is_setup = false
+	
 
 func get_random_villager() -> Texture2D:
 	var rand = randi_range(0, villagers.size())
@@ -104,13 +123,13 @@ func set_game_speed(speed):
 			set_speed(2, active_mine_references)
 			set_speed(2, disaster_references)
 		VERY_FAST:
-			controller.set_speed(3)
-			set_speed(3, villager_references)
-			set_speed(3, house_references)
-			set_speed(3, farm_references)
-			set_speed(3, wood_references)
-			set_speed(3, active_mine_references)
-			set_speed(3, disaster_references)
+			controller.set_speed(5)
+			set_speed(5, villager_references)
+			set_speed(5, house_references)
+			set_speed(5, farm_references)
+			set_speed(5, wood_references)
+			set_speed(5, active_mine_references)
+			set_speed(5, disaster_references)
 
 func set_speed(value, references):
 	for r in references:

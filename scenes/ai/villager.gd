@@ -228,7 +228,7 @@ func run_state(delta, state):
 func _on_action_complete_timeout():
 	job_reference.add_work_point(self)
 	if job_type != "construction":
-		if job_points == require_job_points:
+		if job_points >= require_job_points:
 			job_complete()
 			job_points = 0
 		$TextureProgressBar.value = float(job_points) / require_job_points * 100.0
@@ -236,3 +236,7 @@ func _on_action_complete_timeout():
 func set_speed(value):
 	playback_speed = value
 	$AnimationPlayer.speed_scale = value
+
+func _on_yum_timeout():
+	Global.remove_resources("food", 1)
+	$Yum.start(randi_range(7, 10))

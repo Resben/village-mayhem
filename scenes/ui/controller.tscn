@@ -4,7 +4,6 @@
 [ext_resource type="Script" path="res://scenes/ui/startup.gd" id="2_3b7cw"]
 [ext_resource type="Theme" uid="uid://cbh8r1lpvqme5" path="res://resources/main_theme.tres" id="2_o4um2"]
 [ext_resource type="PackedScene" uid="uid://ds0lpe8titpqh" path="res://scenes/level/main.tscn" id="3_fdg15"]
-[ext_resource type="Texture2D" uid="uid://c44mf2j1x3lge" path="res://icon.svg" id="3_vp72e"]
 [ext_resource type="Script" path="res://scenes/ui/transition_player.gd" id="4_uiov0"]
 [ext_resource type="TileSet" uid="uid://djp1po2qnkljk" path="res://resources/tileset.tres" id="5_0d8tc"]
 [ext_resource type="Script" path="res://scenes/ui/HUD.gd" id="5_2nu4n"]
@@ -22,6 +21,7 @@
 [ext_resource type="Texture2D" uid="uid://or2tdeaf6yxv" path="res://assets/ui/speed_3.png" id="14_f47nt"]
 [ext_resource type="Texture2D" uid="uid://ota0p8br2mb6" path="res://assets/ui/speed_1.png" id="16_pdu2c"]
 [ext_resource type="Script" path="res://scenes/ui/paused.gd" id="16_tsk5n"]
+[ext_resource type="Texture2D" uid="uid://crrbn5t56w1ny" path="res://assets/ui/paused_ui.png" id="21_xh51k"]
 [ext_resource type="Texture2D" uid="uid://db2mngatx53rl" path="res://assets/ui/cloud_cover-Sheet.png" id="23_7cevf"]
 [ext_resource type="AudioStream" uid="uid://bfo70xdhorigt" path="res://assets/music/chill.mp3" id="24_7gf23"]
 
@@ -323,7 +323,8 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_right = 184.0
+offset_left = 640.0
+offset_right = 824.0
 offset_bottom = 350.0
 grow_horizontal = 0
 
@@ -395,9 +396,9 @@ anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
 offset_left = -26.7065
-offset_top = 1559.0
+offset_top = 1734.0
 offset_right = 13.2935
-offset_bottom = 1591.0
+offset_bottom = 1766.0
 grow_vertical = 2
 texture_normal = ExtResource("7_08pkq")
 
@@ -459,26 +460,27 @@ theme = ExtResource("2_o4um2")
 script = ExtResource("16_tsk5n")
 
 [node name="TextureRect" type="TextureRect" parent="Paused"]
+texture_filter = 1
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -316.0
-offset_top = -165.0
-offset_right = 317.0
-offset_bottom = 159.0
+offset_left = -150.0
+offset_top = -100.0
+offset_right = 150.0
+offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_vp72e")
+texture = ExtResource("21_xh51k")
 
 [node name="Continue" type="Button" parent="Paused/TextureRect"]
 layout_mode = 1
-offset_left = 120.0
-offset_top = 96.0
-offset_right = 128.0
-offset_bottom = 104.0
+offset_left = 32.0
+offset_top = 80.0
+offset_right = 115.0
+offset_bottom = 103.0
 text = "Continue"
 
 [node name="ToMenu" type="Button" parent="Paused/TextureRect"]
@@ -486,40 +488,59 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -128.0
-offset_top = 96.0
-offset_right = -120.0
-offset_bottom = 104.0
+offset_left = -145.0
+offset_top = 80.0
+offset_right = -24.0
+offset_bottom = 103.0
 grow_horizontal = 0
 text = "Back To Menu"
 
 [node name="HSlider" type="HSlider" parent="Paused/TextureRect"]
 layout_mode = 1
-anchors_preset = 7
+anchors_preset = 8
 anchor_left = 0.5
-anchor_top = 1.0
+anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -177.5
-offset_top = -88.0
-offset_right = 199.5
-offset_bottom = -72.0
+anchor_bottom = 0.5
+offset_left = -86.0
+offset_top = 57.0
+offset_right = 86.0
+offset_bottom = 73.0
 grow_horizontal = 2
-grow_vertical = 0
+grow_vertical = 2
+max_value = 1.0
+step = 0.01
 
-[node name="HSlider2" type="HSlider" parent="Paused/TextureRect"]
+[node name="Label" type="Label" parent="Paused/TextureRect"]
 layout_mode = 1
-anchors_preset = 7
+anchors_preset = 8
 anchor_left = 0.5
-anchor_top = 1.0
+anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -174.5
-offset_top = -56.0
-offset_right = 195.5
-offset_bottom = -40.0
+anchor_bottom = 0.5
+offset_left = -54.0
+offset_top = 26.5
+offset_right = 54.0
+offset_bottom = 53.5
 grow_horizontal = 2
-grow_vertical = 0
+grow_vertical = 2
+theme_override_font_sizes/font_size = 20
+text = "Volume"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="Paused/TextureRect"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -71.0
+offset_top = 16.0
+offset_right = 67.0
+offset_bottom = 52.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 40
+text = "Paused"
 
 [node name="TransitionPlayer" type="Control" parent="."]
 layout_mode = 3
@@ -577,5 +598,6 @@ one_shot = true
 [connection signal="pressed" from="HUD/Playback" to="HUD" method="_on_playback_pressed"]
 [connection signal="pressed" from="Paused/TextureRect/Continue" to="Paused" method="_on_continue_pressed"]
 [connection signal="pressed" from="Paused/TextureRect/ToMenu" to="Paused" method="_on_to_menu_pressed"]
+[connection signal="value_changed" from="Paused/TextureRect/HSlider" to="." method="_on_h_slider_value_changed"]
 [connection signal="finished" from="BGM" to="." method="_on_bgm_finished"]
 [connection signal="timeout" from="DisasterTimer" to="." method="_on_disaster_timer_timeout"]
