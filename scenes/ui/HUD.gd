@@ -4,6 +4,12 @@ var ui_shown = false
 var current_selection = -1
 @onready var ui_rect = $Control.get_global_rect()
 
+var current_playback = 1
+
+@export var playback_1 : Texture2D
+@export var playback_2 : Texture2D
+@export var playback_3 : Texture2D
+
 func _ready():
 	$Control/TextureRect2/ItemList.set_item_tooltip_enabled(0, false)
 	
@@ -39,3 +45,18 @@ func _on_item_clicked(index, at_position, mouse_button_index):
 func deselect():
 	$Control/TextureRect2/ItemList.deselect_all()
 	current_selection = -1
+
+func _on_playback_pressed():
+	current_playback += 1
+	if current_playback == 4:
+		current_playback = 1
+	match current_playback:
+		1:
+			Global.set_game_speed(Global.NORMAL)
+			$Playback.texture_normal = playback_1
+		2:
+			Global.set_game_speed(Global.FAST)
+			$Playback.texture_normal = playback_2
+		3:
+			Global.set_game_speed(Global.VERY_FAST)
+			$Playback.texture_normal = playback_3

@@ -9,6 +9,18 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_ar0mm"]
 radius = 21.0238
 
+[sub_resource type="Animation" id="Animation_1a78d"]
+resource_name = "broken"
+
+[sub_resource type="Animation" id="Animation_rdipq"]
+resource_name = "damaged"
+
+[sub_resource type="Animation" id="Animation_6ep72"]
+resource_name = "fixed"
+
+[sub_resource type="Animation" id="Animation_0mn8m"]
+resource_name = "underconstruction"
+
 [sub_resource type="Animation" id="Animation_ugfgr"]
 resource_name = "windy_broken"
 
@@ -17,18 +29,6 @@ resource_name = "windy_damaged"
 
 [sub_resource type="Animation" id="Animation_ihghj"]
 resource_name = "windy_fixed"
-
-[sub_resource type="Animation" id="Animation_6ep72"]
-resource_name = "fixed"
-
-[sub_resource type="Animation" id="Animation_rdipq"]
-resource_name = "damaged"
-
-[sub_resource type="Animation" id="Animation_1a78d"]
-resource_name = "broken"
-
-[sub_resource type="Animation" id="Animation_0mn8m"]
-resource_name = "underconstruction"
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_4arjq"]
 _data = {

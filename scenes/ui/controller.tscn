@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://di5rphm7njuh8"]
+[gd_scene load_steps=29 format=3 uid="uid://di5rphm7njuh8"]
 
 [ext_resource type="Script" path="res://scenes/ui/controller.gd" id="1_0b8cs"]
 [ext_resource type="Script" path="res://scenes/ui/startup.gd" id="2_3b7cw"]
@@ -17,6 +17,9 @@
 [ext_resource type="Texture2D" uid="uid://cthfk8yd6c1g2" path="res://assets/environment/farm_single.png" id="9_e06tq"]
 [ext_resource type="Texture2D" uid="uid://crkwt71i22ycg" path="res://assets/ui/god_ui.png" id="9_or2kj"]
 [ext_resource type="PackedScene" uid="uid://5ax878tfs7j0" path="res://scenes/ai/villager.tscn" id="10_20pqs"]
+[ext_resource type="Texture2D" uid="uid://b4n6d2fd1rm6l" path="res://assets/ui/speed_2.png" id="13_4ahrk"]
+[ext_resource type="Texture2D" uid="uid://or2tdeaf6yxv" path="res://assets/ui/speed_3.png" id="14_f47nt"]
+[ext_resource type="Texture2D" uid="uid://ota0p8br2mb6" path="res://assets/ui/speed_1.png" id="16_pdu2c"]
 [ext_resource type="Script" path="res://scenes/ui/paused.gd" id="16_tsk5n"]
 
 [sub_resource type="Animation" id="Animation_jbtq1"]
@@ -240,13 +243,17 @@ grow_vertical = 2
 mouse_filter = 1
 theme = ExtResource("2_o4um2")
 script = ExtResource("5_2nu4n")
+playback_1 = ExtResource("16_pdu2c")
+playback_2 = ExtResource("13_4ahrk")
+playback_3 = ExtResource("14_f47nt")
 
 [node name="Control" type="Control" parent="HUD"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_right = 184.0
+offset_left = 640.0
+offset_right = 824.0
 offset_bottom = 350.0
 grow_horizontal = 0
 
@@ -318,9 +325,9 @@ anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
 offset_left = -26.7065
-offset_top = 859.0
+offset_top = 1209.0
 offset_right = 13.2935
-offset_bottom = 891.0
+offset_bottom = 1241.0
 grow_vertical = 2
 texture_normal = ExtResource("7_08pkq")
 
@@ -361,6 +368,14 @@ libraries = {
 "": SubResource("AnimationLibrary_3shi6")
 }
 autoplay = "idle"
+
+[node name="Playback" type="TextureButton" parent="HUD"]
+texture_filter = 1
+layout_mode = 0
+offset_right = 32.0
+offset_bottom = 32.0
+scale = Vector2(2, 2)
+texture_normal = ExtResource("16_pdu2c")
 
 [node name="Paused" type="Control" parent="."]
 visible = false
@@ -467,5 +482,6 @@ color = Color(0, 0, 0, 1)
 [connection signal="pressed" from="HUD/Control/TextureButton" to="HUD" method="_on_show_ui_pressed"]
 [connection signal="item_clicked" from="HUD/Control/TextureRect2/ItemList" to="HUD" method="_on_item_clicked"]
 [connection signal="animation_finished" from="HUD/AnimationPlayer" to="HUD" method="_on_animation_player_finished"]
+[connection signal="pressed" from="HUD/Playback" to="HUD" method="_on_playback_pressed"]
 [connection signal="pressed" from="Paused/TextureRect/Continue" to="Paused" method="_on_continue_pressed"]
 [connection signal="pressed" from="Paused/TextureRect/ToMenu" to="Paused" method="_on_to_menu_pressed"]

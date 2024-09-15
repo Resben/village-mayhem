@@ -4,6 +4,18 @@
 [ext_resource type="Texture2D" uid="uid://15bvc28oda6i" path="res://assets/ui/construction_back.png" id="2_cdvkn"]
 [ext_resource type="Texture2D" uid="uid://dudprl7k45l5g" path="res://assets/ui/construction_front.png" id="3_iq2wf"]
 
+[sub_resource type="Animation" id="Animation_1a78d"]
+resource_name = "broken"
+
+[sub_resource type="Animation" id="Animation_rdipq"]
+resource_name = "damaged"
+
+[sub_resource type="Animation" id="Animation_6ep72"]
+resource_name = "fixed"
+
+[sub_resource type="Animation" id="Animation_0mn8m"]
+resource_name = "underconstruction"
+
 [sub_resource type="Animation" id="Animation_ugfgr"]
 resource_name = "windy_broken"
 
@@ -12,18 +24,6 @@ resource_name = "windy_damaged"
 
 [sub_resource type="Animation" id="Animation_ihghj"]
 resource_name = "windy_fixed"
-
-[sub_resource type="Animation" id="Animation_6ep72"]
-resource_name = "fixed"
-
-[sub_resource type="Animation" id="Animation_rdipq"]
-resource_name = "damaged"
-
-[sub_resource type="Animation" id="Animation_1a78d"]
-resource_name = "broken"
-
-[sub_resource type="Animation" id="Animation_0mn8m"]
-resource_name = "underconstruction"
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_4arjq"]
 _data = {

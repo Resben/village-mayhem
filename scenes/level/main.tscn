@@ -120,7 +120,7 @@ wait_time = 3.0
 one_shot = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(510, 360)
+position = Vector2(990, 608)
 limit_left = -500
 limit_top = -500
 limit_right = 2500

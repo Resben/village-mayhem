@@ -2,6 +2,8 @@ extends Node
 
 signal setup_complete
 
+enum { NORMAL, FAST, VERY_FAST }
+
 var villager_references : Array
 
 var wood_references : Array[Workable]
@@ -31,8 +33,8 @@ var villagers = [
 var villager = preload("res://scenes/ai/villager.tscn") as PackedScene
 
 var resources = {
-	"food" : 200,
-	"wood" : 200,
+	"food" : 50,
+	"wood" : 25,
 	"materials" : 0
 }
 
@@ -108,3 +110,31 @@ func next_track():
 
 func play_SFX(id):
 	pass
+
+func set_game_speed(speed):
+	match speed:
+		NORMAL:
+			set_speed(1, villager_references)
+			set_speed(1, house_references)
+			set_speed(1, farm_references)
+			set_speed(1, wood_references)
+			set_speed(1, active_mine_references)
+			set_speed(1, disaster_references)
+		FAST:
+			set_speed(2, villager_references)
+			set_speed(2, house_references)
+			set_speed(2, farm_references)
+			set_speed(2, wood_references)
+			set_speed(2, active_mine_references)
+			set_speed(2, disaster_references)
+		VERY_FAST:
+			set_speed(3, villager_references)
+			set_speed(3, house_references)
+			set_speed(3, farm_references)
+			set_speed(3, wood_references)
+			set_speed(3, active_mine_references)
+			set_speed(3, disaster_references)
+
+func set_speed(value, references):
+	for r in references:
+		r.set_speed(value)

@@ -25,6 +25,8 @@ var in_house = false
 var is_returning = false
 var is_working = false
 
+var playback_speed = 1
+
 func _ready():
 	$Sprite2D.texture = Global.get_random_villager()
 	if in_house:
@@ -32,6 +34,9 @@ func _ready():
 	
 	if is_demo:
 		state = DEMO
+	else:
+		playback_speed = Global.hud.current_playback
+		$AnimationPlayer.speed_scale = playback_speed
 
 func go_to(pos):
 	nav.target_position = pos
@@ -142,7 +147,7 @@ func _physics_process(delta):
 		return
 	
 	var next_path_position = nav.get_next_path_position()
-	var new_velocity = global_position.direction_to(next_path_position) * 50
+	var new_velocity = global_position.direction_to(next_path_position) * 50 * playback_speed
 	direction = new_velocity
 	
 	if nav.avoidance_enabled:
@@ -220,4 +225,7 @@ func _on_action_complete_timeout():
 			job_complete()
 			job_points = 0
 		$TextureProgressBar.value = float(job_points) / require_job_points * 100.0
-	
+
+func set_speed(value):
+	playback_speed = value
+	$AnimationPlayer.speed_scale = value

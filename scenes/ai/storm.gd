@@ -4,6 +4,12 @@ var velocity
 var direction
 var destroyables_in_area = []
 
+var playback_speed = 1
+
+func _ready():
+	playback_speed = Global.hud.current_playback
+	$AnimationPlayer.speed_scale = playback_speed
+
 func _physics_process(delta):
 	global_position += direction * 100 * delta
 
@@ -22,3 +28,7 @@ func _on_damage_tick_timeout():
 		h.take_damage()
 	
 	$DamageTick.start()
+
+func set_speed(value):
+	playback_speed = value
+	$AnimationPlayer.speed_scale = value 

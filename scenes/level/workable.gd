@@ -14,7 +14,12 @@ var is_broken = false
 
 var is_windy = false
 
+var playback_speed = 1
+
 func _ready():
+	playback_speed = Global.hud.current_playback
+	$AnimationPlayer.speed_scale = playback_speed
+	
 	if is_under_construction:
 		$TextureProgressBar.visible = true
 	else:
@@ -57,7 +62,7 @@ func get_random_edge_location():
 func add_work_point(reference : Villager):
 	if reference.job_type == "construction":
 		if is_under_construction:
-			construction_percentage += 1
+			construction_percentage += 1 * playback_speed
 			if construction_percentage == 100:
 				is_under_construction = false
 				reference.job_complete()
@@ -68,7 +73,7 @@ func add_work_point(reference : Villager):
 			reference.job_complete()
 	elif reference.job_type == "repair":
 		if is_broken:
-			repair_percentage += 1
+			repair_percentage += 1 * playback_speed
 			if repair_percentage == 100:
 				is_broken = false
 				reference.job_complete()
@@ -78,7 +83,7 @@ func add_work_point(reference : Villager):
 		else:
 			reference.job_complete()
 	else:
-		reference.job_points += 1
+		reference.job_points += 1 * playback_speed
 
 func _on_destroyed():
 	is_broken = true
@@ -93,3 +98,7 @@ func on_repair_complete():
 
 func set_wind(boo : bool):
 	is_windy = boo
+
+func set_speed(value):
+	playback_speed = value
+	$AnimationPlayer.speed_scale = value
