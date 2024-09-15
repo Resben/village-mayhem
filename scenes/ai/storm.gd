@@ -8,10 +8,10 @@ var playback_speed = 1
 
 func _ready():
 	playback_speed = Global.hud.current_playback
-	$AnimationPlayer.speed_scale = playback_speed
+	$Sprite2D.speed_scale = playback_speed
 
 func _physics_process(delta):
-	global_position += direction * 100 * delta
+	global_position += direction * 100 * delta * playback_speed
 
 func _on_area_entered(area):
 	if area is HitBox:

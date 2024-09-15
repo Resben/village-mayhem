@@ -23,25 +23,86 @@ func disaster_over():
 ############################### VILLAGE PLACEMENT ###############################
 #################################################################################
 
+func construct_farm():
+	var total_visited_locations = []
+	var next_location
+	var house_at_other
+	for l in village_map.get_used_cells_by_id(0, 0, Vector2i(1, 0)):
+		if !total_visited_locations.has(l):
+			house_at_other = count_cluster(l, total_visited_locations, "house")
+			if house_at_other < 4:
+				next_location = get_next_location(l)
+				if next_location != null:
+					print("Found existing location for farm")
+					break
+	
+	if next_location == null:
+		next_location = village_map.get_random_valid_display_position()
+		print("Created new random location for farm")
+	
+	if next_location != null:
+		village_map.set_cell(0, next_location, 0, Vector2i(1, 0))
+		return village_map.place_building("crop", next_location, false)
+	else:
+		return null
+
 # Called by villager to create a new house then assign said villager as a builder
 func construct_house():
+	var total_visited_locations = []
 	var th_location = village_map.get_used_cells_by_id(0, 0, Vector2i(0, 2))[0]
-	var new_location = get_next_house_in_cluster(th_location, 8)
-	if new_location == null:
-		for h in village_map.get_used_cells_by_id(0, 0, Vector2i()):
-			new_location = get_next_house_in_cluster(h, 4)
-			if new_location != null:
-				break
+	var house_at_th = count_cluster(th_location, total_visited_locations, "house")
+	var next_location
+	var house_at_other
+	if house_at_th >= 8:
+		for l in village_map.get_used_cells_by_id(0, 0, Vector2i(0, 0)):
+			if !total_visited_locations.has(l):
+				house_at_other = count_cluster(l, total_visited_locations, "house")
+				if house_at_other < 4:
+					next_location = get_next_location(l)
+					if next_location != null:
+						print("Used non TH location")
+						break
+	else:
+		next_location = get_next_location(th_location)
+		print("Used TH location")
 	
-	return village_map.place_building("house", new_location, true)
+	if next_location == null:
+		next_location = village_map.get_random_valid_display_position()
+		print("Created new random location")
+	
+	if next_location != null:
+		village_map.set_cell(0, next_location, 0, Vector2i(0, 0))
+		return village_map.place_building("house", next_location, true)
+	else:
+		return null
 
-func get_next_house_in_cluster(pos : Vector2i, max_cluster : int):
+func get_next_location(pos):
+	var neighbours = get_neighbours(pos)
+	var total_neighbours = []
+	var valid = []
+	for n in neighbours:
+		if !total_neighbours.has(n):
+			total_neighbours.push_back(n)
+		for n2 in get_neighbours(n):
+			if !total_neighbours.has(n2):
+				total_neighbours.push_back(n2)
+	
+	for t in total_neighbours:
+		if village_map.get_cell_atlas_coords(0, t) == Vector2i(-1, -1) && village_map.check_availablity(village_map.map_to_local(t)):
+			valid.push_back(t)
+	
+	if valid.size() == 0:
+		return null
+	
+	var rand = randi_range(1, valid.size())
+	return valid[rand - 1]
+
+func count_cluster(pos, total_visited, type):
 	var visited_positions = {}
 	var queue = [pos]
 	var house_count = 0
-	var next_location = null
 	
-	if !is_house(village_map.get_cell_atlas_coords(0, pos)):
+	if !check_type(village_map.get_cell_atlas_coords(0, pos), type):
 		return 0
 	while queue.size() > 0:
 		var current_pos = queue.pop_front()
@@ -51,24 +112,33 @@ func get_next_house_in_cluster(pos : Vector2i, max_cluster : int):
 		
 		visited_positions[current_pos] = true
 		
-		if is_house(village_map.get_cell_atlas_coords(0, current_pos)):
+		if check_type(village_map.get_cell_atlas_coords(0, current_pos), type):
 			house_count += 1
 			
 			var neighbours = get_neighbours(current_pos)
 			for n in neighbours:
-				if is_house(village_map.get_cell_atlas_coords(0, n)) and !visited_positions.has(n):
+				if check_type(village_map.get_cell_atlas_coords(0, n), type) and !visited_positions.has(n):
 					queue.append(n)
-				elif next_location == null && village_map.get_cell_atlas_coords(0, n) == Vector2i(-1, -1): # IMPORTANT NEED TO CHECK AVAILABILITY DONT WANT STUFF ON OCEAN
-					village_map.set_cell(0, n, 0, Vector2i(0, 0))
-					next_location = n
 	
-	return next_location
+	for v in visited_positions:
+		if total_visited.has(v):
+			print("hmmm")
+		total_visited.push_back(v)
+	
+	return house_count
 
-func is_house(pos):
-	if pos == Vector2i(0, 0) || pos == Vector2i(0, 2):
-		return true
-	else:
-		return false
+func check_type(pos, type):
+	match type:
+		"house":
+			if pos == Vector2i(0, 0) || pos == Vector2i(0, 2):
+				return true
+			else:
+				return false
+		"farm":
+			if pos == Vector2i(1, 0):
+				return true
+			else:
+				return false
 
 func get_neighbours(pos):
 	var directions = [

@@ -38,6 +38,25 @@ func place_building(id : String, pos : Vector2i, should_construct : bool):
 	add_child(scene)
 	return scene
 
+func get_random_valid_display_position():
+	var flag = true
+	var tiles
+	var rand
+	while flag:
+		tiles = display_map.get_used_cells_by_id(0, 0, Vector2i(2, 1))
+		rand = randi_range(1, tiles.size())
+		if tiles.size() == 0:
+			print("no more tiles")
+			flag = false
+			break
+		if check_availablity(display_map.local_to_map(tiles[rand - 1])):
+			flag = false
+	
+	if tiles.size() == 0:
+		return null
+	
+	return tiles[rand - 1]
+
 func check_availablity(raw_position) -> bool:
 	var display_position = display_map.local_to_map(raw_position)
 	var village_position = local_to_map(raw_position)

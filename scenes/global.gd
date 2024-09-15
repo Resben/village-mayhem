@@ -33,8 +33,8 @@ var villagers = [
 var villager = preload("res://scenes/ai/villager.tscn") as PackedScene
 
 var resources = {
-	"food" : 50,
-	"wood" : 25,
+	"food" : 200,
+	"wood" : 1000,
 	"materials" : 0
 }
 

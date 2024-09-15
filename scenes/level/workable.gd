@@ -62,8 +62,8 @@ func get_random_edge_location():
 func add_work_point(reference : Villager):
 	if reference.job_type == "construction":
 		if is_under_construction:
-			construction_percentage += 1 * playback_speed
-			if construction_percentage == 100:
+			construction_percentage += 5 * playback_speed
+			if construction_percentage >= 100:
 				is_under_construction = false
 				reference.job_complete()
 				$TextureProgressBar.visible = false
@@ -74,7 +74,7 @@ func add_work_point(reference : Villager):
 	elif reference.job_type == "repair":
 		if is_broken:
 			repair_percentage += 1 * playback_speed
-			if repair_percentage == 100:
+			if repair_percentage >= 100:
 				is_broken = false
 				reference.job_complete()
 				$TextureProgressBar.visible = false
