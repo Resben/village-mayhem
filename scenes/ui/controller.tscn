@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://di5rphm7njuh8"]
+[gd_scene load_steps=33 format=3 uid="uid://di5rphm7njuh8"]
 
 [ext_resource type="Script" path="res://scenes/ui/controller.gd" id="1_0b8cs"]
 [ext_resource type="Script" path="res://scenes/ui/startup.gd" id="2_3b7cw"]
@@ -23,6 +23,7 @@
 [ext_resource type="Texture2D" uid="uid://ota0p8br2mb6" path="res://assets/ui/speed_1.png" id="16_pdu2c"]
 [ext_resource type="Script" path="res://scenes/ui/paused.gd" id="16_tsk5n"]
 [ext_resource type="Texture2D" uid="uid://db2mngatx53rl" path="res://assets/ui/cloud_cover-Sheet.png" id="23_7cevf"]
+[ext_resource type="AudioStream" uid="uid://bfo70xdhorigt" path="res://assets/music/chill.mp3" id="24_7gf23"]
 
 [sub_resource type="Animation" id="Animation_jbtq1"]
 length = 0.001
@@ -279,12 +280,29 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -27.5
-offset_top = 20.5
+offset_top = 28.5
 offset_right = 27.5
-offset_bottom = 43.5
+offset_bottom = 51.5
 grow_horizontal = 2
 grow_vertical = 2
 text = "Start"
+
+[node name="HSlider" type="HSlider" parent="Startup"]
+layout_mode = 0
+offset_left = 440.0
+offset_top = 208.0
+offset_right = 636.0
+offset_bottom = 224.0
+max_value = 1.0
+step = 0.01
+
+[node name="Label" type="Label" parent="Startup"]
+layout_mode = 0
+offset_left = 376.0
+offset_top = 208.0
+offset_right = 433.0
+offset_bottom = 223.0
+text = "Volume"
 
 [node name="HUD" type="Control" parent="."]
 layout_mode = 3
@@ -541,7 +559,9 @@ position = Vector2(480, 175)
 texture = ExtResource("23_7cevf")
 hframes = 44
 
-[node name="BGM" type="AudioStreamPlayer2D" parent="."]
+[node name="BGM" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("24_7gf23")
+autoplay = true
 
 [node name="SFX" type="AudioStreamPlayer2D" parent="."]
 
@@ -550,10 +570,12 @@ wait_time = 9.0
 one_shot = true
 
 [connection signal="pressed" from="Startup/Button" to="Startup" method="_on_button_pressed"]
+[connection signal="value_changed" from="Startup/HSlider" to="." method="_on_h_slider_value_changed"]
 [connection signal="pressed" from="HUD/Control/TextureButton" to="HUD" method="_on_show_ui_pressed"]
 [connection signal="item_clicked" from="HUD/Control/TextureRect2/ItemList" to="HUD" method="_on_item_clicked"]
 [connection signal="animation_finished" from="HUD/AnimationPlayer" to="HUD" method="_on_animation_player_finished"]
 [connection signal="pressed" from="HUD/Playback" to="HUD" method="_on_playback_pressed"]
 [connection signal="pressed" from="Paused/TextureRect/Continue" to="Paused" method="_on_continue_pressed"]
 [connection signal="pressed" from="Paused/TextureRect/ToMenu" to="Paused" method="_on_to_menu_pressed"]
+[connection signal="finished" from="BGM" to="." method="_on_bgm_finished"]
 [connection signal="timeout" from="DisasterTimer" to="." method="_on_disaster_timer_timeout"]

@@ -6,7 +6,7 @@ enum { MENU, PAUSED, GAME }
 var state = MENU
 
 var current_bgm = "peaceful"
-var bgm_volume = 1.0
+var bgm_volume = 0.5
 var sfx_volume = 1.0
 
 var disaster_time_out_original = 9
@@ -18,6 +18,8 @@ func _ready():
 	$Paused.visible = false
 	get_tree().paused = true
 	Global.controller = self
+	$BGM.volume_db = linear_to_db(bgm_volume)
+	$Startup/HSlider.value = bgm_volume
 
 func _input(event):
 	if Input.is_action_just_pressed("pause") && !$Startup.visible:
@@ -42,10 +44,10 @@ func switch_bgm(id):
 	if id == current_bgm:
 		return
 	
-	current_bgm = id
-	var tween = get_tree().create_tween()
-	tween.tween_property($BGM, "volume_db", linear_to_db(0.0), 7.5)
-	tween.tween_callback(next_track)
+	#current_bgm = id
+	#var tween = get_tree().create_tween()
+	#tween.tween_property($BGM, "volume_db", linear_to_db(0.0), 7.5)
+	#tween.tween_callback(next_track)
 
 func next_track():
 	if current_bgm == "peaceful":
@@ -82,3 +84,12 @@ func _on_disaster_timer_timeout():
 
 func set_speed(value):
 	$DisasterTimer.wait_time = disaster_time_out_original / value
+
+
+func _on_bgm_finished():
+	$BGM.play()
+
+
+func _on_h_slider_value_changed(value):
+	bgm_volume = value
+	$BGM.volume_db = linear_to_db(value)
