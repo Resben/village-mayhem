@@ -26,11 +26,11 @@ func disaster_over():
 func construct_farm():
 	var total_visited_locations = []
 	var next_location
-	var house_at_other
+	var num_farms
 	for l in village_map.get_used_cells_by_id(0, 0, Vector2i(1, 0)):
 		if !total_visited_locations.has(l):
-			house_at_other = count_cluster(l, total_visited_locations, "house")
-			if house_at_other < 4:
+			num_farms = count_cluster(l, total_visited_locations, "farm")
+			if num_farms < 4:
 				next_location = get_next_location(l, "farm")
 				if next_location != null:
 					print("Found existing location for farm")
@@ -90,11 +90,15 @@ func get_next_location(pos, id):
 	
 	var next_location = null
 	
-	while next_location == null || total_neighbours.size() != 0:
-		var next_neighbour = total_neighbours[randi_range(1, total_neighbours.size()) - 1]
+	print(str(total_neighbours.size()) + " neighbours found for next location")
+	
+	while next_location == null:
+		if total_neighbours.size() == 0:
+			break
+		var next_neighbour = total_neighbours[randi_range(0, total_neighbours.size()) - 1]
 		var empty_neigbours = get_neighbours(next_neighbour, "empty")
 		if empty_neigbours.size() != 0:
-			var next_empty = empty_neigbours[randi_range(1, empty_neigbours.size()) - 1]
+			var next_empty = empty_neigbours[randi_range(0, empty_neigbours.size()) - 1]
 			if village_map.check_availablity(village_map.map_to_local(next_empty)):
 				next_location = next_empty
 		total_neighbours.erase(next_neighbour)
@@ -228,7 +232,7 @@ func calculate_priorities(current_jobs, num_available_villagers) -> Dictionary:
 	if num_farms == 0:
 		new_farm_priority = 5.0
 	elif total_villagers / Global.farm_references.size() > 10:
-		new_farm_priority = float(total_villagers * 10 / Global.farm_references.size())
+		new_farm_priority = float((total_villagers * 10 / Global.farm_references.size()) * 10 / wood)
 	
 	var new_mine_priority = 0.0
 	if wood >= 100:
@@ -247,6 +251,7 @@ func calculate_priorities(current_jobs, num_available_villagers) -> Dictionary:
 	var normalized_new_mine = new_mine_priority / total_priority
 	var normalized_construction = construction_priority / total_priority
 	
+	# Get how many villagers *SHOULD* be assigned minus villagers already assigned
 	var food_villagers = max(0, int(normalized_food * total_villagers) - current_jobs["food"])
 	var wood_villagers = max(0, int(normalized_wood * total_villagers) - current_jobs["logging"])
 	var mine_villagers = max(0, int(normalized_mine * total_villagers) - current_jobs["mine"])

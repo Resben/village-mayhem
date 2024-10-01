@@ -92,6 +92,7 @@ tile_set = ExtResource("1_i6dnq")
 format = 2
 
 [node name="VillageTileMap" type="TileMap" parent="." node_paths=PackedStringArray("display_map")]
+self_modulate = Color(1, 1, 1, 0)
 tile_set = ExtResource("4_y4t7t")
 format = 2
 layer_0/tile_data = PackedInt32Array(589839, 0, 2, 589836, 65536, 0, 786454, 65536, 1, 851976, 65536, 1, 262153, 65536, 1, 393233, 65536, 1, 196633, 65536, 1)

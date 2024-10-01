@@ -84,12 +84,14 @@ func work(id):
 			if Global.resources["wood"] > 50:
 				var job = Global.cpu.construct_house()
 				if job != null:
-					Global.resources["wood"] -= 50
+					Global.remove_resources("wood", 50)
 					set_job(job)
 		"farm":
-			var job = Global.cpu.construct_farm()
-			if job != null:
-				set_job(job)
+			if Global.resources["wood"] > 10: 
+				var job = Global.cpu.construct_farm()
+				if job != null:
+					Global.remove_resources("wood", 10)
+					set_job(job)
 		"new_mine":
 			pass
 		"construction":
