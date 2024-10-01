@@ -194,7 +194,7 @@ texture_progress = ExtResource("5_olc6c")
 
 [node name="Hitbox" type="Area2D" parent="."]
 script = ExtResource("6_isbv5")
-health = 75
+health = 30
 type = "town_hall"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]

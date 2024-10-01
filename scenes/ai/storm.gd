@@ -14,7 +14,7 @@ func _ready():
 	$DamageTick.wait_time =  original_wait_time / playback_speed
 
 func _physics_process(delta):
-	global_position += direction * 50 * delta * playback_speed
+	global_position += direction * 25 * delta * playback_speed
 
 func _on_area_entered(area):
 	if area is HitBox:

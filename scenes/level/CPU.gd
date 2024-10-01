@@ -31,7 +31,7 @@ func construct_farm():
 		if !total_visited_locations.has(l):
 			house_at_other = count_cluster(l, total_visited_locations, "house")
 			if house_at_other < 4:
-				next_location = get_next_location(l)
+				next_location = get_next_location(l, "farm")
 				if next_location != null:
 					print("Found existing location for farm")
 					break
@@ -51,19 +51,20 @@ func construct_house():
 	var total_visited_locations = []
 	var th_location = village_map.get_used_cells_by_id(0, 0, Vector2i(0, 2))[0]
 	var house_at_th = count_cluster(th_location, total_visited_locations, "house")
+	print(str(house_at_th) + " num for townhall")
 	var next_location
 	var house_at_other
-	if house_at_th >= 8:
+	if house_at_th >= 5:
 		for l in village_map.get_used_cells_by_id(0, 0, Vector2i(0, 0)):
 			if !total_visited_locations.has(l):
 				house_at_other = count_cluster(l, total_visited_locations, "house")
-				if house_at_other < 4:
-					next_location = get_next_location(l)
+				if house_at_other < 3:
+					next_location = get_next_location(l, "house")
 					if next_location != null:
 						print("Used non TH location")
 						break
 	else:
-		next_location = get_next_location(th_location)
+		next_location = get_next_location(th_location, "house")
 		print("Used TH location")
 	
 	if next_location == null:
@@ -76,26 +77,29 @@ func construct_house():
 	else:
 		return null
 
-func get_next_location(pos):
-	var neighbours = get_neighbours(pos)
+# Gets a random object of a given id
+func get_next_location(pos, id):
+	var neighbours = get_neighbours(pos, id)
 	var total_neighbours = []
-	var valid = []
 	for n in neighbours:
 		if !total_neighbours.has(n):
 			total_neighbours.push_back(n)
-		for n2 in get_neighbours(n):
+		for n2 in get_neighbours(n, id):
 			if !total_neighbours.has(n2):
 				total_neighbours.push_back(n2)
 	
-	for t in total_neighbours:
-		if village_map.get_cell_atlas_coords(0, t) == Vector2i(-1, -1) && village_map.check_availablity(village_map.map_to_local(t)):
-			valid.push_back(t)
+	var next_location = null
 	
-	if valid.size() == 0:
-		return null
+	while next_location == null || total_neighbours.size() != 0:
+		var next_neighbour = total_neighbours[randi_range(1, total_neighbours.size()) - 1]
+		var empty_neigbours = get_neighbours(next_neighbour, "empty")
+		if empty_neigbours.size() != 0:
+			var next_empty = empty_neigbours[randi_range(1, empty_neigbours.size()) - 1]
+			if village_map.check_availablity(village_map.map_to_local(next_empty)):
+				next_location = next_empty
+		total_neighbours.erase(next_neighbour)
 	
-	var rand = randi_range(1, valid.size())
-	return valid[rand - 1]
+	return next_location
 
 func count_cluster(pos, total_visited, type):
 	var visited_positions = {}
@@ -115,9 +119,9 @@ func count_cluster(pos, total_visited, type):
 		if check_type(village_map.get_cell_atlas_coords(0, current_pos), type):
 			house_count += 1
 			
-			var neighbours = get_neighbours(current_pos)
+			var neighbours = get_neighbours(current_pos, type)
 			for n in neighbours:
-				if check_type(village_map.get_cell_atlas_coords(0, n), type) and !visited_positions.has(n):
+				if !visited_positions.has(n):
 					queue.append(n)
 	
 	for v in visited_positions:
@@ -127,6 +131,7 @@ func count_cluster(pos, total_visited, type):
 	
 	return house_count
 
+# Check if a atlas is a given type
 func check_type(pos, type):
 	match type:
 		"house":
@@ -139,16 +144,23 @@ func check_type(pos, type):
 				return true
 			else:
 				return false
+		"empty":
+			if pos == Vector2i(-1, -1):
+				return true
+			else:
+				return false
 
-func get_neighbours(pos):
+# Returns neighbours of a given type
+func get_neighbours(pos, id):
 	var directions = [
 		Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1),
 		Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1)
 	]
 	
-	var neighbors = []
+	var neighbors = [pos]
 	for direction in directions:
-		neighbors.append(pos + direction)
+		if check_type(village_map.get_cell_atlas_coords(0, pos + direction), id):
+			neighbors.append(pos + direction)
 	return neighbors
 
 

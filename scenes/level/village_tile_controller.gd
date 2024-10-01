@@ -40,22 +40,24 @@ func place_building(id : String, pos : Vector2i, should_construct : bool):
 
 func get_random_valid_display_position():
 	var flag = true
-	var tiles
+	var tiles = display_map.get_used_cells_by_id(0, 1, Vector2i(2, 1))
 	var rand
 	while flag:
-		tiles = display_map.get_used_cells_by_id(0, 0, Vector2i(2, 1))
-		rand = randi_range(1, tiles.size())
+		rand = randi_range(0, tiles.size() - 1)
 		if tiles.size() == 0:
 			print("no more tiles")
 			flag = false
 			break
-		if check_availablity(display_map.local_to_map(tiles[rand - 1])):
+		if check_availablity(display_map.map_to_local(tiles[rand - 1])):
 			flag = false
 	
 	if tiles.size() == 0:
 		return null
 	
-	return tiles[rand - 1]
+	# Convert from display to village locations
+	var village_map_location = local_to_map(display_map.map_to_local(tiles[rand - 1]))
+	
+	return village_map_location
 
 func check_availablity(raw_position) -> bool:
 	var display_position = display_map.local_to_map(raw_position)
