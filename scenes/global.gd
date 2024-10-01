@@ -38,7 +38,7 @@ var resources = {
 	"materials" : 0
 }
 
-func _process(delta):
+func _process(_delta):
 	if is_setup:
 		return
 	

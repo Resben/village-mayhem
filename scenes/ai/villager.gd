@@ -141,6 +141,7 @@ func find_best_slot(array_of_workplaces : Array[Workable]) -> Workable:
 		return array_of_workplaces[index]
 
 func _physics_process(delta):
+	
 	if state != last_state:
 		exit_state(last_state)
 		enter_state(state)
@@ -173,8 +174,8 @@ func _physics_process(delta):
 func _on_navigation_agent_2d_velocity_computed(safe_velocity):
 	velocity = safe_velocity
 
-func exit_state(state):
-	match state:
+func exit_state(in_state):
+	match in_state:
 		WORKING:
 			pass
 		IDLING:
@@ -182,8 +183,8 @@ func exit_state(state):
 		SCARED:
 			pass
 
-func enter_state(state):
-	match state:
+func enter_state(in_state):
+	match in_state:
 		WORKING:
 			nav.target_position = job_location
 			$AnimationPlayer.play("walk")
@@ -196,16 +197,16 @@ func enter_state(state):
 		SCARED:
 			last_working_state = last_state
 			#$AnimationPlayer.play("scared")
-			var direction = (house.door_pos - global_position).normalized()
-			var perpendicular = Vector2(-direction.y, direction.x)
+			var new_direction = (house.door_pos - global_position).normalized()
+			var perpendicular = Vector2(-new_direction.y, new_direction.x)
 			for i in range(3):
-				var t =(i + 1) / 3 + randf_range(0.1, -0.1)
+				var t = (i + 1) / 3 + randf_range(0.1, -0.1)
 				var point_on_line = global_position.lerp(house.door_pos, t)
 				var offset = perpendicular * randf_range(-25, 25)
 				panic_locations.push_back(point_on_line + offset)
 
-func run_state(delta, state):
-	match state:
+func run_state(_delta, in_state):
+	match in_state:
 		WORKING:
 			if nav.is_navigation_finished() && $ActionComplete.is_stopped():
 				$ActionComplete.start()

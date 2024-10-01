@@ -21,7 +21,7 @@ func _ready():
 	$BGM.volume_db = linear_to_db(bgm_volume)
 	$Startup/HSlider.value = bgm_volume
 
-func _input(event):
+func _input(_event):
 	if Input.is_action_just_pressed("pause") && !$Startup.visible:
 		toggle_pause()
 
@@ -75,7 +75,7 @@ func next_track():
 	var tween = get_tree().create_tween()
 	tween.tween_property($BGM, "volume_db", linear_to_db(bgm_volume), 7.5)
 
-func play_SFX(id):
+func play_SFX(_id):
 	pass
 
 func restart_disaster_timer():

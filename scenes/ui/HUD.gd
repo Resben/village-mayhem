@@ -33,10 +33,10 @@ func _on_show_ui_pressed():
 		$AnimationPlayer.play("show_ui")
 		ui_shown = true
 
-func _on_animation_player_finished(anim_name):
+func _on_animation_player_finished(_anim_name):
 	$AnimationPlayer.play("idle")
 
-func _on_item_clicked(index, at_position, mouse_button_index):
+func _on_item_clicked(index, _at_position, _mouse_button_index):
 	if current_selection == index:
 		deselect()
 	else:

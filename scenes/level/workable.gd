@@ -25,7 +25,7 @@ func _ready():
 	else:
 		$TextureProgressBar.visible = false
 
-func _process(delta):
+func _process(_delta):
 	if is_under_construction:
 		if is_windy:
 			$AnimationPlayer.play("windy_underconstruction")
