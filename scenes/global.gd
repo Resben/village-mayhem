@@ -8,6 +8,8 @@ var is_in_disaster = false
 
 var villager_references : Array
 
+var map_size = Vector2i(256, 256)
+
 var wood_references : Array[Workable]
 var house_references : Array[Workable]
 var farm_references : Array[Workable]
