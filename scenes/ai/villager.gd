@@ -27,6 +27,8 @@ var is_working = false
 
 var playback_speed = 1
 
+@onready var original_wait_time = $ActionComplete.wait_time
+
 func _ready():
 	$Sprite2D.texture = Global.get_random_villager()
 	if in_house:
@@ -113,7 +115,7 @@ func set_idle():
 	is_working = false
 
 func job_complete():
-	job_reference.available_work_slots += 1
+	job_reference.remove_worker()
 	match job_type:
 		"build":
 			set_idle()
@@ -131,7 +133,7 @@ func find_best_slot(array_of_workplaces : Array[Workable]) -> Workable:
 	var index = -1
 	var i = 0
 	for w in array_of_workplaces:
-		if w.available_work_slots > num_spots:
+		if w.available_work_slots > num_spots && w.available_work_slots > 0:
 			index = i
 			num_spots = w.available_work_slots
 			i += 1
@@ -239,6 +241,7 @@ func _on_action_complete_timeout():
 func set_speed(value):
 	playback_speed = value
 	$AnimationPlayer.speed_scale = value
+	$ActionComplete.wait_time = original_wait_time / value
 
 func _on_yum_timeout():
 	Global.remove_resources("food", 1)

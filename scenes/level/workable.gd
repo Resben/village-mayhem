@@ -49,6 +49,11 @@ func _process(_delta):
 
 func add_worker():
 	available_work_slots -= 1
+	print("Added a worker there are now: " + str(available_work_slots) + " left")
+
+func remove_worker():
+	available_work_slots += 1
+	print("Removed a worker there are now: " + str(available_work_slots) + " left")
 
 func get_job_type():
 	pass
@@ -62,7 +67,7 @@ func get_random_edge_location():
 func add_work_point(reference : Villager):
 	if reference.job_type == "construction":
 		if is_under_construction:
-			construction_percentage += 5 * playback_speed
+			construction_percentage += 1
 			if construction_percentage >= 100:
 				is_under_construction = false
 				reference.job_complete()
@@ -73,7 +78,7 @@ func add_work_point(reference : Villager):
 			reference.job_complete()
 	elif reference.job_type == "repair":
 		if is_broken:
-			repair_percentage += 1 * playback_speed
+			repair_percentage += 1
 			if repair_percentage >= 100:
 				is_broken = false
 				reference.job_complete()
@@ -83,7 +88,7 @@ func add_work_point(reference : Villager):
 		else:
 			reference.job_complete()
 	else:
-		reference.job_points += 1 * playback_speed
+		reference.job_points += 1
 
 func _on_destroyed():
 	is_broken = true
