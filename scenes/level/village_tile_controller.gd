@@ -1,6 +1,10 @@
 extends TileMap
 
 @export var display_map : TileMap
+@export var should_generate_random = true
+
+var num_trees = 30
+var num_mines = 10
 
 var id_to_atlas = {
 	"house" : Vector2i(0, 0),
@@ -27,8 +31,27 @@ var id_to_scene = {
 }
 
 func _ready():
-	for vec in get_used_cells(0):
-		place_building(atlas_to_id[get_cell_atlas_coords(0, vec)], vec, false)
+	if should_generate_random:
+		var flag = true
+		var th_location
+		var farm_location
+		while flag:
+			th_location = get_random_valid_display_position()
+			for i in get_surrounding_cells(th_location):
+				if check_availablity(map_to_local(i)):
+					farm_location = i
+					flag = false
+					break
+			
+		place_building("town_hall", th_location, false)
+		place_building("crop", farm_location, false)
+		
+		for i in range(num_trees):
+			place_building("tree", get_random_valid_display_position(), false)
+		
+	else:
+		for vec in get_used_cells(0):
+			place_building(atlas_to_id[get_cell_atlas_coords(0, vec)], vec, false)
 
 func place_building(id : String, pos : Vector2i, should_construct : bool):
 	var local = map_to_local(pos)
@@ -36,6 +59,7 @@ func place_building(id : String, pos : Vector2i, should_construct : bool):
 	scene.position = local
 	scene.is_under_construction = should_construct
 	add_child(scene)
+	set_cell(0, pos, 0, id_to_atlas[id])
 	return scene
 
 func get_random_valid_display_position():

@@ -94,7 +94,6 @@ format = 2
 self_modulate = Color(1, 1, 1, 0)
 tile_set = ExtResource("4_y4t7t")
 format = 2
-layer_0/tile_data = PackedInt32Array(589839, 0, 2, 589836, 65536, 0, 786454, 65536, 1, 851976, 65536, 1, 262153, 65536, 1, 393233, 65536, 1, 196633, 65536, 1)
 script = ExtResource("5_iu43c")
 display_map = NodePath("../DisplayTileMap")
 
@@ -119,7 +118,7 @@ cpu = NodePath("../CPU")
 wait_time = 3.0
 one_shot = true
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." node_paths=PackedStringArray("village_ref")]
 position = Vector2(990, 608)
 limit_left = -5000
 limit_top = -5000
@@ -127,6 +126,7 @@ limit_right = 10000
 limit_bottom = 10000
 editor_draw_limits = true
 script = ExtResource("4_crpwy")
+village_ref = NodePath("../VillageTileMap")
 
 [node name="DisasterController" type="Node2D" parent="." node_paths=PackedStringArray("camera")]
 script = ExtResource("10_f1wx0")

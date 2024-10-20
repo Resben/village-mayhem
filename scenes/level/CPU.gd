@@ -41,7 +41,6 @@ func construct_farm():
 		print("Created new random location for farm")
 	
 	if next_location != null:
-		village_map.set_cell(0, next_location, 0, Vector2i(1, 0))
 		return village_map.place_building("crop", next_location, false)
 	else:
 		return null
@@ -72,7 +71,6 @@ func construct_house():
 		print("Created new random location")
 	
 	if next_location != null:
-		village_map.set_cell(0, next_location, 0, Vector2i(0, 0))
 		return village_map.place_building("house", next_location, true)
 	else:
 		return null
