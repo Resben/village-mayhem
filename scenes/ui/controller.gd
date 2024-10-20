@@ -5,6 +5,8 @@ enum { MENU, PAUSED, GAME }
 
 var state = MENU
 
+@export var main : PackedScene
+
 var current_bgm = "peaceful"
 var bgm_volume = 0.5
 var sfx_volume = 1.0
@@ -52,6 +54,8 @@ func switch_to_game():
 	$TransitionPlayer.play_transition(to_game_callback)
 
 func to_game_callback():
+	var next = main.instantiate()
+	get_node("/root/").add_child(next)
 	$Startup.visible = false
 	$Startup.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	$HUD.visible = true
@@ -108,3 +112,6 @@ func _on_bgm_finished():
 func _on_h_slider_value_changed(value):
 	bgm_volume = value
 	$BGM.volume_db = linear_to_db(value)
+
+func _on_button_pressed():
+	switch_to_game()

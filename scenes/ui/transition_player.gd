@@ -7,4 +7,5 @@ func play_transition(callback : Callable):
 	$AnimationPlayer.play("transition")
 
 func play_callback():
-	next_callback.call()
+	await next_callback.call()
+	$AnimationPlayer.play("transition_pt2")
