@@ -30,6 +30,7 @@ var playback_speed = 1
 @onready var original_wait_time = $ActionComplete.wait_time
 
 func _ready():
+	$AnimationPlayer.play("walk")
 	$Sprite2D.texture = Global.get_random_villager()
 	if in_house:
 		visible = false
@@ -42,9 +43,6 @@ func _ready():
 	else:
 		playback_speed = Global.hud.current_playback
 		$AnimationPlayer.speed_scale = playback_speed
-
-func go_to(pos):
-	nav.target_position = pos
 
 func on_disaster():
 	state = SCARED
@@ -193,12 +191,13 @@ func enter_state(in_state):
 		IDLING:
 			nav.target_position = Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position
 			$AnimationPlayer.play("walk")
+			$Emotes.set_emote("chilled")
 		DEMO:
 			nav.target_position = Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position
 			$AnimationPlayer.play("walk")
 		SCARED:
+			$Emotes.set_emote("scared")
 			last_working_state = last_state
-			#$AnimationPlayer.play("scared")
 			var new_direction = (house.door_pos - global_position).normalized()
 			var perpendicular = Vector2(-new_direction.y, new_direction.x)
 			for i in range(3):
@@ -212,7 +211,8 @@ func run_state(_delta, in_state):
 		WORKING:
 			if nav.is_navigation_finished() && $ActionComplete.is_stopped():
 				$ActionComplete.start()
-				#$AnimationPlayer.play(job_type)
+				$AnimationPlayer.play(job_type)
+				$Emotes.set_emote("work")
 		IDLING:
 			if nav.is_navigation_finished():
 				nav.target_position = Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position

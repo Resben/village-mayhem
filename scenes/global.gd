@@ -29,7 +29,7 @@ var controller
 var is_setup = false
 
 var villagers = [
-	preload("res://assets/temp/villager_1_sheet.png")
+	preload("res://assets/temp/villager_sheet.png")
 ]
 
 var villager = preload("res://scenes/ai/villager.tscn") as PackedScene
