@@ -64,7 +64,7 @@ func place_building(id : String, pos : Vector2i, should_construct : bool):
 
 func get_random_valid_display_position():
 	var flag = true
-	var tiles = display_map.get_used_cells_by_id(0, 1, Vector2i(2, 1))
+	var tiles = display_map.get_used_cells_by_id(0, 1, Vector2i(2, 1)) + display_map.get_used_cells_by_id(0, 2, Vector2i(2, 1))
 	var rand
 	while flag:
 		rand = randi_range(0, tiles.size() - 1)
