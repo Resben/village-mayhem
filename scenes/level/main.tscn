@@ -76,12 +76,13 @@ animations = [{
 [node name="Main" type="Node2D"]
 script = ExtResource("1_n61w2")
 
-[node name="WorldTileMap" type="TileMap" parent="." node_paths=PackedStringArray("display_map")]
+[node name="WorldTileMap" type="TileMap" parent="." node_paths=PackedStringArray("display_map", "village_map")]
 texture_filter = 1
 tile_set = ExtResource("1_i6dnq")
 format = 2
 script = ExtResource("2_8ckyv")
 display_map = NodePath("../DisplayTileMap")
+village_map = NodePath("../VillageTileMap")
 high_placeholder_atlas = Vector2i(2, 0)
 sea_placeholder_atlas = Vector2i(1, 0)
 

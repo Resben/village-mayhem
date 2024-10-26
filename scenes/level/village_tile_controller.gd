@@ -27,7 +27,8 @@ var id_to_scene = {
 	"crop" : preload("res://scenes/level/farm.tscn"),
 	"mine" : preload("res://scenes/level/house.tscn"),
 	"tree" : preload("res://scenes/level/wood_resource.tscn"),
-	"town_hall" : preload("res://scenes/level/town_hall.tscn")
+	"town_hall" : preload("res://scenes/level/town_hall.tscn"),
+	"dock" : preload("res://scenes/level/dock.tscn")
 }
 
 func _ready():
@@ -109,3 +110,16 @@ func check_availablity(raw_position) -> bool:
 		return false
 	
 	return true
+
+func generate_docks(docks):
+	var new_docks = {}
+	for dock in docks:
+		var scene = id_to_scene["dock"].instantiate()
+		var id = dock
+		var new_position = display_map.map_to_local(docks[dock])
+		
+		scene.id = id
+		scene.position = new_position
+		new_docks[id] = scene
+		add_child(scene)
+	Global.docks = new_docks

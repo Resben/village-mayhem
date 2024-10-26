@@ -60,6 +60,8 @@ right_mouse={
 
 [layer_names]
 
+2d_navigation/layer_1="Land"
+2d_navigation/layer_2="Sea"
 2d_physics/layer_4="HitBox"
 2d_physics/layer_5="HurtBox"
 

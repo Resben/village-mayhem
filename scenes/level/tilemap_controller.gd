@@ -3,6 +3,7 @@ extends TileMap
 enum {GRASS, SEA, HIGH}
 
 @export var display_map : TileMap
+@export var village_map : TileMap
 @export var grass_placeholder_atlas : Vector2i
 @export var high_placeholder_atlas : Vector2i
 @export var sea_placeholder_atlas : Vector2i
@@ -14,6 +15,7 @@ var neighbours = [Vector2i(0,0), Vector2i(1,0), Vector2i(0,1), Vector2i(1,1)]
 var noise = FastNoiseLite.new()
 var sea_threshold = 0.5
 var high_threshold = 0.7
+var minimum_island_size = 15
 
 var neighbours_to_atlas_grass_sea = {
 	## GRASS TO SEA
@@ -70,6 +72,12 @@ func _ready():
 	
 	for vec in get_used_cells(0):
 		set_display_tile(vec)
+	
+	if should_generate:
+		initialize_map()
+		identify_islands()
+		remove_docks()
+		village_map.generate_docks(docks)
 
 func generate_tilemap_from_noise():
 	for x in range(Global.map_size.x):
@@ -131,3 +139,85 @@ func get_world_tile(vec):
 		return HIGH
 	else:
 		return SEA
+
+################ DOCK GENERATION ################
+
+var island_map = []
+var docks = {}
+var island_sizes = {}
+
+func get_island_id(vec) -> int:
+	if vec.x >= 0 and vec.x < Global.map_size.x and vec.y >= 0 and vec.y < Global.map_size.y:
+		return island_map[vec.x][vec.y]
+	else:
+		return -1  # Return -1 if position is out of bounds or sea
+
+func initialize_map():
+	island_map.resize(Global.map_size.x)
+	for x in range(Global.map_size.x):
+		island_map[x] = []
+		for y in range(Global.map_size.y):
+			island_map[x].append(-1)
+
+func identify_islands():
+	var island_id = 0
+	for x in range(Global.map_size.x):
+		for y in range(Global.map_size.y):
+			if is_land_tile(x, y) and island_map[x][y] == -1:
+				flood_fill_island(x, y, island_id)
+				island_id += 1
+
+func is_land_tile(x, y):
+	var atlas = display_map.get_cell_atlas_coords(0, Vector2i(x, y))
+	if atlas != Vector2i(0, 3):
+		return true
+	else:
+		return false
+
+func is_shore_tile(x, y):
+	var atlas = display_map.get_cell_atlas_coords(0, Vector2i(x, y))
+	var source = display_map.get_cell_source_id(0, Vector2i(x, y))
+	if atlas != Vector2i(0, 3) && atlas != Vector2i(2, 1) && source != 2:
+		return true
+	else:
+		return false
+
+func flood_fill_island(start_x, start_y, island_id):
+	var stack = []
+	stack.append(Vector2(start_x, start_y))
+	var shoreline_tiles = []
+	var island_size = 0
+
+	while stack.size() > 0:
+		var current = stack.pop_back()
+		var cx = int(current.x)
+		var cy = int(current.y)
+
+		# Skip if already visited
+		if island_map[cx][cy] != -1:
+			continue
+
+		# Mark the tile with the island ID
+		island_map[cx][cy] = island_id
+		island_size += 1
+
+		# Check neighbors for shorelines and connected land tiles
+		for offset in [Vector2(0, -1), Vector2(0, 1), Vector2(-1, 0), Vector2(1, 0)]:
+			var nx = cx + int(offset.x)
+			var ny = cy + int(offset.y)
+			if nx >= 0 and nx < Global.map_size.x and ny >= 0 and ny < Global.map_size.y:
+				if is_land_tile(nx, ny) and island_map[nx][ny] == -1:
+					stack.append(Vector2(nx, ny))
+					if is_shore_tile(nx, ny):
+						shoreline_tiles.append(Vector2(cx, cy))  # Current tile is on shore
+	
+	island_sizes[island_id] = island_size
+	
+	# Place a dock on a random shoreline tile for this island
+	if shoreline_tiles.size() > 0:
+		docks[island_id] = shoreline_tiles[randi() % shoreline_tiles.size()]
+
+func remove_docks():
+	for d in docks:
+		if island_sizes[d] < minimum_island_size:
+			docks.erase(d)

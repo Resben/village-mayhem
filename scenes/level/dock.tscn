@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://cdvjewsq04w6y"]
+
+[ext_resource type="Texture2D" uid="uid://c44mf2j1x3lge" path="res://icon.svg" id="1_mf74c"]
+[ext_resource type="Script" path="res://scenes/level/dock.gd" id="1_vtcdn"]
+
+[node name="Dock" type="Node2D"]
+script = ExtResource("1_vtcdn")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_mf74c")
