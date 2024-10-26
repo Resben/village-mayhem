@@ -1,12 +1,10 @@
-[gd_scene load_steps=18 format=3 uid="uid://bdtit0flpgvth"]
+[gd_scene load_steps=20 format=3 uid="uid://bdtit0flpgvth"]
 
 [ext_resource type="Script" path="res://scenes/ai/storm.gd" id="1_u85mp"]
 [ext_resource type="Texture2D" uid="uid://drvq6765g6ww7" path="res://assets/environment/shadow.png" id="2_6ptx6"]
 [ext_resource type="Texture2D" uid="uid://cm6ee0hi4mohs" path="res://assets/environment/storm-Sheet.png" id="2_o1mj0"]
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_my4m8"]
-radius = 59.0
-height = 242.0
+[ext_resource type="PackedScene" uid="uid://buisw7ypiqdlh" path="res://scenes/components/velocity_component.tscn" id="4_fjret"]
+[ext_resource type="PackedScene" uid="uid://cxxrbremgngb7" path="res://scenes/components/hit_box_component.tscn" id="4_vo7e8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vdt8i"]
 atlas = ExtResource("2_o1mj0")
@@ -100,38 +98,42 @@ animations = [{
 "speed": 10.0
 }]
 
-[node name="Storm" type="Area2D"]
-script = ExtResource("1_u85mp")
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_my4m8"]
+radius = 120.0
+height = 480.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 41)
-rotation = 1.5708
-shape = SubResource("CapsuleShape2D_my4m8")
+[node name="Storm" type="Node2D"]
+script = ExtResource("1_u85mp")
 
 [node name="Shadow" type="Sprite2D" parent="."]
 self_modulate = Color(1, 1, 1, 0.145098)
 texture_filter = 1
 position = Vector2(0, 40)
-scale = Vector2(2, 2)
+scale = Vector2(4, 4)
 texture = ExtResource("2_6ptx6")
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
-scale = Vector2(2, 2)
+scale = Vector2(4, 4)
 sprite_frames = SubResource("SpriteFrames_jvd6q")
 autoplay = "default"
 frame_progress = 0.525618
 
-[node name="DamageTick" type="Timer" parent="."]
-wait_time = 0.25
-one_shot = true
-autostart = true
+[node name="VelocityComponent" parent="." instance=ExtResource("4_fjret")]
+
+[node name="HitBoxComponent" parent="." instance=ExtResource("4_vo7e8")]
+tick_damage = 1
+should_tick_damage = true
+tick_interval = 1.0
+hit_type = "wind"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitBoxComponent"]
+position = Vector2(0, 41)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_my4m8")
 
 [node name="TimeOnScreen" type="Timer" parent="."]
 wait_time = 80.0
 one_shot = true
 
-[connection signal="area_entered" from="." to="." method="_on_area_entered"]
-[connection signal="area_exited" from="." to="." method="_on_area_exited"]
-[connection signal="timeout" from="DamageTick" to="." method="_on_damage_tick_timeout"]
 [connection signal="timeout" from="TimeOnScreen" to="." method="_on_time_on_screen_timeout"]

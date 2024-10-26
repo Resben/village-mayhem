@@ -58,6 +58,11 @@ right_mouse={
 ]
 }
 
+[layer_names]
+
+2d_physics/layer_4="HitBox"
+2d_physics/layer_5="HurtBox"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

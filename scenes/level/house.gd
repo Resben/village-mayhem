@@ -13,13 +13,13 @@ func _ready():
 	Global.setup_complete.connect(_on_world_setup)
 
 func get_job_type():
-	if !is_under_construction:
+	if state != CONSTRUCTION:
 		push_error("You tried to get a job type on a built house?")
 	return "construction"
 
 func _on_world_setup():
 	if is_townhall:
-		is_under_construction = false
+		state = BUILT
 		spawn_villagers()
 
 func leave_house():
@@ -37,7 +37,7 @@ func _on_leave_house_timeout():
 		villagers_left += 1
 
 func _on_destroyed():
-	if is_broken:
+	if state == BROKEN:
 		return
 	super._on_destroyed()
 	Global.remove_population(residents.size())
@@ -45,9 +45,6 @@ func _on_destroyed():
 		Global.villager_references.erase(r)
 		r.queue_free()
 	residents.clear()
-
-func on_construction_complete():
-	spawn_villagers()
 
 func on_repair_complete():
 	spawn_villagers()

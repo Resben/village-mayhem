@@ -1,6 +1,7 @@
 extends Node
 
 signal setup_complete
+signal _on_speed_changed
 
 enum { NORMAL, FAST, VERY_FAST }
 
@@ -109,29 +110,17 @@ func remove_resources(id : String, amount : int):
 func set_game_speed(speed):
 	match speed:
 		NORMAL:
+			_on_speed_changed.emit(1)
 			controller.set_speed(1)
 			set_speed(1, villager_references)
-			set_speed(1, house_references)
-			set_speed(1, farm_references)
-			set_speed(1, wood_references)
-			set_speed(1, active_mine_references)
-			set_speed(1, disaster_references)
 		FAST:
+			_on_speed_changed.emit(2)
 			controller.set_speed(2)
 			set_speed(2, villager_references)
-			set_speed(2, house_references)
-			set_speed(2, farm_references)
-			set_speed(2, wood_references)
-			set_speed(2, active_mine_references)
-			set_speed(2, disaster_references)
 		VERY_FAST:
+			_on_speed_changed.emit(5)
 			controller.set_speed(5)
 			set_speed(5, villager_references)
-			set_speed(5, house_references)
-			set_speed(5, farm_references)
-			set_speed(5, wood_references)
-			set_speed(5, active_mine_references)
-			set_speed(5, disaster_references)
 
 func set_speed(value, references):
 	for r in references:

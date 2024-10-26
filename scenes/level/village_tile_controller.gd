@@ -57,7 +57,11 @@ func place_building(id : String, pos : Vector2i, should_construct : bool):
 	var local = map_to_local(pos)
 	var scene = id_to_scene[id].instantiate() as Workable
 	scene.position = local
-	scene.is_under_construction = should_construct
+	if should_construct:
+		scene.state = Workable.CONSTRUCTION
+	else:
+		scene.state = Workable.BUILT
+	
 	add_child(scene)
 	set_cell(0, pos, 0, id_to_atlas[id])
 	return scene

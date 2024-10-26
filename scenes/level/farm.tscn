@@ -43,6 +43,7 @@ _data = {
 
 [node name="Farm" type="Node2D"]
 script = ExtResource("1_qe5d3")
+built_texture = ExtResource("2_0ga8o")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1

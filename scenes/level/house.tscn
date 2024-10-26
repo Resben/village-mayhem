@@ -1,179 +1,33 @@
-[gd_scene load_steps=17 format=3 uid="uid://dkm7f7jggkwyg"]
+[gd_scene load_steps=12 format=3 uid="uid://dkm7f7jggkwyg"]
 
 [ext_resource type="Script" path="res://scenes/level/house.gd" id="1_rwma6"]
-[ext_resource type="Texture2D" uid="uid://cw46ufhtd1e7c" path="res://assets/buildings/house/house_hit_broken_wind_sheet.png" id="2_5l4x8"]
+[ext_resource type="Texture2D" uid="uid://bp37s8mfetvvr" path="res://assets/buildings/house/house_construction.png" id="2_fwxpi"]
+[ext_resource type="Texture2D" uid="uid://dk1v4y2k3e034" path="res://assets/buildings/house/house_broken.png" id="3_onxjm"]
+[ext_resource type="Texture2D" uid="uid://0ehfbctp80ew" path="res://assets/buildings/house/house_damaged.png" id="4_yglap"]
 [ext_resource type="Texture2D" uid="uid://15bvc28oda6i" path="res://assets/ui/construction_back.png" id="4_yko8o"]
+[ext_resource type="Texture2D" uid="uid://bauo0k8ih1wl3" path="res://assets/buildings/house/house.png" id="5_c2ceo"]
 [ext_resource type="Texture2D" uid="uid://dudprl7k45l5g" path="res://assets/ui/construction_front.png" id="5_roiiy"]
-[ext_resource type="Script" path="res://scenes/level/hitbox.gd" id="6_50nhw"]
+[ext_resource type="PackedScene" uid="uid://s1lqdsrhk2h1" path="res://scenes/components/health_component.tscn" id="6_enn6o"]
+[ext_resource type="Script" path="res://scenes/components/hurtboxcomponent.gd" id="7_7xlnu"]
+[ext_resource type="PackedScene" uid="uid://b0ibgbnmp6r28" path="res://scenes/level/workable_effects.tscn" id="7_gruuq"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_umwap"]
 radius = 30.0
 
-[sub_resource type="Animation" id="Animation_00die"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [5]
-}
-
-[sub_resource type="Animation" id="Animation_7r4mw"]
-resource_name = "broken"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [5]
-}
-
-[sub_resource type="Animation" id="Animation_lpgbp"]
-resource_name = "damaged"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [11]
-}
-
-[sub_resource type="Animation" id="Animation_i5ood"]
-resource_name = "fixed"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [17]
-}
-
-[sub_resource type="Animation" id="Animation_vdcbg"]
-resource_name = "underconstruction"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [23]
-}
-
-[sub_resource type="Animation" id="Animation_6n74l"]
-resource_name = "windy_broken"
-length = 0.6
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [0, 1, 2, 3, 4, 5]
-}
-
-[sub_resource type="Animation" id="Animation_oiyyt"]
-resource_name = "windy_damaged"
-length = 0.6
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [6, 7, 8, 9, 10, 11]
-}
-
-[sub_resource type="Animation" id="Animation_aoqlt"]
-resource_name = "windy_fixed"
-length = 0.6
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [12, 13, 14, 15, 16, 17]
-}
-
-[sub_resource type="Animation" id="Animation_w15o8"]
-resource_name = "windy_underconstruction"
-length = 0.6
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [18, 19, 20, 21, 22, 23]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_eoij0"]
-_data = {
-"RESET": SubResource("Animation_00die"),
-"broken": SubResource("Animation_7r4mw"),
-"damaged": SubResource("Animation_lpgbp"),
-"fixed": SubResource("Animation_i5ood"),
-"underconstruction": SubResource("Animation_vdcbg"),
-"windy_broken": SubResource("Animation_6n74l"),
-"windy_damaged": SubResource("Animation_oiyyt"),
-"windy_fixed": SubResource("Animation_aoqlt"),
-"windy_underconstruction": SubResource("Animation_w15o8")
-}
-
-[node name="House" type="Node2D"]
+[node name="House" type="Node2D" node_paths=PackedStringArray("health_component", "hurtbox_component")]
 script = ExtResource("1_rwma6")
+health_component = NodePath("HealthComponent")
+hurtbox_component = NodePath("HurtBoxComponent")
+construction_texture = ExtResource("2_fwxpi")
+broken_texture = ExtResource("3_onxjm")
+damaged_texture = ExtResource("4_yglap")
+built_texture = ExtResource("5_c2ceo")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
-texture = ExtResource("2_5l4x8")
-hframes = 6
-vframes = 4
-frame = 5
+texture = ExtResource("5_c2ceo")
+
+[node name="WorkableEffects" parent="." instance=ExtResource("7_gruuq")]
 
 [node name="Door" type="Node2D" parent="."]
 position = Vector2(0, 19)
@@ -192,17 +46,16 @@ offset_bottom = 36.0
 texture_under = ExtResource("4_yko8o")
 texture_progress = ExtResource("5_roiiy")
 
-[node name="Hitbox" type="Area2D" parent="."]
-script = ExtResource("6_50nhw")
-health = 15
-type = "house"
+[node name="HealthComponent" parent="." instance=ExtResource("6_enn6o")]
+max_health = 30
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+[node name="HurtBoxComponent" type="Area2D" parent="." node_paths=PackedStringArray("health_component")]
+script = ExtResource("7_7xlnu")
+health_component = NodePath("../HealthComponent")
+process_tick_damage = true
+process_impact_damage = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBoxComponent"]
 shape = SubResource("CircleShape2D_umwap")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_eoij0")
-}
 
 [connection signal="timeout" from="LeaveHouse" to="." method="_on_leave_house_timeout"]
