@@ -126,7 +126,6 @@ var is_setup = false
 func thread_job_1():
 	var generated_map = []
 	
-	print("starting job 1")
 	noise.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
 	noise.frequency = 0.01
 	noise.fractal_octaves = 5
@@ -151,8 +150,6 @@ func thread_job_1():
 func thread_complete():
 	if thread.is_alive():
 		thread.wait_to_finish()
-	
-	print("Task COMPLETE")
 	
 	for x in range(Global.map_size.x):
 		for y in range(Global.map_size.y):

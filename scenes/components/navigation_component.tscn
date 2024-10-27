@@ -4,3 +4,9 @@
 
 [node name="NavigationComponent" type="Node2D"]
 script = ExtResource("1_dy4fk")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+
+[node name="IntervalTimer" type="Timer" parent="."]
+wait_time = 0.3
+one_shot = true

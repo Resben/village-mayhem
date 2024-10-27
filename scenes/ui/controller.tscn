@@ -729,6 +729,10 @@ theme = ExtResource("2_o4um2")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Loading..."
 
+[node name="Default" type="Timer" parent="TransitionPlayer"]
+wait_time = 1.5
+one_shot = true
+
 [node name="BGM" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("24_7gf23")
 autoplay = true
@@ -748,5 +752,6 @@ one_shot = true
 [connection signal="pressed" from="Paused/TextureRect/Continue" to="Paused" method="_on_continue_pressed"]
 [connection signal="pressed" from="Paused/TextureRect/ToMenu" to="Paused" method="_on_to_menu_pressed"]
 [connection signal="value_changed" from="Paused/TextureRect/HSlider" to="." method="_on_h_slider_value_changed"]
+[connection signal="timeout" from="TransitionPlayer/Default" to="TransitionPlayer" method="_on_default_timeout"]
 [connection signal="finished" from="BGM" to="." method="_on_bgm_finished"]
 [connection signal="timeout" from="DisasterTimer" to="." method="_on_disaster_timer_timeout"]

@@ -4,7 +4,7 @@ class_name VelocityComponent
 @export var max_speed : float = 100;
 @export var accelaration_coefficient : float = 10;
 
-@onready var game_speed_multiplier : float = Global.hud.current_playback
+@onready var game_speed_multiplier : float = Global.current_playback
 
 var velocity : Vector2
 var velocity_override : Vector2
@@ -13,7 +13,7 @@ var speed_percent_modifiers = {}
 
 func _ready():
 	Global.connect("_on_speed_changed", _speed_changed)
-	_speed_changed(Global.hud.current_playback)
+	_speed_changed(Global.current_playback)
 
 func calculate_max_speed():
 	return max_speed * (1.0 + 0.0) * game_speed_multiplier # Replace 0.0 with speed modifiers when we actually use them
@@ -42,7 +42,8 @@ func decelerate():
 	accelerate_to_velocity(Vector2.ZERO)
 
 func move(characterBody : CharacterBody2D):
-	characterBody.velocity = velocity_override if velocity_override != null else velocity
+	#characterBody.velocity = velocity_override if velocity_override != null else velocity
+	characterBody.velocity = velocity
 	characterBody.move_and_slide()
 
 func move_body(node : Node2D, delta : float):

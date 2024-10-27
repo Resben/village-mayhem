@@ -28,8 +28,10 @@ var hud
 var disaster_controller
 
 var controller
-
 var is_setup = false
+var is_scene_loaded = false
+
+var current_playback = 1
 
 var villagers = [
 	preload("res://assets/temp/villager_sheet.png")
@@ -47,7 +49,7 @@ func _process(_delta):
 	if is_setup:
 		return
 	
-	if cpu != null && hud != null:
+	if cpu != null && hud != null && is_scene_loaded:
 		setup_complete.emit()
 		is_setup = true
 		hud.update_resources()
@@ -70,6 +72,7 @@ func bye_bye():
 	is_in_disaster = false
 	cpu = null
 	is_setup = false
+	is_scene_loaded = false
 	
 
 func get_random_villager() -> Texture2D:
@@ -115,14 +118,17 @@ func set_game_speed(speed):
 			_on_speed_changed.emit(1)
 			controller.set_speed(1)
 			set_speed(1, villager_references)
+			current_playback = 1
 		FAST:
 			_on_speed_changed.emit(2)
 			controller.set_speed(2)
 			set_speed(2, villager_references)
+			current_playback = 2
 		VERY_FAST:
 			_on_speed_changed.emit(5)
 			controller.set_speed(5)
 			set_speed(5, villager_references)
+			current_playback = 5
 
 func set_speed(value, references):
 	for r in references:

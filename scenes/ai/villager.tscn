@@ -1,11 +1,13 @@
-[gd_scene load_steps=18 format=3 uid="uid://5ax878tfs7j0"]
+[gd_scene load_steps=20 format=3 uid="uid://5ax878tfs7j0"]
 
 [ext_resource type="Script" path="res://scenes/ai/villager.gd" id="1_o06ye"]
 [ext_resource type="Texture2D" uid="uid://c57w1bia1c0dm" path="res://assets/temp/villager_sheet.png" id="2_o2fcp"]
 [ext_resource type="Texture2D" uid="uid://b4sy0ajaq4k0u" path="res://assets/temp/backbar.png" id="3_dk856"]
 [ext_resource type="Texture2D" uid="uid://jasf1b8ejdpy" path="res://assets/temp/frontbar.png" id="4_hij7v"]
-[ext_resource type="Script" path="res://scenes/ai/villager_tag.gd" id="5_3ihug"]
+[ext_resource type="PackedScene" uid="uid://cpdej8l8txsq0" path="res://scenes/components/navigation_component.tscn" id="6_1seeh"]
 [ext_resource type="PackedScene" uid="uid://ddsvg6cyf6qlx" path="res://scenes/ai/emotes.tscn" id="6_ainw4"]
+[ext_resource type="PackedScene" uid="uid://buisw7ypiqdlh" path="res://scenes/components/velocity_component.tscn" id="7_ymlai"]
+[ext_resource type="PackedScene" uid="uid://q7st16jfuixd" path="res://scenes/components/hurt_box_component.tscn" id="8_pyh60"]
 
 [sub_resource type="Animation" id="Animation_kaiik"]
 length = 0.001
@@ -173,8 +175,6 @@ libraries = {
 }
 autoplay = "walk"
 
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_habms")
 
@@ -189,12 +189,6 @@ offset_bottom = 11.0
 texture_under = ExtResource("3_dk856")
 texture_progress = ExtResource("4_hij7v")
 
-[node name="Area2D" type="Area2D" parent="."]
-script = ExtResource("5_3ihug")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-shape = SubResource("RectangleShape2D_rmog4")
-
 [node name="Yum" type="Timer" parent="."]
 one_shot = true
 autostart = true
@@ -202,6 +196,15 @@ autostart = true
 [node name="Emotes" parent="." instance=ExtResource("6_ainw4")]
 position = Vector2(-1, -16)
 
-[connection signal="velocity_computed" from="NavigationAgent2D" to="." method="_on_navigation_agent_2d_velocity_computed"]
+[node name="NavigationComponent" parent="." node_paths=PackedStringArray("velocity_component") instance=ExtResource("6_1seeh")]
+velocity_component = NodePath("../VelocityComponent")
+
+[node name="VelocityComponent" parent="." instance=ExtResource("7_ymlai")]
+
+[node name="HurtBoxComponent" parent="." instance=ExtResource("8_pyh60")]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBoxComponent"]
+shape = SubResource("RectangleShape2D_rmog4")
+
 [connection signal="timeout" from="ActionComplete" to="." method="_on_action_complete_timeout"]
 [connection signal="timeout" from="Yum" to="." method="_on_yum_timeout"]

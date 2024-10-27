@@ -16,7 +16,7 @@ var job_points = 0
 
 @export var is_demo : bool
 @export var village_map : TileMap
-@onready var nav = $NavigationAgent2D
+
 var direction
 var texture : Texture2D
 var house : House
@@ -29,9 +29,16 @@ var playback_speed = 1
 
 @onready var original_wait_time = $ActionComplete.wait_time
 
+@onready var hurtbox_component = $HurtBoxComponent
+@onready var navigation_component = $NavigationComponent
+@onready var velocity_component = $VelocityComponent
+
 func _ready():
 	$AnimationPlayer.play("walk")
 	$Sprite2D.texture = Global.get_random_villager()
+	
+	hurtbox_component._on_damage.connect(on_disaster)
+	
 	if in_house:
 		visible = false
 	
@@ -41,7 +48,7 @@ func _ready():
 	if is_demo:
 		state = DEMO
 	else:
-		playback_speed = Global.hud.current_playback
+		playback_speed = Global.current_playback
 		$AnimationPlayer.speed_scale = playback_speed
 
 func on_disaster():
@@ -59,9 +66,9 @@ func enter_house():
 func exit_house(pos = null):
 	if pos != null:
 		if is_working:
-			nav.target_position = job_location
+			navigation_component.force_set_target_position(job_location)
 		else:
-			nav.target_position = pos
+			navigation_component.force_set_target_position(pos)
 	visible = true
 	in_house = false
 	is_returning = false
@@ -152,23 +159,12 @@ func _physics_process(delta):
 	if in_house:
 		return
 	
-	if nav.is_navigation_finished():
-		return
+	navigation_component.follow_path()
+	velocity_component.move(self)
 	
-	var next_path_position = nav.get_next_path_position()
-	var new_velocity = global_position.direction_to(next_path_position) * 50 * playback_speed
-	direction = new_velocity
-	
-	if nav.avoidance_enabled:
-		nav.set_velocity(new_velocity)
-	else:
-		_on_navigation_agent_2d_velocity_computed(new_velocity)
-	
-	move_and_slide()
-	
-	if direction.x > 0:
+	if velocity_component.velocity.x > 0:
 		$Sprite2D.flip_h = false
-	elif direction.x < 0:
+	elif velocity_component.velocity.x < 0:
 		$Sprite2D.flip_h = true
 
 func _on_navigation_agent_2d_velocity_computed(safe_velocity):
@@ -186,14 +182,14 @@ func exit_state(in_state):
 func enter_state(in_state):
 	match in_state:
 		WORKING:
-			nav.target_position = job_location
+			navigation_component.force_set_target_position(job_location)
 			$AnimationPlayer.play("walk")
 		IDLING:
-			nav.target_position = Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position
+			navigation_component.set_target_position(Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position)
 			$AnimationPlayer.play("walk")
 			$Emotes.set_emote("chilled")
 		DEMO:
-			nav.target_position = Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position
+			navigation_component.set_target_position(Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position)
 			$AnimationPlayer.play("walk")
 		SCARED:
 			$Emotes.set_emote("scared")
@@ -209,25 +205,25 @@ func enter_state(in_state):
 func run_state(_delta, in_state):
 	match in_state:
 		WORKING:
-			if nav.is_navigation_finished() && $ActionComplete.is_stopped():
+			if navigation_component.is_navigation_finished() && $ActionComplete.is_stopped():
 				$ActionComplete.start()
 				$AnimationPlayer.play(job_type)
 				$Emotes.set_emote("work")
 		IDLING:
-			if nav.is_navigation_finished():
-				nav.target_position = Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position
+			if navigation_component.is_navigation_finished():
+				navigation_component.set_target_position(Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position)
 		DEMO:
-			if nav.is_navigation_finished():
-				nav.target_position = Vector2(randf_range(-100, 100), randf_range(-100, 100)) + global_position
+			if navigation_component.is_navigation_finished():
+				navigation_component.set_target_position(Vector2(randf_range(-100, 100), randf_range(-100, 100)) + global_position)
 		SCARED:
-			if panic_locations.size() > 0 && nav.is_navigation_finished():
-				nav.target_position = panic_locations[0]
+			if panic_locations.size() > 0 && navigation_component.is_navigation_finished():
+				navigation_component.set_target_position(panic_locations[0])
 				panic_locations.remove_at(0)
 			elif panic_locations.size() == 0 && !in_house:
-				nav.target_position = house.door_pos
+				navigation_component.force_set_target_position(house.door_pos)
 			
-			if panic_locations.size() == 0 && nav.target_position == house.door_pos:
-				if nav.is_navigation_finished():
+			if panic_locations.size() == 0 && navigation_component.get_navigation_target() == house.door_pos:
+				if navigation_component.is_navigation_finished():
 					enter_house()
 
 func _on_action_complete_timeout():

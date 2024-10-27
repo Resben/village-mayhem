@@ -4,7 +4,7 @@ var ui_shown = false
 var current_selection = -1
 @onready var ui_rect = $Control.get_global_rect()
 
-var current_playback = 1
+var playback_id = 1
 
 @export var playback_1 : Texture2D
 @export var playback_2 : Texture2D
@@ -47,10 +47,10 @@ func deselect():
 	current_selection = -1
 
 func _on_playback_pressed():
-	current_playback += 1
-	if current_playback == 4:
-		current_playback = 1
-	match current_playback:
+	playback_id += 1
+	if playback_id == 4:
+		playback_id = 1
+	match playback_id:
 		1:
 			Global.set_game_speed(Global.NORMAL)
 			$Playback.texture_normal = playback_1
