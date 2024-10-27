@@ -1,11 +1,13 @@
 extends CanvasLayer
 class_name Controller
 
+signal _on_finish_loading
+
 enum { MENU, PAUSED, GAME }
 
 var state = MENU
 
-@export var main : PackedScene
+var main = "res://scenes/level/main.tscn"
 
 var current_bgm = "peaceful"
 var bgm_volume = 0.5
@@ -51,11 +53,9 @@ func to_menu_callback():
 
 func switch_to_game():
 	state = GAME
-	$TransitionPlayer.play_transition(to_game_callback)
+	$TransitionPlayer.play_transition(to_game_callback, main)
 
 func to_game_callback():
-	var next = main.instantiate()
-	get_node("/root/").add_child(next)
 	$Startup.visible = false
 	$Startup.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	$HUD.visible = true

@@ -2,6 +2,7 @@ extends TileMap
 
 @export var display_map : TileMap
 @export var should_generate_random = true
+@export var cam : Camera2D
 
 var num_trees = 30
 var num_mines = 10
@@ -32,6 +33,9 @@ var id_to_scene = {
 }
 
 func _ready():
+	pass
+
+func on_display_setup():
 	if should_generate_random:
 		var flag = true
 		var th_location
@@ -53,6 +57,8 @@ func _ready():
 	else:
 		for vec in get_used_cells(0):
 			place_building(atlas_to_id[get_cell_atlas_coords(0, vec)], vec, false)
+	
+	cam.set_camera_position(map_to_local(get_used_cells_by_id(0, 0, Vector2i(0, 2))[0]))
 
 func place_building(id : String, pos : Vector2i, should_construct : bool):
 	var local = map_to_local(pos)

@@ -7,12 +7,13 @@ var screen_start_pos
 var dragging = false
 
 func _ready():
-	position = village_ref.map_to_local(village_ref.get_used_cells_by_id(0, 0, Vector2i(0, 2))[0])
-	
 	limit_left = 0
 	limit_top = 0
 	limit_right = Global.map_size.x * 32
 	limit_bottom = Global.map_size.y * 32
+
+func set_camera_position(pos):
+	position = pos
 
 func _input(event):
 	if event.is_action("drag"):
