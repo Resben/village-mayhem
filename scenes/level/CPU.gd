@@ -187,7 +187,7 @@ func _on_action_timeout():
 		"construction" : 0
 	}
 	for v in Global.villager_references:
-		if !v.is_working:
+		if v.state != Global.VillagerState.WORKING:
 			available_villagers.push_back(v)
 		else:
 			current_jobs[v.job_type] += 1
@@ -201,92 +201,116 @@ func _on_action_timeout():
 
 func calculate_priorities(current_jobs, num_available_villagers) -> Dictionary:
 	var total_villagers = Global.villager_references.size()
+	var resources = Global.resources
+	var broken_buildings = Global.get_broken_buildings().size()
+	var farms = Global.farm_references.size()
+	var mines = Global.active_mine_references.size()
 	
-	var food = max(1, Global.resources["food"])
-	var wood = max(1, Global.resources["wood"])
-	var materials = max(1, Global.resources["materials"])
+	# Initialize priorities dictionary
+	var priorities = {
+		"food": float(total_villagers * 30 / max(1, resources["food"])),
+		"logging": float(50 / max(1, resources["wood"])),
+		"mine": 0.0,
+		"repair": 0.0,
+		"build": 0.0,
+		"farm": 0.0,
+		"new_mine": 0.0,
+		"construction": Global.get_construction_buildings().size()
+	}
 	
-	var food_priority = float(total_villagers * 30 / food)
-	var wood_priority = float(50 / wood)
-	var mine_priority = 0.0
-	if Global.active_mine_references.size() != 0:
-		mine_priority = float(50 / materials)
+	# Set conditional values separately
+	if mines > 0:
+		priorities["mine"] = float(50 / max(1, resources["materials"]))
 	
-	var num_broken_buildings = Global.get_broken_buildings().size()
-	var num_farms = Global.farm_references.size()
+	if broken_buildings > 0 and resources["wood"] >= 25:
+		priorities["repair"] = float(broken_buildings * 25 / max(1, resources["wood"]))
 	
-	var repair_priority = 0.0
-	if num_broken_buildings > 0 and wood >= 25: # 25 cost to repair
-		repair_priority = float(num_broken_buildings * 25 / wood)
+	if broken_buildings == 0 and resources["wood"] >= 50:
+		priorities["build"] = float(resources["wood"] / 50)
 	
-	# Add together all the current constructions
-	var construction_priority = Global.get_construction_buildings().size()
+	if farms == 0:
+		priorities["farm"] = 5.0
+	elif total_villagers / farms > 10:
+		priorities["farm"] = float(total_villagers * 10 / farms * 10 / max(1, resources["wood"]))
 	
-	var build_priority = 0.0
-	if num_broken_buildings == 0 and wood >= 50:
-		build_priority = float(wood / 50)
+	if resources["wood"] >= 100 and mines < farms / 5:
+		priorities["new_mine"] = float(farms / 5 - mines)
 	
-	var new_farm_priority = 0.0
-	if num_farms == 0:
-		new_farm_priority = 5.0
-	elif total_villagers / Global.farm_references.size() > 10:
-		new_farm_priority = float((total_villagers * 10 / Global.farm_references.size()) * 10 / wood)
+	# Normalize priorities to avoid extreme differences
+	var total_priority = 0.0
+	for value in priorities.values():
+		total_priority += value
 	
-	var new_mine_priority = 0.0
-	if wood >= 100:
-		var required_mines = Global.farm_references.size() / 5
-		if Global.active_mine_references.size() < required_mines:
-			new_mine_priority = float(required_mines - Global.active_mine_references.size())
+	# Ensure all tasks receive a minimum allocation for fairness
+	var min_allocation = 0.1
+	for key in priorities.keys():
+		priorities[key] = max(priorities[key] / total_priority, min_allocation)
 	
-	var total_priority = food_priority + wood_priority + mine_priority + repair_priority + build_priority + new_farm_priority + new_mine_priority + construction_priority
+	# Allocate villagers proportionally
+	var allocated_villagers = {}
+	var total_assigned_villagers = 0
 	
-	var normalized_food = food_priority / total_priority
-	var normalized_wood = wood_priority / total_priority
-	var normalized_mine = mine_priority / total_priority
-	var normalized_repair = repair_priority / total_priority
-	var normalized_build = build_priority / total_priority
-	var normalized_farm = new_farm_priority / total_priority
-	var normalized_new_mine = new_mine_priority / total_priority
-	var normalized_construction = construction_priority / total_priority
+	for key in priorities.keys():
+		var assigned = int(priorities[key] * num_available_villagers) - current_jobs.get(key, 0)
+		allocated_villagers[key] = max(0, assigned)
+		total_assigned_villagers += allocated_villagers[key]
 	
-	# Get how many villagers *SHOULD* be assigned minus villagers already assigned
-	var food_villagers = max(0, int(normalized_food * total_villagers) - current_jobs["food"])
-	var wood_villagers = max(0, int(normalized_wood * total_villagers) - current_jobs["logging"])
-	var mine_villagers = max(0, int(normalized_mine * total_villagers) - current_jobs["mine"])
-	var repair_villagers = max(0, int(normalized_repair * total_villagers) - current_jobs["repair"])
-	var build_villagers = max(0, int(normalized_build * total_villagers) - current_jobs["build"])
-	var farm_villagers = max(0, int(normalized_farm * total_villagers) - current_jobs["farm"])
-	var new_mine_villagers = max(0, int(normalized_new_mine * total_villagers) - current_jobs["new_mine"])
-	var construction_villagers = max(0, int(normalized_construction * total_villagers) - current_jobs["construction"])
-	
-	var total_assigned_villagers = food_villagers + wood_villagers + mine_villagers + repair_villagers + build_villagers + farm_villagers + new_mine_villagers + construction_villagers
-	
+	# Scale down if over-allocated due to rounding
 	if total_assigned_villagers > num_available_villagers:
 		var scale_factor = float(num_available_villagers) / total_assigned_villagers
-		food_villagers = int(food_villagers * scale_factor)
-		wood_villagers = int(wood_villagers * scale_factor)
-		mine_villagers = int(mine_villagers * scale_factor)
-		repair_villagers = int(repair_villagers * scale_factor)
-		build_villagers = int(build_villagers * scale_factor)
-		farm_villagers = int(farm_villagers * scale_factor)
-		new_mine_villagers = int(new_mine_villagers * scale_factor)
-		construction_villagers = int(construction_villagers * scale_factor)
+		for key in allocated_villagers.keys():
+			allocated_villagers[key] = int(allocated_villagers[key] * scale_factor)
 	
-	return {
-		"food" : food_villagers,
-		"logging" : wood_villagers,
-		"mine" : mine_villagers,
-		"repair" : repair_villagers,
-		"build" : build_villagers,
-		"farm" : farm_villagers,
-		"new_mine" : new_mine_villagers,
-		"construction" : construction_villagers
-	}
+	return allocated_villagers
 
 
 func assign_workers(priorities, villagers):
 	var i = 0
 	for p in priorities:
 		for v in priorities[p]:
-			villagers[i].work(p)
+			var workable
+			match p:
+				"food":
+					workable = find_best_slot(p, Global.farm_references)
+				"logging":
+					workable = find_best_slot(p, Global.wood_references)
+				"mine":
+					pass
+				"repair":
+					pass
+				"build":
+					if Global.resources["wood"] > 50:
+						workable = construct_house()
+				"farm":
+					if Global.resources["wood"] > 10: 
+						workable = construct_farm()
+				"new_mine":
+					pass
+				"construction":
+					workable = find_best_slot(p, Global.get_construction_buildings())
+			
+			if workable != null:
+				var type
+				if p == "construction":
+					type = Global.JobType.CONSTRUCTION
+				else:
+					type = Global.JobType.RESOURCE
+				var job = workable.create_job(type, villagers[i])
+				i += 1
+			else:
+				priorities.erase(p)
+				print(p + " was null")
+
+func find_best_slot(job_id, array_of_workplaces : Array[Workable]) -> Workable:
+	var num_spots = 0
+	var index = -1
+	var i = 0
+	for w in array_of_workplaces:
+		if w.available_work_slots > num_spots && w.available_work_slots > 0:
+			index = i
+			num_spots = w.available_work_slots
 			i += 1
+	if index == -1:
+		return null
+	else:
+		return array_of_workplaces[index]

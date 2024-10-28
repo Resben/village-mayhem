@@ -1,18 +1,13 @@
 extends CharacterBody2D
 class_name Villager
 
-enum { WORKING, IDLING, SCARED, DEMO }
-var state = IDLING
-var last_state = IDLING
-var last_working_state = IDLING
+var state = Global.VillagerState.IDLING
+var last_state = Global.VillagerState.IDLING
+var last_working_state = Global.VillagerState.IDLING
 
 var panic_locations = []
 
-var job_location
-var job_reference
-var job_type
-var require_job_points = 0
-var job_points = 0
+var job_reference : Job
 
 @export var is_demo : bool
 @export var village_map : TileMap
@@ -23,7 +18,6 @@ var house : House
 
 var in_house = false
 var is_returning = false
-var is_working = false
 
 var playback_speed = 1
 
@@ -46,13 +40,13 @@ func _ready():
 		on_disaster()
 	
 	if is_demo:
-		state = DEMO
+		state = Global.VillagerState.DEMO
 	else:
 		playback_speed = Global.current_playback
 		$AnimationPlayer.speed_scale = playback_speed
 
 func on_disaster():
-	state = SCARED
+	state = Global.VillagerState.SCARED
 
 func disaster_over():
 	state = last_working_state
@@ -63,89 +57,32 @@ func enter_house():
 	in_house = true
 	visible = false
 
+func has_job():
+	if job_reference == null:
+		return false
+	return job_reference.is_job_complete()
+
 func exit_house(pos = null):
 	if pos != null:
-		if is_working:
-			navigation_component.force_set_target_position(job_location)
-		else:
-			navigation_component.force_set_target_position(pos)
+		if has_job():
+			state = Global.VillagerState.WORKING
 	visible = true
 	in_house = false
 	is_returning = false
 
-func work(id):
-	match id:
-		"food":
-			var job = find_best_slot(Global.farm_references)
-			if job != null:
-				set_job(job)
-		"logging":
-			var job = find_best_slot(Global.wood_references)
-			if job != null:
-				set_job(job)
-		"mine":
-			pass
-		"repair":
-			pass
-		"build":
-			if Global.resources["wood"] > 50:
-				var job = Global.cpu.construct_house()
-				if job != null:
-					Global.remove_resources("wood", 50)
-					set_job(job)
-		"farm":
-			if Global.resources["wood"] > 10: 
-				var job = Global.cpu.construct_farm()
-				if job != null:
-					Global.remove_resources("wood", 10)
-					set_job(job)
-		"new_mine":
-			pass
-		"construction":
-			var job = find_best_slot(Global.get_construction_buildings())
-			if job != null:
-				set_job(job)
-
 func set_job(job):
-	state = WORKING
-	job_location = job.get_random_edge_location()
+	state = Global.VillagerState.WORKING
 	job_reference = job
-	job_type = job.get_job_type() 
-	job.add_worker()
-	require_job_points = job.required_points
-	is_working = true
+	job_reference._on_job_completion.connect(job_complete)
 
 func set_idle():
-	state = IDLING
-	is_working = false
+	state = Global.VillagerState.IDLING
 
-func job_complete():
-	job_reference.remove_worker()
-	match job_type:
-		"build":
-			set_idle()
-		"food":
-			set_idle()
-			Global.add_resource("food", 10)
-		"logging":
-			set_idle()
-			Global.add_resource("wood", 10)
-		"construction":
-			set_idle()
-
-func find_best_slot(array_of_workplaces : Array[Workable]) -> Workable:
-	var num_spots = 0
-	var index = -1
-	var i = 0
-	for w in array_of_workplaces:
-		if w.available_work_slots > num_spots && w.available_work_slots > 0:
-			index = i
-			num_spots = w.available_work_slots
-			i += 1
-	if index == -1:
-		return null
-	else:
-		return array_of_workplaces[index]
+func job_complete(job_type):
+	job_reference = null
+	JobManager.queue_villager(self)
+	if job_reference == null:
+		set_idle()
 
 func _physics_process(delta):
 	
@@ -172,26 +109,25 @@ func _on_navigation_agent_2d_velocity_computed(safe_velocity):
 
 func exit_state(in_state):
 	match in_state:
-		WORKING:
+		Global.VillagerState.WORKING:
 			pass
-		IDLING:
+		Global.VillagerState.IDLING:
 			pass
-		SCARED:
+		Global.VillagerState.SCARED:
 			pass
 
 func enter_state(in_state):
 	match in_state:
-		WORKING:
-			navigation_component.force_set_target_position(job_location)
+		Global.VillagerState.WORKING:
 			$AnimationPlayer.play("walk")
-		IDLING:
+		Global.VillagerState.IDLING:
 			navigation_component.set_target_position(Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position)
 			$AnimationPlayer.play("walk")
 			$Emotes.set_emote("chilled")
-		DEMO:
+		Global.VillagerState.DEMO:
 			navigation_component.set_target_position(Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position)
 			$AnimationPlayer.play("walk")
-		SCARED:
+		Global.VillagerState.SCARED:
 			$Emotes.set_emote("scared")
 			last_working_state = last_state
 			var new_direction = (house.door_pos - global_position).normalized()
@@ -202,20 +138,24 @@ func enter_state(in_state):
 				var offset = perpendicular * randf_range(-25, 25)
 				panic_locations.push_back(point_on_line + offset)
 
-func run_state(_delta, in_state):
+func run_state(delta, in_state):
 	match in_state:
-		WORKING:
-			if navigation_component.is_navigation_finished() && $ActionComplete.is_stopped():
-				$ActionComplete.start()
-				$AnimationPlayer.play(job_type)
-				$Emotes.set_emote("work")
-		IDLING:
-			if navigation_component.is_navigation_finished():
-				navigation_component.set_target_position(Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position)
-		DEMO:
-			if navigation_component.is_navigation_finished():
-				navigation_component.set_target_position(Vector2(randf_range(-100, 100), randf_range(-100, 100)) + global_position)
-		SCARED:
+		Global.VillagerState.WORKING:
+			job_reference.process_job(delta)
+			$Emotes.set_emote("work")
+		Global.VillagerState.IDLING:
+			if navigation_component.is_navigation_finished() && $IdlePeriod.is_stopped():
+				$IdlePeriod.start()
+				$Emotes.set_emote("chilled")
+			elif $IdlePeriod.is_stopped():
+				$Emotes.set_emote("none")
+		Global.VillagerState.DEMO:
+			if navigation_component.is_navigation_finished() && $IdlePeriod.is_stopped():
+				$IdlePeriod.start()
+				$Emotes.set_emote("chilled")
+			elif $IdlePeriod.is_stopped():
+				$Emotes.set_emote("none")
+		Global.VillagerState.SCARED:
 			if panic_locations.size() > 0 && navigation_component.is_navigation_finished():
 				navigation_component.set_target_position(panic_locations[0])
 				panic_locations.remove_at(0)
@@ -226,13 +166,13 @@ func run_state(_delta, in_state):
 				if navigation_component.is_navigation_finished():
 					enter_house()
 
-func _on_action_complete_timeout():
-	job_reference.add_work_point(self)
-	if job_type != "construction":
-		if job_points >= require_job_points:
-			job_complete()
-			job_points = 0
-		$TextureProgressBar.value = float(job_points) / require_job_points * 100.0
+func set_progress(value):
+	if value == 0 || value == 1:
+		$TextureProgressBar.visible = false
+	else:
+		$TextureProgressBar.visible =  true
+		
+	$TextureProgressBar.value = value
 
 func set_speed(value):
 	playback_speed = value
@@ -240,5 +180,12 @@ func set_speed(value):
 	$ActionComplete.wait_time = original_wait_time / value
 
 func _on_yum_timeout():
-	Global.remove_resources("food", 1)
-	$Yum.start(randi_range(7, 10))
+	if state != Global.VillagerState.DEMO:
+		Global.remove_resources("food", 1)
+		$Yum.start(randi_range(7, 10))
+
+func _on_idle_period_timeout():
+	if state == Global.VillagerState.DEMO:
+		navigation_component.set_target_position(Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position)
+	elif state == Global.VillagerState.IDLING:
+		navigation_component.set_target_position(Vector2(randf_range(-500, 500), randf_range(-500, 500)) + global_position)

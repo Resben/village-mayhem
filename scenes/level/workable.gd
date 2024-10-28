@@ -6,6 +6,7 @@ var state = CONSTRUCTION
 var last_state = CONSTRUCTION
 
 var available_work_slots = 3
+var workers = 0
 var work_radius = 30
 
 var required_points = 0
@@ -17,6 +18,8 @@ var required_points = 0
 @export var broken_texture : Texture2D
 @export var damaged_texture : Texture2D
 @export var built_texture : Texture2D
+
+@export var jobs : Array[Job]
 
 func _ready():
 	if hurtbox_component:
@@ -45,35 +48,38 @@ func enter_state(in_state):
 		BUILT:
 			$Sprite2D.texture = built_texture
 
-func add_worker():
-	available_work_slots -= 1
-	print("Added a worker there are now: " + str(available_work_slots) + " left")
-
-func remove_worker():
-	available_work_slots += 1
-	print("Removed a worker there are now: " + str(available_work_slots) + " left")
-
 func get_random_edge_location():
 	var angle = randf_range(0, TAU)
 	var x = work_radius * cos(angle)
 	var y = work_radius * sin(angle)
 	return Vector2(x, y) + global_position
 
-func add_work_point(reference : Villager):
-	if reference.job_type == "construction" || reference.job_type == "repair":
-		if state != BUILT:
-			health_component.heal(1)
-			if health_component.has_max_health():
-				reference.job_complete()
-				if state != DAMAGED:
-					on_repair_complete()
-		else:
-			reference.job_complete()
-	else:
-		reference.job_points += 1
-
 func on_repair_complete():
 	pass
+
+func add_worker():
+	workers += 1
+
+func remove_worker():
+	workers -= 1
+
+func _on_job_complete(type):
+	if type == Global.JobType.CONSTRUCTION:
+		state = BUILT
+	else:
+		remove_worker()
+
+func create_job(type, villager):
+	for j in jobs:
+		if j.type == type:
+			var newJob = j.duplicate()
+			newJob.set_up(self, villager)
+			villager.set_job(newJob)
+			newJob._on_job_completion.connect(_on_job_complete)
+			if type == Global.JobType.RESOURCE:
+				add_worker()
+			return
+	print("couldn't find job")
 
 func _health_changed():
 	if health_component.has_max_health():

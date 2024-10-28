@@ -178,20 +178,26 @@ autoplay = "walk"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_habms")
 
-[node name="ActionComplete" type="Timer" parent="."]
-one_shot = true
-
 [node name="TextureProgressBar" type="TextureProgressBar" parent="."]
 offset_left = -5.0
 offset_top = 10.0
 offset_right = 6.0
 offset_bottom = 11.0
+max_value = 1.0
+step = 0.01
 texture_under = ExtResource("3_dk856")
 texture_progress = ExtResource("4_hij7v")
+
+[node name="ActionComplete" type="Timer" parent="."]
+one_shot = true
 
 [node name="Yum" type="Timer" parent="."]
 one_shot = true
 autostart = true
+
+[node name="IdlePeriod" type="Timer" parent="."]
+wait_time = 2.5
+one_shot = true
 
 [node name="Emotes" parent="." instance=ExtResource("6_ainw4")]
 position = Vector2(-1, -16)
@@ -208,3 +214,4 @@ shape = SubResource("RectangleShape2D_rmog4")
 
 [connection signal="timeout" from="ActionComplete" to="." method="_on_action_complete_timeout"]
 [connection signal="timeout" from="Yum" to="." method="_on_yum_timeout"]
+[connection signal="timeout" from="IdlePeriod" to="." method="_on_idle_period_timeout"]

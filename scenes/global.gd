@@ -5,6 +5,10 @@ signal _on_speed_changed
 
 enum { NORMAL, FAST, VERY_FAST }
 
+enum JobType { CONSTRUCTION, RESOURCE }
+enum TaskType { CONSTRUCT_HOUSE, CONSTRUCT_FARM, COLLECT_FOOD, COLLECT_WOOD, RETURN_ITEMS }
+enum VillagerState { WORKING, IDLING, SCARED, DEMO }
+
 var is_in_disaster = false
 
 var villager_references : Array

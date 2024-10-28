@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="Task" load_steps=2 format=3 uid="uid://d4e805y6ujxch"]
+
+[ext_resource type="Script" path="res://scenes/ai/task.gd" id="1_2oixm"]
+
+[resource]
+script = ExtResource("1_2oixm")
+task_type = 0

@@ -18,12 +18,12 @@ radius = 30.0
 texture_filter = 1
 script = ExtResource("1_pk5v8")
 is_townhall = true
-health_component = NodePath("HealthComponent")
-hurtbox_component = NodePath("HurtBoxComponent")
 construction_texture = ExtResource("2_mdbf3")
 broken_texture = ExtResource("3_c22ra")
 damaged_texture = ExtResource("4_qc3ef")
 built_texture = ExtResource("2_lbe1h")
+health_component = NodePath("HealthComponent")
+hurtbox_component = NodePath("HurtBoxComponent")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_lbe1h")

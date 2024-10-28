@@ -105,8 +105,8 @@ script = ExtResource("9_lrpbx")
 village_map = NodePath("../VillageTileMap")
 
 [node name="ActionTimer" type="Timer" parent="CPU"]
-wait_time = 5.0
 one_shot = true
+autostart = true
 
 [node name="Cursor" type="AnimatedSprite2D" parent="." node_paths=PackedStringArray("village_map", "cpu")]
 texture_filter = 1
