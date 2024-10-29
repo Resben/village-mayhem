@@ -30,6 +30,9 @@ func set_up(in_workable : Workable, in_villager : Villager):
 func is_job_complete():
 	return job_completion
 
+func add_work_point():
+	current_task.add_action_point()
+
 func process_job(delta):
 	if current_task != null:
 		current_task.run(delta)

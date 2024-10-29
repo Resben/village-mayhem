@@ -20,10 +20,17 @@ func add_action_point():
 	if task_complete:
 		return
 	current_points += 1
-	villager.set_progress(float(current_points / required_points))
+	villager.set_progress(float(current_points) / required_points)
 	if current_points == required_points:
 		_on_task_complete.emit()
 		villager.set_progress(1)
+
+func set_data(type, points):
+	task_type = type
+	required_points = points
+
+func on_enter():
+	pass
 
 func run(delta):
 	pass
@@ -31,128 +38,104 @@ func run(delta):
 func set_up_override():
 	pass
 
-class BuildHouseTask extends Task:
-	func set_up_override():
-		task_type = Global.TaskType.BUILD_HOUSE
-		required_points = 100
+###################################################################
+############################## TASKS ##############################
+###################################################################
 
-	func run(delta):
+class ActionTask extends Task:
+	func on_enter():
 		pass
 
-class BuildFarmTask extends Task:
-	func set_up_override():
-		task_type = Global.TaskType.BUILD_FARM
-		required_points = 100
-
 	func run(delta):
-		pass
-
-class BuildMineTask extends Task:
-	func set_up_override():
-		task_type = Global.TaskType.BUILD_MINE
-		required_points = 100
-
-	func run(delta):
-		pass
-
-class ResourceFoodTask extends Task:
-	func set_up_override():
-		task_type = Global.TaskType.FARM_FOOD
-		required_points = 50
-
-	func run(delta):
-		pass
-
-class ResourceWoodTask extends Task:
-	func set_up_override():
-		task_type = Global.TaskType.CUT_TREES
-		required_points = 50
-
-	func run(delta):
-		pass
-
-class ResourceMaterialTask extends Task:
-	func set_up_override():
-		task_type = Global.TaskType.MINE_MATERIALS
-		required_points = 50
-
-	func run(delta):
-		pass
-
-class RepairTask extends Task:
-	func set_up_override():
-		task_type = Global.TaskType.REPAIR
-		required_points = 100
-
-	func run(delta):
-		pass
+		if villager.global_position.distance_to(workable.global_position) > 50:
+			villager.navigation_component.set_target_position(workable.global_position)
+		else:
+			villager.start_work(task_type)
 
 class RefineMaterialTask extends Task:
-	func set_up_override():
-		task_type = Global.TaskType.REFINE_MATERIALS
-		required_points = 50
+	func on_enter():
+		pass
 
 	func run(delta):
-		pass
+		if villager.global_position.distance_to(workable.global_position) > 50:
+			villager.navigation_component.set_target_position(workable.global_position)
+		else:
+			villager.start_work(task_type)
 
 class RefineWoodTask extends Task:
-	func set_up_override():
-		task_type = Global.TaskType.CHOP_WOOD
-		required_points = 50
-
-	func run(delta):
+	func on_enter():
 		pass
 
-class AcquireHouseMaterialTask extends Task:
-	func set_up_override():
-		task_type = Global.TaskType.ACQUIRE_HOUSE_MATERIAL
-		required_points = 50
-
 	func run(delta):
+		if villager.global_position.distance_to(workable.global_position) > 50:
+			villager.navigation_component.set_target_position(workable.global_position)
+		else:
+			villager.start_work(task_type)
+
+class AcquireTask extends Task:
+	func on_enter():
 		pass
 
-class AcquireFarmMaterialTask extends Task:
-	func set_up_override():
-		task_type = Global.TaskType.ACQUIRE_FARM_MATERIAL
-		required_points = 50
-
 	func run(delta):
-		pass
+		if villager.global_position.distance_to(workable.global_position) > 50:
+			villager.navigation_component.set_target_position(workable.global_position)
+		else:
+			villager.start_work(task_type)
 
-class AcquireMineMaterialTask extends Task:
-	func set_up_override():
-		task_type = Global.TaskType.ACQUIRE_MINE_MATERIAL
-		required_points = 50
-
-	func run(delta):
-		pass
+###################################################################
+############################# FACTORY #############################
+###################################################################
 
 static func create_task(type : Global.TaskType):
 	match type:
 		Global.TaskType.BUILD_FARM:
-			return BuildFarmTask.new()
+			var task = ActionTask.new()
+			task.set_data(type, 100)
+			return task
 		Global.TaskType.BUILD_HOUSE:
-			return BuildHouseTask.new()
+			var task = ActionTask.new()
+			task.set_data(type, 100)
+			return task
 		Global.TaskType.BUILD_MINE:
-			return BuildMineTask.new()
+			var task = ActionTask.new()
+			task.set_data(type, 100)
+			return task
 		Global.TaskType.FARM_FOOD:
-			return ResourceFoodTask.new()
+			var task = ActionTask.new()
+			task.set_data(type, 30)
+			return task
 		Global.TaskType.CUT_TREES:
-			return ResourceWoodTask.new()
+			var task = ActionTask.new()
+			task.set_data(type, 50)
+			return task
 		Global.TaskType.MINE_MATERIALS:
-			return ResourceMaterialTask.new()
+			var task = ActionTask.new()
+			task.set_data(type, 200)
+			return task
 		Global.TaskType.ACQUIRE_HOUSE_MATERIAL:
-			return AcquireHouseMaterialTask.new()
+			var task = AcquireTask.new()
+			task.set_data(type, 5)
+			return task
 		Global.TaskType.ACQUIRE_FARM_MATERIAL:
-			return AcquireFarmMaterialTask.new()
+			var task = AcquireTask.new()
+			task.set_data(type, 5)
+			return task
 		Global.TaskType.ACQUIRE_MINE_MATERIAL:
-			return AcquireMineMaterialTask.new()
+			var task = AcquireTask.new()
+			task.set_data(type, 5)
+			return task
 		Global.TaskType.REPAIR:
-			return RepairTask.new()
+			var task = ActionTask.new()
+			task.set_data(type, 100)
+			return task
 		Global.TaskType.REFINE_MATERIALS:
-			return RefineMaterialTask.new()
+			var task = RefineMaterialTask.new()
+			task.set_data(type, 100)
+			return task
 		Global.TaskType.CHOP_WOOD:
-			return RefineWoodTask.new()
+			var task = RefineWoodTask.new()
+			task.set_data(type, 50)
+			return task
 		_:
 			print("Ayo this doesn't exist")
 			return null

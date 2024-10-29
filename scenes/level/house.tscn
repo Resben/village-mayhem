@@ -9,8 +9,38 @@
 [ext_resource type="Texture2D" uid="uid://dudprl7k45l5g" path="res://assets/ui/construction_front.png" id="5_roiiy"]
 [ext_resource type="PackedScene" uid="uid://s1lqdsrhk2h1" path="res://scenes/components/health_component.tscn" id="6_enn6o"]
 [ext_resource type="Resource" uid="uid://d2pvvmywd77dc" path="res://resources/jobs/construction_house.tres" id="6_ke105"]
-[ext_resource type="Script" path="res://scenes/components/hurtboxcomponent.gd" id="7_7xlnu"]
 [ext_resource type="PackedScene" uid="uid://b0ibgbnmp6r28" path="res://scenes/level/workable_effects.tscn" id="7_gruuq"]
+
+[sub_resource type="GDScript" id="GDScript_evru7"]
+script/source = "extends Area2D
+class_name HurtBoxComponent
+
+signal _on_damage
+signal _on_tick_damage
+signal _on_impact_damage
+
+@export var health_component : HealthComponent
+@export var process_tick_damage : bool
+@export var process_impact_damage : bool
+
+func _ready():
+	self.collision_layer = 16
+	self.collision_mask = 0
+
+func apply_impact_damage(dmg, type = null):
+	if health_component && process_impact_damage:
+		health_component.damage(dmg)
+	
+	_on_damage.emit(dmg, type)
+	_on_impact_damage.emit(dmg, type)
+
+func apply_tick_damage(dmg, type = null):
+	if health_component && process_tick_damage:
+		health_component.damage(dmg)
+	
+	_on_damage.emit(dmg, type)
+	_on_tick_damage.emit(dmg, type)
+"
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_umwap"]
 radius = 30.0
@@ -52,7 +82,7 @@ texture_progress = ExtResource("5_roiiy")
 max_health = 30
 
 [node name="HurtBoxComponent" type="Area2D" parent="." node_paths=PackedStringArray("health_component")]
-script = ExtResource("7_7xlnu")
+script = SubResource("GDScript_evru7")
 health_component = NodePath("../HealthComponent")
 process_tick_damage = true
 process_impact_damage = true

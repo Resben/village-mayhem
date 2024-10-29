@@ -10,7 +10,6 @@ var panic_locations = []
 var job_reference : Job
 
 @export var is_demo : bool
-@export var village_map : TileMap
 
 var direction
 var texture : Texture2D
@@ -77,6 +76,11 @@ func set_job(job):
 
 func set_idle():
 	state = Global.VillagerState.IDLING
+
+func start_work(type):
+	# Set emote here
+	if $ActionComplete.is_stopped():
+		$ActionComplete.start()
 
 func job_complete(job_type):
 	job_reference = null
@@ -188,3 +192,6 @@ func _on_idle_period_timeout():
 		navigation_component.set_target_position(Vector2(randf_range(-200, 200), randf_range(-200, 200)) + global_position)
 	elif state == Global.VillagerState.IDLING:
 		navigation_component.set_target_position(Vector2(randf_range(-500, 500), randf_range(-500, 500)) + global_position)
+
+func _on_action_complete_timeout():
+	job_reference.add_work_point()
