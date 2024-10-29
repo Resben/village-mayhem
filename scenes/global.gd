@@ -5,9 +5,25 @@ signal _on_speed_changed
 
 enum { NORMAL, FAST, VERY_FAST }
 
-enum JobType { CONSTRUCTION, RESOURCE }
-enum TaskType { CONSTRUCT_HOUSE, CONSTRUCT_FARM, COLLECT_FOOD, COLLECT_WOOD, RETURN_ITEMS }
+enum JobType { CONSTRUCTION_HOUSE, CONSTRUCTION_FARM, CONSTRUCTION_MINE, RESOURCE_FOOD, RESOURCE_WOOD, RESOURCE_MATERIALS, REPAIR }
+enum TaskType { 
+	BUILD_HOUSE, BUILD_FARM, BUILD_MINE, REPAIR, # Construction tasks
+	ACQUIRE_HOUSE_MATERIAL, ACQUIRE_FARM_MATERIAL, ACQUIRE_MINE_MATERIAL, # Collection tasks
+	FARM_FOOD, CUT_TREES, MINE_MATERIALS, # Gathering tasks
+	CHOP_WOOD, REFINE_MATERIALS # Refining tasks
+	}
 enum VillagerState { WORKING, IDLING, SCARED, DEMO }
+enum RewardType { WOOD, FOOD, MATERIAL, NONE }
+
+var jobtype_string_dictionary = {
+	Global.JobType.RESOURCE_FOOD : "resource_food",
+	Global.JobType.RESOURCE_WOOD : "resource_wood",
+	Global.JobType.RESOURCE_MATERIALS : "resource_material",
+	Global.JobType.CONSTRUCTION_HOUSE: "construct_house",
+	Global.JobType.CONSTRUCTION_FARM: "construct_farm",
+	Global.JobType.CONSTRUCTION_MINE: "construct_mine",
+	Global.JobType.REPAIR: "repair"
+}
 
 var is_in_disaster = false
 
@@ -137,3 +153,16 @@ func set_game_speed(speed):
 func set_speed(value, references):
 	for r in references:
 		r.set_speed(value)
+
+func is_construction_job(type):
+	if type == JobType.CONSTRUCTION_HOUSE || type == JobType.CONSTRUCTION_FARM || type == JobType.CONSTRUCTION_MINE:
+		return true
+	return false
+
+func is_resource_job(type):
+	if type == JobType.RESOURCE_FOOD || type == JobType.RESOURCE_WOOD || type == JobType.RESOURCE_MATERIALS:
+		return true
+	return false
+
+func jobtype_to_string(type):
+	return jobtype_string_dictionary[type]

@@ -177,29 +177,35 @@ func _on_action_timeout():
 	
 	var available_villagers = []
 	var current_jobs = {
-		"food" : 0,
-		"logging" : 0,
-		"mine" : 0,
-		"repair" : 0,
-		"build" : 0,
-		"farm" : 0,
-		"new_mine" : 0,
-		"construction" : 0
+		Global.JobType.RESOURCE_FOOD : 0,
+		Global.JobType.RESOURCE_WOOD : 0,
+		Global.JobType.RESOURCE_MATERIALS : 0,
+		Global.JobType.CONSTRUCTION_HOUSE: 0,
+		Global.JobType.CONSTRUCTION_FARM: 0,
+		Global.JobType.CONSTRUCTION_MINE: 0,
+		Global.JobType.REPAIR: 0
 	}
 	for v in Global.villager_references:
 		if v.state != Global.VillagerState.WORKING:
 			available_villagers.push_back(v)
 		else:
-			current_jobs[v.job_type] += 1
+			current_jobs[v.job_reference.type] += 1
 	
 	var priorities = calculate_priorities(current_jobs, available_villagers.size())
-	assign_workers(priorities, available_villagers)
 	
-	print(priorities)
+	var debug_print = ""
+	for p in priorities:
+		debug_print += Global.jobtype_to_string(p) + " : " + str(priorities[p]) + ", "
+	print(debug_print)
+	
+	assign_workers(priorities, available_villagers)
 	
 	$ActionTimer.start()
 
 func calculate_priorities(current_jobs, num_available_villagers) -> Dictionary:
+	if num_available_villagers == 0:
+		return {}
+	
 	var total_villagers = Global.villager_references.size()
 	var resources = Global.resources
 	var broken_buildings = Global.get_broken_buildings().size()
@@ -208,33 +214,30 @@ func calculate_priorities(current_jobs, num_available_villagers) -> Dictionary:
 	
 	# Initialize priorities dictionary
 	var priorities = {
-		"food": float(total_villagers * 30 / max(1, resources["food"])),
-		"logging": float(50 / max(1, resources["wood"])),
-		"mine": 0.0,
-		"repair": 0.0,
-		"build": 0.0,
-		"farm": 0.0,
-		"new_mine": 0.0,
-		"construction": Global.get_construction_buildings().size()
+		Global.JobType.RESOURCE_FOOD: float(total_villagers * 30 / max(1, resources["food"])),
+		Global.JobType.RESOURCE_WOOD: float(50 / max(1, resources["wood"])),
+		Global.JobType.RESOURCE_MATERIALS: 0.0,
+		Global.JobType.CONSTRUCTION_HOUSE: 0,
+		Global.JobType.CONSTRUCTION_FARM: 0,
+		Global.JobType.CONSTRUCTION_MINE: 0,
+		Global.JobType.REPAIR: 0
 	}
 	
 	# Set conditional values separately
 	if mines > 0:
-		priorities["mine"] = float(50 / max(1, resources["materials"]))
+		priorities[Global.JobType.RESOURCE_MATERIALS] = float(50 / max(1, resources["materials"]))
 	
 	if broken_buildings > 0 and resources["wood"] >= 25:
-		priorities["repair"] = float(broken_buildings * 25 / max(1, resources["wood"]))
+		priorities[Global.JobType.REPAIR] = float(broken_buildings * 25 / max(1, resources["wood"]))
 	
 	if broken_buildings == 0 and resources["wood"] >= 50:
-		priorities["build"] = float(resources["wood"] / 50)
+		priorities[Global.JobType.CONSTRUCTION_HOUSE] = float(resources["wood"] / 50)
 	
-	if farms == 0:
-		priorities["farm"] = 5.0
-	elif total_villagers / farms > 10:
-		priorities["farm"] = float(total_villagers * 10 / farms * 10 / max(1, resources["wood"]))
+	if total_villagers / farms > 10:
+		priorities[Global.JobType.CONSTRUCTION_FARM] = float(total_villagers * 10 / farms * 10 / max(1, resources["wood"]))
 	
 	if resources["wood"] >= 100 and mines < farms / 5:
-		priorities["new_mine"] = float(farms / 5 - mines)
+		priorities[Global.JobType.CONSTRUCTION_MINE] = float(farms / 5 - mines)
 	
 	# Normalize priorities to avoid extreme differences
 	var total_priority = 0.0
@@ -270,36 +273,29 @@ func assign_workers(priorities, villagers):
 		for v in priorities[p]:
 			var workable
 			match p:
-				"food":
+				Global.JobType.RESOURCE_FOOD:
 					workable = find_best_slot(p, Global.farm_references)
-				"logging":
+				Global.JobType.RESOURCE_WOOD:
 					workable = find_best_slot(p, Global.wood_references)
-				"mine":
+				Global.JobType.RESOURCE_MATERIALS:
 					pass
-				"repair":
+				Global.JobType.REPAIR:
 					pass
-				"build":
+				Global.JobType.CONSTRUCTION_HOUSE:
 					if Global.resources["wood"] > 50:
 						workable = construct_house()
-				"farm":
+				Global.JobType.CONSTRUCTION_FARM:
 					if Global.resources["wood"] > 10: 
 						workable = construct_farm()
-				"new_mine":
+				Global.JobType.CONSTRUCTION_MINE:
 					pass
-				"construction":
-					workable = find_best_slot(p, Global.get_construction_buildings())
 			
 			if workable != null:
-				var type
-				if p == "construction":
-					type = Global.JobType.CONSTRUCTION
-				else:
-					type = Global.JobType.RESOURCE
-				var job = workable.create_job(type, villagers[i])
+				var job = workable.create_job(p, villagers[i])
 				i += 1
 			else:
 				priorities.erase(p)
-				print(p + " was null")
+				print(Global.jobtype_to_string(p) + " was null")
 
 func find_best_slot(job_id, array_of_workplaces : Array[Workable]) -> Workable:
 	var num_spots = 0

@@ -80,7 +80,6 @@ func set_idle():
 
 func job_complete(job_type):
 	job_reference = null
-	JobManager.queue_villager(self)
 	if job_reference == null:
 		set_idle()
 

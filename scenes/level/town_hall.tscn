@@ -1,13 +1,14 @@
-[gd_scene load_steps=12 format=3 uid="uid://c33pktdldj78b"]
+[gd_scene load_steps=13 format=3 uid="uid://c33pktdldj78b"]
 
 [ext_resource type="Script" path="res://scenes/level/house.gd" id="1_pk5v8"]
 [ext_resource type="Texture2D" uid="uid://bauo0k8ih1wl3" path="res://assets/buildings/house/house.png" id="2_lbe1h"]
-[ext_resource type="Texture2D" uid="uid://bp37s8mfetvvr" path="res://assets/buildings/house/house_construction.png" id="2_mdbf3"]
-[ext_resource type="Texture2D" uid="uid://dk1v4y2k3e034" path="res://assets/buildings/house/house_broken.png" id="3_c22ra"]
-[ext_resource type="Texture2D" uid="uid://0ehfbctp80ew" path="res://assets/buildings/house/house_damaged.png" id="4_qc3ef"]
+[ext_resource type="Texture2D" uid="uid://bp37s8mfetvvr" path="res://assets/buildings/house/house_construction.png" id="2_mitt5"]
+[ext_resource type="Texture2D" uid="uid://dk1v4y2k3e034" path="res://assets/buildings/house/house_broken.png" id="3_b0d42"]
+[ext_resource type="Texture2D" uid="uid://0ehfbctp80ew" path="res://assets/buildings/house/house_damaged.png" id="4_ngjok"]
 [ext_resource type="Texture2D" uid="uid://15bvc28oda6i" path="res://assets/ui/construction_back.png" id="4_wkov0"]
 [ext_resource type="PackedScene" uid="uid://q7st16jfuixd" path="res://scenes/components/hurt_box_component.tscn" id="5_0uymm"]
 [ext_resource type="Texture2D" uid="uid://dudprl7k45l5g" path="res://assets/ui/construction_front.png" id="5_olc6c"]
+[ext_resource type="Resource" uid="uid://d2pvvmywd77dc" path="res://resources/jobs/construction_house.tres" id="6_i06ye"]
 [ext_resource type="PackedScene" uid="uid://b0ibgbnmp6r28" path="res://scenes/level/workable_effects.tscn" id="6_r4sci"]
 [ext_resource type="PackedScene" uid="uid://s1lqdsrhk2h1" path="res://scenes/components/health_component.tscn" id="6_x280k"]
 
@@ -18,12 +19,13 @@ radius = 30.0
 texture_filter = 1
 script = ExtResource("1_pk5v8")
 is_townhall = true
-construction_texture = ExtResource("2_mdbf3")
-broken_texture = ExtResource("3_c22ra")
-damaged_texture = ExtResource("4_qc3ef")
-built_texture = ExtResource("2_lbe1h")
 health_component = NodePath("HealthComponent")
 hurtbox_component = NodePath("HurtBoxComponent")
+construction_texture = ExtResource("2_mitt5")
+broken_texture = ExtResource("3_b0d42")
+damaged_texture = ExtResource("4_ngjok")
+built_texture = ExtResource("2_lbe1h")
+jobs = Array[Resource("res://scenes/ai/job.gd")]([ExtResource("6_i06ye")])
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_lbe1h")

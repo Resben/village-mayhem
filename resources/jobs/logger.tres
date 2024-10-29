@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Job" load_steps=2 format=3 uid="uid://c733a7aubhrrh"]
+
+[ext_resource type="Script" path="res://scenes/ai/job.gd" id="1_hjxwn"]
+
+[resource]
+script = ExtResource("1_hjxwn")
+type = 4
+tasks_to_complete = Array[int]([8])
+reward_type = 0
+reward_count = 50

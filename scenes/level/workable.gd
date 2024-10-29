@@ -9,8 +9,6 @@ var available_work_slots = 3
 var workers = 0
 var work_radius = 30
 
-var required_points = 0
-
 @export var health_component : HealthComponent
 @export var hurtbox_component : HurtBoxComponent
 
@@ -64,7 +62,7 @@ func remove_worker():
 	workers -= 1
 
 func _on_job_complete(type):
-	if type == Global.JobType.CONSTRUCTION:
+	if Global.is_construction_job(type):
 		state = BUILT
 	else:
 		remove_worker()
@@ -76,7 +74,7 @@ func create_job(type, villager):
 			newJob.set_up(self, villager)
 			villager.set_job(newJob)
 			newJob._on_job_completion.connect(_on_job_complete)
-			if type == Global.JobType.RESOURCE:
+			if Global.is_resource_job(type):
 				add_worker()
 			return
 	print("couldn't find job")

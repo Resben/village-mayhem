@@ -1,7 +1,8 @@
-[gd_scene load_steps=13 format=3 uid="uid://b31napmf2sfek"]
+[gd_scene load_steps=14 format=3 uid="uid://b31napmf2sfek"]
 
 [ext_resource type="Script" path="res://scenes/level/wood_resource.gd" id="1_0c7rg"]
 [ext_resource type="Texture2D" uid="uid://ciqbu2cok60nc" path="res://assets/environment/tree.png" id="3_78yov"]
+[ext_resource type="Resource" uid="uid://c733a7aubhrrh" path="res://resources/jobs/logger.tres" id="3_g8670"]
 [ext_resource type="Texture2D" uid="uid://15bvc28oda6i" path="res://assets/ui/construction_back.png" id="3_n7k4v"]
 [ext_resource type="Texture2D" uid="uid://dudprl7k45l5g" path="res://assets/ui/construction_front.png" id="4_l3q8v"]
 
@@ -41,6 +42,7 @@ _data = {
 scale = Vector2(2, 2)
 script = ExtResource("1_0c7rg")
 built_texture = ExtResource("3_78yov")
+jobs = Array[Resource("res://scenes/ai/job.gd")]([ExtResource("3_g8670")])
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1

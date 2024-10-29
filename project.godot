@@ -18,7 +18,6 @@ config/icon="res://icon.svg"
 [autoload]
 
 Global="*res://scenes/global.gd"
-JobManager="*res://scenes/job_manager.tscn"
 
 [display]
 
