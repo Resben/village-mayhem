@@ -117,8 +117,10 @@ func get_world_tile_existing(vec):
 
 var display_generated_map = []
 var island_map = []
+var ocean_map = []
 var docks = {}
 var island_sizes = {}
+var ocean_sizes = {}
 
 var thread : Thread = Thread.new()
 var is_setup = false
@@ -135,7 +137,8 @@ func thread_job_1():
 		
 	initialise_map(generated_map)
 	initialise_map(display_generated_map)
-	initialise_island_map(island_map)
+	initialise_flood_map(island_map)
+	initialise_flood_map(ocean_map)
 	generate_tilemap_from_noise(generated_map)
 	
 	for x in range(Global.map_size.x):
@@ -143,6 +146,8 @@ func thread_job_1():
 			generate_display_tile(generated_map, Vector2i(x, y))
 	
 	identify_islands()
+	identify_oceans()
+	print(ocean_sizes)
 	remove_docks()
 	
 	call_deferred("thread_complete")
@@ -236,7 +241,7 @@ func get_world_tile_from_generated(map, vec):
 
 ################ DOCK GENERATION ################
 
-func initialise_island_map(map):
+func initialise_flood_map(map):
 	map.resize(Global.map_size.x)
 	for x in range(Global.map_size.x):
 		map[x] = []
@@ -263,6 +268,14 @@ func identify_islands():
 				flood_fill_island(x, y, island_id)
 				island_id += 1
 
+func identify_oceans():
+	var ocean_id = 0
+	for x in range(Global.map_size.x):
+		for y in range(Global.map_size.y):
+			if is_ocean_tile(x, y) and ocean_map[x][y] == -1:
+				flood_fill_ocean(x, y, ocean_id)
+				ocean_id += 1
+
 func is_land_tile(x, y):
 	var atlas = display_generated_map[x][y][0]
 	var source = display_generated_map[x][y][1]
@@ -280,6 +293,42 @@ func is_shore_tile(x, y):
 		return true
 	else:
 		return false
+
+func is_ocean_tile(x, y):
+	var atlas = display_generated_map[x][y][0]
+	var source = display_generated_map[x][y][1]
+	if atlas == Vector2i(0, 3) && source == 1:
+		return true
+	else:
+		return false
+
+func flood_fill_ocean(start_x, start_y, ocean_id):
+	var stack = []
+	stack.append(Vector2(start_x, start_y))
+	var ocean_size = 0
+
+	while stack.size() > 0:
+		var current = stack.pop_back()
+		var cx = int(current.x)
+		var cy = int(current.y)
+
+		# Skip if already visited
+		if ocean_map[cx][cy] != -1:
+			continue
+
+		# Mark the tile with the ocean ID
+		ocean_map[cx][cy] = ocean_id
+		ocean_size += 1
+
+		# Check neighbors to continue the fill
+		for offset in [Vector2(0, -1), Vector2(0, 1), Vector2(-1, 0), Vector2(1, 0)]:
+			var nx = cx + int(offset.x)
+			var ny = cy + int(offset.y)
+			if nx >= 0 and nx < Global.map_size.x and ny >= 0 and ny < Global.map_size.y:
+				if is_ocean_tile(nx, ny) and ocean_map[nx][ny] == -1:
+					stack.append(Vector2(nx, ny))
+		
+	ocean_sizes[ocean_id] = ocean_size
 
 func flood_fill_island(start_x, start_y, island_id):
 	var stack = []
