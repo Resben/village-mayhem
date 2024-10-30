@@ -83,9 +83,9 @@ max_health = 30
 
 [node name="HurtBoxComponent" type="Area2D" parent="." node_paths=PackedStringArray("health_component")]
 script = SubResource("GDScript_evru7")
-health_component = NodePath("../HealthComponent")
 process_tick_damage = true
 process_impact_damage = true
+health_component = NodePath("../HealthComponent")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBoxComponent"]
 shape = SubResource("CircleShape2D_umwap")

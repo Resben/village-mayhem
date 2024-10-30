@@ -38,9 +38,12 @@ func process_job(delta):
 		current_task.run(delta)
 
 func _task_complete():
+	if current_task != null:
+		current_task.on_exit()
 	if tasks.size() > 0:
 		current_task = tasks.pop_front()
+		current_task.on_enter()
 	else:
 		job_completion = true
-		_on_job_completion.emit()
+		_on_job_completion.emit(type)
 		current_task = null

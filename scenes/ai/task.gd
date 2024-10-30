@@ -11,6 +11,8 @@ var task_complete = false
 var workable : Workable
 var villager : Villager
 
+var variables = {}
+
 func set_up(in_workable : Workable, in_villager : Villager):
 	workable = in_workable
 	villager = in_villager
@@ -32,6 +34,9 @@ func set_data(type, points):
 func on_enter():
 	pass
 
+func on_exit():
+	pass
+
 func run(delta):
 	pass
 
@@ -44,43 +49,55 @@ func set_up_override():
 
 class ActionTask extends Task:
 	func on_enter():
-		pass
+		variables["target_position"] = workable.get_random_edge_location()
+		villager.navigation_component.force_set_target_position(variables["target_position"])
+
+	func on_exit():
+		villager.emotes.set_emote("none")
 
 	func run(delta):
-		if villager.global_position.distance_to(workable.global_position) > 50:
-			villager.navigation_component.set_target_position(workable.global_position)
-		else:
+		if villager.navigation_component.is_navigation_finished():
 			villager.start_work(task_type)
+			villager.emotes.set_emote("work")
 
 class RefineMaterialTask extends Task:
 	func on_enter():
-		pass
+		variables["target_position"] = workable.get_random_edge_location()
+		villager.navigation_component.force_set_target_position(variables["target_position"])
+
+	func on_exit():
+		villager.emotes.set_emote("none")
 
 	func run(delta):
-		if villager.global_position.distance_to(workable.global_position) > 50:
-			villager.navigation_component.set_target_position(workable.global_position)
-		else:
+		if villager.navigation_component.is_navigation_finished():
 			villager.start_work(task_type)
+			villager.emotes.set_emote("work")
 
 class RefineWoodTask extends Task:
 	func on_enter():
-		pass
+		variables["target_position"] = workable.get_random_edge_location()
+		villager.navigation_component.force_set_target_position(variables["target_position"])
+
+	func on_exit():
+		villager.emotes.set_emote("none")
 
 	func run(delta):
-		if villager.global_position.distance_to(workable.global_position) > 50:
-			villager.navigation_component.set_target_position(workable.global_position)
-		else:
+		if villager.navigation_component.is_navigation_finished():
 			villager.start_work(task_type)
+			villager.emotes.set_emote("work")
 
 class AcquireTask extends Task:
 	func on_enter():
-		pass
+		variables["target_position"] = workable.get_random_edge_location()
+		villager.navigation_component.force_set_target_position(variables["target_position"])
+
+	func on_exit():
+		villager.emotes.set_emote("none")
 
 	func run(delta):
-		if villager.global_position.distance_to(workable.global_position) > 50:
-			villager.navigation_component.set_target_position(workable.global_position)
-		else:
+		if villager.navigation_component.is_navigation_finished():
 			villager.start_work(task_type)
+			villager.emotes.set_emote("work")
 
 ###################################################################
 ############################# FACTORY #############################

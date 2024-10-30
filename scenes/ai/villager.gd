@@ -22,6 +22,7 @@ var playback_speed = 1
 
 @onready var original_wait_time = $ActionComplete.wait_time
 
+@onready var emotes = $Emotes
 @onready var hurtbox_component = $HurtBoxComponent
 @onready var navigation_component = $NavigationComponent
 @onready var velocity_component = $VelocityComponent
@@ -78,14 +79,12 @@ func set_idle():
 	state = Global.VillagerState.IDLING
 
 func start_work(type):
-	# Set emote here
 	if $ActionComplete.is_stopped():
 		$ActionComplete.start()
 
 func job_complete(job_type):
 	job_reference = null
-	if job_reference == null:
-		set_idle()
+	set_idle()
 
 func _physics_process(delta):
 	
