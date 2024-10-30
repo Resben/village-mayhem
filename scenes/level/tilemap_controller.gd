@@ -15,7 +15,7 @@ var neighbours = [Vector2i(0,0), Vector2i(1,0), Vector2i(0,1), Vector2i(1,1)]
 var noise = FastNoiseLite.new()
 var sea_threshold = 0.5
 var high_threshold = 0.7
-var minimum_island_size = 15
+var minimum_island_size = 25
 
 var neighbours_to_atlas_grass_sea = {
 	## GRASS TO SEA
@@ -243,11 +243,17 @@ func initialise_island_map(map):
 		for y in range(Global.map_size.y):
 			map[x].append(-1)
 
-func get_island_id(vec) -> int:
+func get_island_id(raw_position) -> int:
+	var vec = local_to_map(raw_position)
 	if vec.x >= 0 and vec.x < Global.map_size.x and vec.y >= 0 and vec.y < Global.map_size.y:
 		return island_map[vec.x][vec.y]
 	else:
 		return -1  # Return -1 if position is out of bounds or sea
+
+func get_island_size(id):
+	if id == -1:
+		return 0
+	return island_sizes[id]
 
 func identify_islands():
 	var island_id = 0
@@ -258,15 +264,18 @@ func identify_islands():
 				island_id += 1
 
 func is_land_tile(x, y):
-	var atlas = display_map.get_cell_atlas_coords(0, Vector2i(x, y))
-	if atlas != Vector2i(0, 3):
+	var atlas = display_generated_map[x][y][0]
+	var source = display_generated_map[x][y][1]
+	if atlas != Vector2i(0, 3) && source == 1:
+		return true
+	elif source != 1:
 		return true
 	else:
 		return false
 
 func is_shore_tile(x, y):
-	var atlas = display_map.get_cell_atlas_coords(0, Vector2i(x, y))
-	var source = display_map.get_cell_source_id(0, Vector2i(x, y))
+	var atlas = display_generated_map[x][y][0]
+	var source = display_generated_map[x][y][1]
 	if atlas != Vector2i(0, 3) && atlas != Vector2i(2, 1) && source != 2:
 		return true
 	else:
@@ -308,6 +317,10 @@ func flood_fill_island(start_x, start_y, island_id):
 		docks[island_id] = shoreline_tiles[randi() % shoreline_tiles.size()]
 
 func remove_docks():
+	var docks_to_erase = []
 	for d in docks:
 		if island_sizes[d] < minimum_island_size:
-			docks.erase(d)
+			docks_to_erase.push_back(d)
+	
+	for e in docks_to_erase:
+		docks.erase(e)

@@ -108,7 +108,7 @@ village_map = NodePath("../VillageTileMap")
 one_shot = true
 autostart = true
 
-[node name="Cursor" type="AnimatedSprite2D" parent="." node_paths=PackedStringArray("village_map", "cpu")]
+[node name="Cursor" type="AnimatedSprite2D" parent="." node_paths=PackedStringArray("village_map", "cpu", "world_map")]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_lay0s")
 animation = &"second"
@@ -116,6 +116,7 @@ autoplay = "default"
 script = ExtResource("6_5ykgd")
 village_map = NodePath("../VillageTileMap")
 cpu = NodePath("../CPU")
+world_map = NodePath("../WorldTileMap")
 
 [node name="WaypointTimer" type="Timer" parent="Cursor"]
 wait_time = 3.0
