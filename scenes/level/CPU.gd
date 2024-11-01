@@ -25,53 +25,32 @@ func disaster_over():
 ############################### VILLAGE PLACEMENT ###############################
 #################################################################################
 
-func construct_farm():
+func construct_workable(id):
 	var new_location
-	for townhall in village_map.get_used_cells_by_id(0, 0, Vector2i(1, 0)):
-		var town_count = count_farms(townhall)
-		if town_count < 5:
-			new_location = get_next_location_in_range(townhall)
-		if new_location == null:
-			new_location = get_random_location(townhall)
-		if new_location != null:
-			break
-	
-	if new_location != null:
-		return village_map.place_building("farm", new_location, true)
-	else:
-		return null
-
-func construct_house():
-	var new_location
+	var was_random = false
 	for townhall in village_map.get_used_cells_by_id(0, 0, Vector2i(0, 2)):
-		var town_count = count_houses(townhall)
-		if town_count < 5:
+		var workable_count = count_workables(townhall, id)
+		if workable_count < 5:
 			new_location = get_next_location_in_range(townhall)
 		if new_location == null:
 			new_location = get_random_location(townhall)
+			if new_location != null:
+				was_random = true
 		if new_location != null:
 			break
 	
 	if new_location != null:
-		return village_map.place_building("house", new_location, true)
+		if was_random && id == "house":
+			id = "town_house"
+		return village_map.place_building(id, new_location, true)
 	else:
 		return null
 
-func count_farms(location):
+func count_workables(location, id):
 	var count = 0
 	var world_position = village_map.map_to_local(location)
-	for farm in Global.farm_references:
-		if farm.global_position.distance_to(world_position) <= MINIMUM_TOWN_DISTANCE:
-			count += 1
-	return count
-
-func count_houses(location):
-	var count = 0
-	var world_position = village_map.map_to_local(location)
-	for house in Global.house_references:
-		if house.is_townhall:
-			continue
-		if house.global_position.distance_to(world_position) <= MINIMUM_TOWN_DISTANCE:
+	for workable in Global.workable_references[id]:
+		if workable.global_position.distance_to(world_position) <= MINIMUM_TOWN_DISTANCE:
 			count += 1
 	return count
 
@@ -193,6 +172,8 @@ func calculate_priorities(current_jobs, num_available_villagers) -> Dictionary:
 	for key in priorities.keys():
 		priorities[key] = max(priorities[key] / total_priority, min_allocation)
 	
+	print(priorities)
+	
 	# Allocate villagers proportionally
 	var allocated_villagers = {}
 	var total_assigned_villagers = 0
@@ -227,12 +208,12 @@ func assign_workers(priorities, villagers):
 					pass
 				Global.JobType.CONSTRUCTION_HOUSE:
 					if Global.resources["wood"] >= 50:
-						workable = construct_house()
+						workable = construct_workable("house")
 						if workable:
 							Global.remove_resources("wood", 50)
 				Global.JobType.CONSTRUCTION_FARM:
 					if Global.resources["wood"] >= 10: 
-						workable = construct_farm()
+						workable = construct_workable("farm")
 						if workable:
 							Global.remove_resources("wood", 10)
 				Global.JobType.CONSTRUCTION_MINE:
