@@ -23,9 +23,9 @@ var playback_speed = 1
 @onready var original_wait_time = $ActionComplete.wait_time
 
 @onready var emotes = $Emotes
-@onready var hurtbox_component = $HurtBoxComponent
-@onready var navigation_component = $NavigationComponent
-@onready var velocity_component = $VelocityComponent
+@onready var hurtbox_component : HealthComponent = $HurtBoxComponent
+@onready var navigation_component : NavigationComponent = $NavigationComponent
+@onready var velocity_component : VelocityComponent = $VelocityComponent
 
 func _ready():
 	$AnimationPlayer.play("walk")
@@ -85,6 +85,16 @@ func start_work(type):
 func job_complete(job_type):
 	job_reference = null
 	set_idle()
+
+func travel_to(target_position):
+	if navigation_component.is_navigation_possible(target_position):
+		navigation_component.force_set_target_position(target_position)
+	else:
+		var current_island
+		var target_island
+		
+		var dock_position
+		
 
 func _physics_process(delta):
 	

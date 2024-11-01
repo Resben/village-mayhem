@@ -517,9 +517,9 @@ anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
 offset_left = -26.7065
-offset_top = 6109.0
+offset_top = 6284.0
 offset_right = 13.2935
-offset_bottom = 6141.0
+offset_bottom = 6316.0
 grow_vertical = 2
 texture_normal = ExtResource("7_08pkq")
 

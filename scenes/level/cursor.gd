@@ -23,9 +23,8 @@ func get_world_pos_tile(world_pos):
 func _unhandled_input(_event):
 	
 	if Input.is_action_just_pressed("left_mouse"):
-		var id = world_map.get_island_id(get_global_mouse_position())
+		var id = world_map.is_ocean_tile(world_map.local_to_map(get_global_mouse_position()).x, world_map.local_to_map(get_global_mouse_position()).y)
 		print(id)
-		print(world_map.get_island_size(id))
 	#if Input.is_action_just_pressed("right_mouse"):
 		#Global.disaster_over()
 	

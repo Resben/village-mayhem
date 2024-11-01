@@ -119,13 +119,13 @@ func check_availablity(raw_position) -> bool:
 
 func generate_docks(docks):
 	var new_docks = {}
-	for dock in docks:
-		var scene = id_to_scene["dock"].instantiate()
-		var id = dock
-		var new_position = display_map.map_to_local(docks[dock])
-		
-		scene.id = id
-		scene.position = new_position
-		new_docks[id] = scene
-		add_child(scene)
+	for island in docks:
+		for ocean in docks[island]:
+			var scene = id_to_scene["dock"].instantiate()
+			var new_position = display_map.map_to_local(docks[island][ocean].map_position)
+			
+			scene.position = new_position
+			scene.data = docks[island][ocean]
+			new_docks[Vector2i(island, ocean)] = scene
+			add_child(scene)
 	Global.docks = new_docks

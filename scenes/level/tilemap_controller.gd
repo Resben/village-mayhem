@@ -115,12 +115,13 @@ func get_world_tile_existing(vec):
 ###################### THREAD SAFE STUFF ########################
 #################################################################
 
-var display_generated_map = []
-var island_map = []
-var ocean_map = []
-var docks = {}
-var island_sizes = {}
-var ocean_sizes = {}
+var display_generated_map = [] # Generated map based on noise texture
+var island_map = [] # Land map position to island id
+var ocean_map = [] # Ocean map position to ocean id
+var docks = {} # List of docks
+var island_sizes = {} # Island id to island size
+var ocean_sizes = {} # Ocean id to ocean size
+var shoreline_tiles = {} # Ocean id to array of island ids to array of shoreline positions
 
 var thread : Thread = Thread.new()
 var is_setup = false
@@ -134,7 +135,7 @@ func thread_job_1():
 	noise.fractal_lacunarity = 2.0
 	noise.fractal_gain = 0.5
 	noise.seed = randi()
-		
+	
 	initialise_map(generated_map)
 	initialise_map(display_generated_map)
 	initialise_flood_map(island_map)
@@ -145,11 +146,10 @@ func thread_job_1():
 		for y in range(Global.map_size.y):
 			generate_display_tile(generated_map, Vector2i(x, y))
 	
-	identify_islands()
 	identify_oceans()
-	print(ocean_sizes)
-	remove_docks()
-	
+	identify_islands()
+	identify_shorelines()
+	generate_docks()
 	call_deferred("thread_complete")
 
 func thread_complete():
@@ -249,9 +249,16 @@ func initialise_flood_map(map):
 			map[x].append(-1)
 
 func get_island_id(raw_position) -> int:
-	var vec = local_to_map(raw_position)
+	var vec = display_map.local_to_map(raw_position)
 	if vec.x >= 0 and vec.x < Global.map_size.x and vec.y >= 0 and vec.y < Global.map_size.y:
 		return island_map[vec.x][vec.y]
+	else:
+		return -1  # Return -1 if position is out of bounds or sea
+
+func get_ocean_id(raw_position) -> int:
+	var vec = display_map.local_to_map(raw_position)
+	if vec.x >= 0 and vec.x < Global.map_size.x and vec.y >= 0 and vec.y < Global.map_size.y:
+		return ocean_map[vec.x][vec.y]
 	else:
 		return -1  # Return -1 if position is out of bounds or sea
 
@@ -275,6 +282,13 @@ func identify_oceans():
 			if is_ocean_tile(x, y) and ocean_map[x][y] == -1:
 				flood_fill_ocean(x, y, ocean_id)
 				ocean_id += 1
+
+func identify_shorelines():
+	for x in range(Global.map_size.x):
+		for y in range(Global.map_size.y):
+			if is_ocean_tile(x, y) and !visited.has(Vector2i(x, y)):
+				var ocean_id = get_ocean_id(display_map.map_to_local(Vector2i(x, y)))
+				flood_fill_shorelines(x, y, ocean_id)
 
 func is_land_tile(x, y):
 	var atlas = display_generated_map[x][y][0]
@@ -304,7 +318,7 @@ func is_ocean_tile(x, y):
 
 func flood_fill_ocean(start_x, start_y, ocean_id):
 	var stack = []
-	stack.append(Vector2(start_x, start_y))
+	stack.append(Vector2i(start_x, start_y))
 	var ocean_size = 0
 
 	while stack.size() > 0:
@@ -321,20 +335,20 @@ func flood_fill_ocean(start_x, start_y, ocean_id):
 		ocean_size += 1
 
 		# Check neighbors to continue the fill
-		for offset in [Vector2(0, -1), Vector2(0, 1), Vector2(-1, 0), Vector2(1, 0)]:
+		for offset in [Vector2i(0, -1), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(1, 0)]:
 			var nx = cx + int(offset.x)
 			var ny = cy + int(offset.y)
 			if nx >= 0 and nx < Global.map_size.x and ny >= 0 and ny < Global.map_size.y:
 				if is_ocean_tile(nx, ny) and ocean_map[nx][ny] == -1:
-					stack.append(Vector2(nx, ny))
+					stack.append(Vector2i(nx, ny))
 		
 	ocean_sizes[ocean_id] = ocean_size
 
 func flood_fill_island(start_x, start_y, island_id):
 	var stack = []
-	stack.append(Vector2(start_x, start_y))
-	var shoreline_tiles = []
+	stack.append(Vector2i(start_x, start_y))
 	var island_size = 0
+	var next_shoreline = []
 
 	while stack.size() > 0:
 		var current = stack.pop_back()
@@ -350,26 +364,83 @@ func flood_fill_island(start_x, start_y, island_id):
 		island_size += 1
 
 		# Check neighbors for shorelines and connected land tiles
-		for offset in [Vector2(0, -1), Vector2(0, 1), Vector2(-1, 0), Vector2(1, 0)]:
+		for offset in [Vector2i(0, -1), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(1, 0)]:
 			var nx = cx + int(offset.x)
 			var ny = cy + int(offset.y)
 			if nx >= 0 and nx < Global.map_size.x and ny >= 0 and ny < Global.map_size.y:
 				if is_land_tile(nx, ny) and island_map[nx][ny] == -1:
-					stack.append(Vector2(nx, ny))
-					if is_shore_tile(nx, ny):
-						shoreline_tiles.append(Vector2(cx, cy))  # Current tile is on shore
+					stack.append(Vector2i(nx, ny))
 	
 	island_sizes[island_id] = island_size
-	
-	# Place a dock on a random shoreline tile for this island
-	if shoreline_tiles.size() > 0:
-		docks[island_id] = shoreline_tiles[randi() % shoreline_tiles.size()]
 
-func remove_docks():
-	var docks_to_erase = []
-	for d in docks:
-		if island_sizes[d] < minimum_island_size:
-			docks_to_erase.push_back(d)
+var visited = {}  # Keep track of visited tiles in this flood fill
+
+# Flood-fill function to identify shorelines for a given ocean tile
+func flood_fill_shorelines(start_x, start_y, ocean_id):
+	var stack = []
+	stack.append(Vector2i(start_x, start_y))
 	
-	for e in docks_to_erase:
-		docks.erase(e)
+	while stack.size() > 0:
+		var current = stack.pop_back()
+		var cx = int(current.x)
+		var cy = int(current.y)
+		
+		# Skip if already visited
+		if visited.has(Vector2i(cx, cy)):
+			continue
+		
+		visited[Vector2i(cx, cy)] = true
+		
+		# Check neighbors
+		for offset in [Vector2i(0, -1), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(1, 0)]:
+			var nx = cx + int(offset.x)
+			var ny = cy + int(offset.y)
+			
+			if nx >= 0 and nx < Global.map_size.x and ny >= 0 and ny < Global.map_size.y:
+				if is_land_tile(nx, ny):
+					# This tile is a shoreline
+					var island_id = get_island_id(display_map.map_to_local(Vector2i(nx, ny)))
+					
+					# Add to shoreline_tiles under the correct ocean_id and island_id
+					if not shoreline_tiles.has(ocean_id):
+						shoreline_tiles[ocean_id] = {}
+					
+					if not shoreline_tiles[ocean_id].has(island_id):
+						shoreline_tiles[ocean_id][island_id] = []
+
+					# Record the shoreline position
+					shoreline_tiles[ocean_id][island_id].append(Vector2i(nx, ny))
+				elif is_ocean_tile(nx, ny):
+					# Continue flood filling into adjacent ocean tiles
+					stack.append(Vector2i(nx, ny))
+
+func generate_docks():
+	var new_shoreline_tile_map = shoreline_tiles.duplicate(true)
+	
+	for ocean in shoreline_tiles:
+		for island in shoreline_tiles[ocean]:
+			if get_island_size(island) < minimum_island_size:
+				new_shoreline_tile_map[ocean].erase(island)
+	
+	for ocean in new_shoreline_tile_map:
+		if new_shoreline_tile_map[ocean].size() > 1:
+			for island in new_shoreline_tile_map[ocean]:
+				if !docks.has(island):
+					docks[island] = {}
+				if docks[island].has(ocean):
+					print("Island cannot have multiple docks for the same ocean")
+				var dockData = DockData.new()
+				var random_tile = shoreline_tiles[ocean][island][randi() % shoreline_tiles[ocean][island].size()]
+				dockData.map_position = random_tile
+				dockData.connected_island_id = get_island_id(display_map.map_to_local(random_tile))
+				dockData.connected_island_pos = random_tile
+				for n in neighbours.size():
+					var newPos = random_tile + neighbours[n]
+					if newPos.x >= 0 and newPos.x < Global.map_size.x and newPos.y >= 0 and newPos.y < Global.map_size.y:
+						if display_generated_map[newPos.x][newPos.y][0] == Vector2i(0, 3) && display_generated_map[newPos.x][newPos.y][1] == 1:
+							dockData.connected_ocean_pos = newPos
+							dockData.connected_ocean_id = get_ocean_id(newPos)
+				if !dockData.is_set():
+					print("Something went wrong")
+				docks[island][ocean] = dockData
+	print(docks)
