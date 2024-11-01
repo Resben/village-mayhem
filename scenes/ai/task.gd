@@ -8,6 +8,8 @@ var required_points : int
 var current_points = 0
 var task_complete = false
 
+var process_action_points = true
+
 var workable : Workable
 var villager : Villager
 
@@ -21,15 +23,22 @@ func set_up(in_workable : Workable, in_villager : Villager):
 func add_action_point():
 	if task_complete:
 		return
-	current_points += 1
-	villager.set_progress(float(current_points) / required_points)
+	on_action_point()
+	if process_action_points:
+		current_points += 1
 	if current_points == required_points:
+		on_task_completion()
 		_on_task_complete.emit()
-		villager.set_progress(1)
 
 func set_data(type, points):
 	task_type = type
 	required_points = points
+
+func on_action_point():
+	pass
+
+func on_task_completion():
+	pass
 
 func on_enter():
 	pass
@@ -48,54 +57,45 @@ func set_up_override():
 ###################################################################
 
 class ActionTask extends Task:
+	func on_action_point():
+		villager.set_progress(float(current_points) / required_points)
+
+	func on_task_completion():
+		villager.set_progress(1)
+
 	func on_enter():
 		variables["target_position"] = workable.get_random_edge_location()
-		villager.navigation_component.force_set_target_position(variables["target_position"])
+		villager.travel_to(variables["target_position"])
 
 	func on_exit():
 		villager.emotes.set_emote("none")
 
 	func run(delta):
-		if villager.navigation_component.is_navigation_finished():
+		if villager.navigation_component.get_navigation_target() == variables["target_position"] && villager.navigation_component.is_navigation_finished():
+			villager.state = Global.VillagerState.WORKING
 			villager.start_work(task_type)
 			villager.emotes.set_emote("work")
 
-class RefineMaterialTask extends Task:
+class BuildTask extends Task:
+	func setup_override():
+		current_points = workable.health_component.current_health
+		required_points = workable.health_component.max_health
+		process_action_points = false
+	
+	func on_action_point():
+		workable.health_component.heal(1)
+	
 	func on_enter():
 		variables["target_position"] = workable.get_random_edge_location()
-		villager.navigation_component.force_set_target_position(variables["target_position"])
+		villager.travel_to(variables["target_position"])
 
 	func on_exit():
 		villager.emotes.set_emote("none")
 
 	func run(delta):
-		if villager.navigation_component.is_navigation_finished():
-			villager.start_work(task_type)
-			villager.emotes.set_emote("work")
-
-class RefineWoodTask extends Task:
-	func on_enter():
-		variables["target_position"] = workable.get_random_edge_location()
-		villager.navigation_component.force_set_target_position(variables["target_position"])
-
-	func on_exit():
-		villager.emotes.set_emote("none")
-
-	func run(delta):
-		if villager.navigation_component.is_navigation_finished():
-			villager.start_work(task_type)
-			villager.emotes.set_emote("work")
-
-class AcquireTask extends Task:
-	func on_enter():
-		variables["target_position"] = workable.get_random_edge_location()
-		villager.navigation_component.force_set_target_position(variables["target_position"])
-
-	func on_exit():
-		villager.emotes.set_emote("none")
-
-	func run(delta):
-		if villager.navigation_component.is_navigation_finished():
+		current_points = workable.health_component.current_health
+		if villager.navigation_component.get_navigation_target() == variables["target_position"] && villager.navigation_component.is_navigation_finished():
+			villager.state = Global.VillagerState.WORKING
 			villager.start_work(task_type)
 			villager.emotes.set_emote("work")
 
@@ -106,17 +106,11 @@ class AcquireTask extends Task:
 static func create_task(type : Global.TaskType):
 	match type:
 		Global.TaskType.BUILD_FARM:
-			var task = ActionTask.new()
-			task.set_data(type, 100)
-			return task
+			return BuildTask.new()
 		Global.TaskType.BUILD_HOUSE:
-			var task = ActionTask.new()
-			task.set_data(type, 100)
-			return task
+			return BuildTask.new()
 		Global.TaskType.BUILD_MINE:
-			var task = ActionTask.new()
-			task.set_data(type, 100)
-			return task
+			return BuildTask.new()
 		Global.TaskType.FARM_FOOD:
 			var task = ActionTask.new()
 			task.set_data(type, 30)
@@ -130,15 +124,15 @@ static func create_task(type : Global.TaskType):
 			task.set_data(type, 200)
 			return task
 		Global.TaskType.ACQUIRE_HOUSE_MATERIAL:
-			var task = AcquireTask.new()
+			var task = ActionTask.new()
 			task.set_data(type, 5)
 			return task
 		Global.TaskType.ACQUIRE_FARM_MATERIAL:
-			var task = AcquireTask.new()
+			var task = ActionTask.new()
 			task.set_data(type, 5)
 			return task
 		Global.TaskType.ACQUIRE_MINE_MATERIAL:
-			var task = AcquireTask.new()
+			var task = ActionTask.new()
 			task.set_data(type, 5)
 			return task
 		Global.TaskType.REPAIR:
@@ -146,11 +140,11 @@ static func create_task(type : Global.TaskType):
 			task.set_data(type, 100)
 			return task
 		Global.TaskType.REFINE_MATERIALS:
-			var task = RefineMaterialTask.new()
+			var task = ActionTask.new()
 			task.set_data(type, 100)
 			return task
 		Global.TaskType.CHOP_WOOD:
-			var task = RefineWoodTask.new()
+			var task = ActionTask.new()
 			task.set_data(type, 50)
 			return task
 		_:

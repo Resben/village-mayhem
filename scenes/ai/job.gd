@@ -44,6 +44,7 @@ func _task_complete():
 		current_task = tasks.pop_front()
 		current_task.on_enter()
 	else:
+		Global.give_reward(reward_type, reward_count)
 		job_completion = true
 		_on_job_completion.emit(type)
 		current_task = null

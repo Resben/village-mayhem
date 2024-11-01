@@ -3,6 +3,8 @@ class_name CPU
 
 @export var village_map : TileMap
 
+var MINIMUM_TOWN_DISTANCE = 500
+
 func _ready():
 	Global.cpu = self
 	$ActionTimer.start()
@@ -24,147 +26,89 @@ func disaster_over():
 #################################################################################
 
 func construct_farm():
-	var total_visited_locations = []
-	var next_location
-	var num_farms
-	for l in village_map.get_used_cells_by_id(0, 0, Vector2i(1, 0)):
-		if !total_visited_locations.has(l):
-			num_farms = count_cluster(l, total_visited_locations, "farm")
-			if num_farms < 4:
-				next_location = get_next_location(l, "farm")
-				if next_location != null:
-					print("Found existing location for farm")
-					break
-	
-	if next_location == null:
-		next_location = village_map.get_random_valid_display_position()
-		print("Created new random location for farm")
-	
-	if next_location != null:
-		return village_map.place_building("crop", next_location, false)
-	else:
-		return null
-
-# Called by villager to create a new house then assign said villager as a builder
-func construct_house():
-	var total_visited_locations = []
-	var th_location = village_map.get_used_cells_by_id(0, 0, Vector2i(0, 2))[0]
-	var house_at_th = count_cluster(th_location, total_visited_locations, "house")
-	print(str(house_at_th) + " num for townhall")
-	var next_location
-	var house_at_other
-	if house_at_th >= 5:
-		for l in village_map.get_used_cells_by_id(0, 0, Vector2i(0, 0)):
-			if !total_visited_locations.has(l):
-				house_at_other = count_cluster(l, total_visited_locations, "house")
-				if house_at_other < 3:
-					next_location = get_next_location(l, "house")
-					if next_location != null:
-						print("Used non TH location")
-						break
-	else:
-		next_location = get_next_location(th_location, "house")
-		print("Used TH location")
-	
-	if next_location == null:
-		next_location = village_map.get_random_valid_display_position()
-		print("Created new random location")
-	
-	if next_location != null:
-		return village_map.place_building("house", next_location, true)
-	else:
-		return null
-
-# Gets a random object of a given id
-func get_next_location(pos, id):
-	var neighbours = get_neighbours(pos, id)
-	var total_neighbours = []
-	for n in neighbours:
-		if !total_neighbours.has(n):
-			total_neighbours.push_back(n)
-		for n2 in get_neighbours(n, id):
-			if !total_neighbours.has(n2):
-				total_neighbours.push_back(n2)
-	
-	var next_location = null
-	
-	print(str(total_neighbours.size()) + " neighbours found for next location")
-	
-	while next_location == null:
-		if total_neighbours.size() == 0:
+	var new_location
+	for townhall in village_map.get_used_cells_by_id(0, 0, Vector2i(1, 0)):
+		var town_count = count_farms(townhall)
+		if town_count < 5:
+			new_location = get_next_location_in_range(townhall)
+		if new_location == null:
+			new_location = get_random_location(townhall)
+		if new_location != null:
 			break
-		var next_neighbour = total_neighbours[randi_range(0, total_neighbours.size()) - 1]
-		var empty_neigbours = get_neighbours(next_neighbour, "empty")
-		if empty_neigbours.size() != 0:
-			var next_empty = empty_neigbours[randi_range(0, empty_neigbours.size()) - 1]
-			if village_map.check_availablity(village_map.map_to_local(next_empty)):
-				next_location = next_empty
-		total_neighbours.erase(next_neighbour)
 	
-	return next_location
+	if new_location != null:
+		return village_map.place_building("farm", new_location, true)
+	else:
+		return null
 
-func count_cluster(pos, total_visited, type):
-	var visited_positions = {}
-	var queue = [pos]
-	var house_count = 0
+func construct_house():
+	var new_location
+	for townhall in village_map.get_used_cells_by_id(0, 0, Vector2i(0, 2)):
+		var town_count = count_houses(townhall)
+		if town_count < 5:
+			new_location = get_next_location_in_range(townhall)
+		if new_location == null:
+			new_location = get_random_location(townhall)
+		if new_location != null:
+			break
 	
-	if !check_type(village_map.get_cell_atlas_coords(0, pos), type):
-		return 0
-	while queue.size() > 0:
-		var current_pos = queue.pop_front()
-		
-		if visited_positions.has(current_pos):
+	if new_location != null:
+		return village_map.place_building("house", new_location, true)
+	else:
+		return null
+
+func count_farms(location):
+	var count = 0
+	var world_position = village_map.map_to_local(location)
+	for farm in Global.farm_references:
+		if farm.global_position.distance_to(world_position) <= MINIMUM_TOWN_DISTANCE:
+			count += 1
+	return count
+
+func count_houses(location):
+	var count = 0
+	var world_position = village_map.map_to_local(location)
+	for house in Global.house_references:
+		if house.is_townhall:
 			continue
-		
-		visited_positions[current_pos] = true
-		
-		if check_type(village_map.get_cell_atlas_coords(0, current_pos), type):
-			house_count += 1
-			
-			var neighbours = get_neighbours(current_pos, type)
-			for n in neighbours:
-				if !visited_positions.has(n):
-					queue.append(n)
-	
-	for v in visited_positions:
-		if total_visited.has(v):
-			print("hmmm")
-		total_visited.push_back(v)
-	
-	return house_count
+		if house.global_position.distance_to(world_position) <= MINIMUM_TOWN_DISTANCE:
+			count += 1
+	return count
 
-# Check if a atlas is a given type
-func check_type(pos, type):
-	match type:
-		"house":
-			if pos == Vector2i(0, 0) || pos == Vector2i(0, 2):
-				return true
-			else:
-				return false
-		"farm":
-			if pos == Vector2i(1, 0):
-				return true
-			else:
-				return false
-		"empty":
-			if pos == Vector2i(-1, -1):
-				return true
-			else:
-				return false
+func get_next_location_in_range(location):
+	var potential_positions = get_positions_within_radius(location, 5)
+	var next_position
+	var max_attemps = 0
+	while next_position == null || max_attemps == 30:
+		var random_position = potential_positions[randi() % potential_positions.size()]
+		if village_map.check_availablity(village_map.map_to_local(random_position)):
+			next_position = random_position
+			break
+		potential_positions.erase(random_position)
+		max_attemps += 1
+	return next_position
 
-# Returns neighbours of a given type
-func get_neighbours(pos, id):
-	var directions = [
-		Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1),
-		Vector2i(1, 1), Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1)
-	]
+func get_positions_within_radius(center : Vector2i, radius : int):
+	var positions = []
+
+	for x_offset in range(-radius, radius + 1):
+		for y_offset in range(-radius, radius + 1):
+			var position = Vector2i(center.x + x_offset, center.y + y_offset)
+			positions.append(position)
 	
-	var neighbors = [pos]
-	for direction in directions:
-		if check_type(village_map.get_cell_atlas_coords(0, pos + direction), id):
-			neighbors.append(pos + direction)
-	return neighbors
+	return positions
 
+func get_random_location(location):
+	var next_location
+	var world_position = village_map.map_to_local(location)
+	var max_attempts = 0
+	while next_location == null || max_attempts == 30:
+		var possible_location = village_map.get_random_valid_display_position()
+		if village_map.map_to_local(possible_location).distance_to(world_position) >= MINIMUM_TOWN_DISTANCE * 2:
+			next_location = possible_location
+		else:
+			max_attempts += 1
+	return next_location
 
 #################################################################################
 ############################## VILLAGER PRIORITIES ##############################
@@ -282,11 +226,15 @@ func assign_workers(priorities, villagers):
 				Global.JobType.REPAIR:
 					pass
 				Global.JobType.CONSTRUCTION_HOUSE:
-					if Global.resources["wood"] > 50:
+					if Global.resources["wood"] >= 50:
 						workable = construct_house()
+						if workable:
+							Global.remove_resources("wood", 50)
 				Global.JobType.CONSTRUCTION_FARM:
-					if Global.resources["wood"] > 10: 
+					if Global.resources["wood"] >= 10: 
 						workable = construct_farm()
+						if workable:
+							Global.remove_resources("wood", 10)
 				Global.JobType.CONSTRUCTION_MINE:
 					pass
 			
@@ -302,9 +250,9 @@ func find_best_slot(job_id, array_of_workplaces : Array[Workable]) -> Workable:
 	var index = -1
 	var i = 0
 	for w in array_of_workplaces:
-		if w.available_work_slots > num_spots && w.available_work_slots > 0:
+		if w.get_available_workers() > num_spots && w.get_available_workers() > 0:
 			index = i
-			num_spots = w.available_work_slots
+			num_spots = w.get_available_workers()
 			i += 1
 	if index == -1:
 		return null

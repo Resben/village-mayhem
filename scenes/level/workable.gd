@@ -1,9 +1,9 @@
 extends Node2D
 class_name Workable
 
-enum { CONSTRUCTION, BROKEN, DAMAGED, BUILT }
+enum { CONSTRUCTION, BROKEN, DAMAGED, BUILT, NONE }
 var state = CONSTRUCTION
-var last_state = CONSTRUCTION
+var last_state = NONE
 
 var available_work_slots = 3
 var workers = 0
@@ -25,8 +25,9 @@ func _ready():
 	if health_component:
 		health_component._on_health_change.connect(_health_changed)
 		health_component._on_health_depletion.connect(_on_destroyed)
-		if state == BUILT && health_component.has_max_health():
-			$TextureProgressBar.visible = false
+		if state != BUILT:
+			health_component.current_health = 0
+		update_progress()
 	else:
 		$TextureProgressBar.visible = false
 
@@ -55,11 +56,21 @@ func get_random_edge_location():
 func on_repair_complete():
 	pass
 
+func get_available_workers():
+	return available_work_slots - workers
+
 func add_worker():
 	workers += 1
 
 func remove_worker():
 	workers -= 1
+
+func update_progress():
+	if health_component:
+		if health_component.has_max_health() || health_component.has_no_health():
+			$TextureProgressBar.visible = false
+		else:
+			$TextureProgressBar.value = health_component.get_health_as_percentage()
 
 func _on_job_complete(type):
 	if Global.is_construction_job(type):
@@ -80,10 +91,7 @@ func create_job(type, villager):
 	print("couldn't find job")
 
 func _health_changed():
-	if health_component.has_max_health():
-		$TextureProgressBar.visible = false
-	else:
-		$TextureProgressBar.visible = true
+	update_progress()
 
 func _on_destroyed():
 	state = BROKEN

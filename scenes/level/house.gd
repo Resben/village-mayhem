@@ -52,7 +52,7 @@ func on_repair_complete():
 func spawn_villagers():
 	var rand_villagers
 	if is_townhall:
-		rand_villagers = 1
+		rand_villagers = randi_range(5, 10)
 	else:
 		rand_villagers = randi_range(2, 5)
 	

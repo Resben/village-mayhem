@@ -97,6 +97,15 @@ func bye_bye():
 	is_scene_loaded = false
 	
 
+func give_reward(type : RewardType, count : int):
+	match type:
+		RewardType.WOOD:
+			add_resource("wood", count)
+		RewardType.FOOD:
+			add_resource("food", count)
+		RewardType.MATERIAL:
+			add_resource("material", count)
+
 func get_random_villager() -> Texture2D:
 	var rand = randi_range(0, villagers.size())
 	return villagers[rand - 1]

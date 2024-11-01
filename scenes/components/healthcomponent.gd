@@ -33,3 +33,11 @@ func heal(health):
 
 func has_max_health() -> bool:
 	return true if current_health == max_health else false
+
+func has_no_health() -> bool:
+	return true if current_health <= 0 else false
+
+func get_health_as_percentage() -> float:
+	if current_health == 0:
+		return 0.0
+	return float(min(current_health, max_health)) / max_health
