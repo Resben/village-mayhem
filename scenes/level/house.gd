@@ -10,6 +10,7 @@ var villagers_left = 0
 
 func _ready():
 	super._ready()
+	Global.workable_references["house"].push_back(self)
 	Global.setup_complete.connect(_on_world_setup)
 
 func get_job_type():

@@ -153,8 +153,8 @@ func calculate_priorities(current_jobs, num_available_villagers) -> Dictionary:
 	var total_villagers = Global.villager_references.size()
 	var resources = Global.resources
 	var broken_buildings = Global.get_broken_buildings().size()
-	var farms = Global.farm_references.size()
-	var mines = Global.active_mine_references.size()
+	var farms = Global.workable_references["farm"].size()
+	var mines = 0
 	
 	# Initialize priorities dictionary
 	var priorities = {
@@ -218,9 +218,9 @@ func assign_workers(priorities, villagers):
 			var workable
 			match p:
 				Global.JobType.RESOURCE_FOOD:
-					workable = find_best_slot(p, Global.farm_references)
+					workable = find_best_slot(p, Global.workable_references["farm"])
 				Global.JobType.RESOURCE_WOOD:
-					workable = find_best_slot(p, Global.wood_references)
+					workable = find_best_slot(p, Global.workable_references["wood"])
 				Global.JobType.RESOURCE_MATERIALS:
 					pass
 				Global.JobType.REPAIR:
@@ -242,10 +242,9 @@ func assign_workers(priorities, villagers):
 				var job = workable.create_job(p, villagers[i])
 				i += 1
 			else:
-				priorities.erase(p)
 				print(Global.jobtype_to_string(p) + " was null")
 
-func find_best_slot(job_id, array_of_workplaces : Array[Workable]) -> Workable:
+func find_best_slot(job_id, array_of_workplaces : Array):
 	var num_spots = 0
 	var index = -1
 	var i = 0

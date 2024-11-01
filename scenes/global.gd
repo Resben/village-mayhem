@@ -33,12 +33,12 @@ var map_size = Vector2i(256, 256)
 
 var docks : Dictionary
 
-var wood_references : Array[Workable]
-var house_references : Array[Workable]
-var farm_references : Array[Workable]
-
-var inactive_mine_references : Array[Workable]
-var active_mine_references : Array[Workable]
+var workable_references = {
+	"house" : [],
+	"farm" : [],
+	"wood" : [],
+	"mine" : []
+}
 
 var disaster_references = []
 
@@ -78,11 +78,7 @@ func _process(_delta):
 		hud.update_population()
 
 func bye_bye():
-	wood_references.clear()
-	house_references.clear()
-	farm_references.clear()
-	inactive_mine_references.clear()
-	active_mine_references.clear()
+	workable_references.clear()
 	disaster_references.clear()
 	villager_references.clear()
 	resources = {
@@ -120,16 +116,16 @@ func remove_population(num):
 
 func get_broken_buildings() -> Array[Workable]:
 	var refs : Array[Workable]
-	for h in house_references:
-		if h.is_broken:
+	for h in workable_references["house"]:
+		if h.state == Workable.BROKEN || h.state == Workable.DAMAGED:
 			refs.push_back(h)
 	
 	return refs
 
 func get_construction_buildings() -> Array[Workable]:
 	var refs : Array[Workable]
-	for h in house_references:
-		if h.is_under_construction:
+	for h in workable_references["house"]:
+		if h.state == Workable.CONSTRUCTION:
 			refs.push_back(h)
 	
 	return refs
@@ -191,3 +187,7 @@ func get_dock_from_to(start_island : int, end_island: int):
 							if first_dock.data.connected_ocean_id == second_dock.data.connected_ocean_id:
 								return [first_dock, second_dock]
 	return null
+
+func get_workable_array():
+	pass
+
