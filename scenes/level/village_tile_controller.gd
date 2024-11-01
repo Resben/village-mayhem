@@ -126,6 +126,8 @@ func generate_docks(docks):
 			
 			scene.position = new_position
 			scene.data = docks[island][ocean]
-			new_docks[Vector2i(island, ocean)] = scene
+			if !new_docks.has(island):
+				new_docks[island] = []
+			new_docks[island].append(scene)
 			add_child(scene)
 	Global.docks = new_docks

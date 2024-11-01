@@ -6,6 +6,12 @@ class_name NavigationComponent
 func _ready():
 	$NavigationAgent2D.connect("velocity_computed", _on_velocity_computed)
 
+func get_target_position():
+	return $NavigationAgent2D.target_position
+
+func set_layer(layer : int):
+	$NavigationAgent2D.navigation_layers = layer
+
 func set_target_position(target_position : Vector2):
 	if !$IntervalTimer.is_stopped():
 		return

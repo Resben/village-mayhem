@@ -163,6 +163,7 @@ func thread_complete():
 	
 	village_map.on_display_setup()
 	village_map.generate_docks(docks)
+	Global.main_map = self
 	is_setup = true
 
 ################### GENERATE MAP ######################

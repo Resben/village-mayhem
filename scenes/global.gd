@@ -12,7 +12,7 @@ enum TaskType {
 	FARM_FOOD, CUT_TREES, MINE_MATERIALS, # Gathering tasks
 	CHOP_WOOD, REFINE_MATERIALS # Refining tasks
 	}
-enum VillagerState { WORKING, IDLING, SCARED, DEMO }
+enum VillagerState { WORKING, IDLING, SCARED, DEMO, TRAVELLING }
 enum RewardType { WOOD, FOOD, MATERIAL, NONE }
 
 var jobtype_string_dictionary = {
@@ -52,6 +52,8 @@ var is_setup = false
 var is_scene_loaded = false
 
 var current_playback = 1
+
+var main_map : TileMap
 
 var villagers = [
 	preload("res://assets/temp/villager_sheet.png")
@@ -166,3 +168,17 @@ func is_resource_job(type):
 
 func jobtype_to_string(type):
 	return jobtype_string_dictionary[type]
+
+func get_dock_from_to(start_island : int, end_island: int):
+	if start_island == end_island:
+		return null
+	
+	for first in docks:
+		for second in docks:
+			if first == start_island:
+				if second == end_island:
+					for first_dock in docks[first]:
+						for second_dock in docks[second]:
+							if first_dock.data.connected_ocean_id == second_dock.data.connected_ocean_id:
+								return [first_dock, second_dock]
+	return null

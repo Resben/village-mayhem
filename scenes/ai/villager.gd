@@ -20,10 +20,15 @@ var is_returning = false
 
 var playback_speed = 1
 
+var is_travelling = false
+var dock1
+var dock2
+var target
+
 @onready var original_wait_time = $ActionComplete.wait_time
 
 @onready var emotes = $Emotes
-@onready var hurtbox_component : HealthComponent = $HurtBoxComponent
+@onready var hurtbox_component : HurtBoxComponent = $HurtBoxComponent
 @onready var navigation_component : NavigationComponent = $NavigationComponent
 @onready var velocity_component : VelocityComponent = $VelocityComponent
 
@@ -86,15 +91,25 @@ func job_complete(job_type):
 	job_reference = null
 	set_idle()
 
+func get_in_boat():
+	navigation_component.set_layer(2)
+
+func get_out_boat():
+	navigation_component.set_layer(1)
+
 func travel_to(target_position):
 	if navigation_component.is_navigation_possible(target_position):
 		navigation_component.force_set_target_position(target_position)
 	else:
-		var current_island
-		var target_island
+		var current_island = Global.main_map.get_island_id(global_position)
+		var target_island = Global.main_map.get_island_id(target_position)
 		
-		var dock_position
-		
+		var dock_pair = Global.get_dock_from_to(current_island, target_island)
+		if dock_pair != null:
+			state = Global.VillagerState.TRAVELLING
+			dock1 = dock_pair[0]
+			dock2 = dock_pair[1]
+			target = target_position
 
 func _physics_process(delta):
 	
@@ -130,6 +145,8 @@ func exit_state(in_state):
 
 func enter_state(in_state):
 	match in_state:
+		Global.VillagerState.TRAVELLING:
+			navigation_component.force_set_target_position(dock1.get_land_position())
 		Global.VillagerState.WORKING:
 			$AnimationPlayer.play("walk")
 		Global.VillagerState.IDLING:
@@ -152,6 +169,16 @@ func enter_state(in_state):
 
 func run_state(delta, in_state):
 	match in_state:
+		Global.VillagerState.TRAVELLING:
+			if navigation_component.is_navigation_finished():
+				if navigation_component.get_target_position() == dock1.get_land_position():
+					get_in_boat()
+					global_position = dock1.get_boat_position()
+					navigation_component.force_set_target_position(dock2.get_boat_position())
+				elif navigation_component.get_target_position() == dock2.get_boat_position():
+					get_out_boat()
+					global_position = dock2.get_land_position()
+					navigation_component.force_set_target_position(target)
 		Global.VillagerState.WORKING:
 			job_reference.process_job(delta)
 			$Emotes.set_emote("work")
