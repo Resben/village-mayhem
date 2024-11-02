@@ -145,6 +145,12 @@ func remove_resources(id : String, amount : int):
 		resources[id] -= amount
 		hud.update_resources()
 
+func get_total_available_slots(id):
+	var total = 0
+	for w in workable_references[id]:
+		total += w.get_available_workers()
+	return total
+
 func set_game_speed(speed):
 	match speed:
 		NORMAL:

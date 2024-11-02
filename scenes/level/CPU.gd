@@ -133,6 +133,7 @@ func calculate_priorities(current_jobs, num_available_villagers) -> Dictionary:
 	var resources = Global.resources
 	var broken_buildings = Global.get_broken_buildings().size()
 	var farms = Global.workable_references["farm"].size()
+	var trees = Global.workable_references["wood"].size()
 	var mines = 0
 	
 	# Initialize priorities dictionary
@@ -182,17 +183,66 @@ func calculate_priorities(current_jobs, num_available_villagers) -> Dictionary:
 	var allocated_villagers = {}
 	var total_assigned_villagers = 0
 	
+	
 	for key in priorities.keys():
 		var assigned = int(priorities[key] * num_available_villagers) - current_jobs.get(key, 0)
-		allocated_villagers[key] = max(0, assigned)
+		var floor_value = 0
+		if assigned >= 1:
+			floor_value = 1
+		match key:
+			Global.JobType.RESOURCE_FOOD:
+				allocated_villagers[key] = min(max(0, assigned), Global.get_total_available_slots("farm"))
+			Global.JobType.RESOURCE_WOOD:
+				allocated_villagers[key] = min(max(0, assigned), Global.get_total_available_slots("wood"))
+			Global.JobType.RESOURCE_MATERIALS:
+				allocated_villagers[key] = min(max(0, assigned), Global.get_total_available_slots("mine"))
+			Global.JobType.CONSTRUCTION_HOUSE:
+				allocated_villagers[key] = min(max(0, assigned), 1)
+			Global.JobType.CONSTRUCTION_FARM:
+				allocated_villagers[key] = min(max(0, assigned), 1)
+			Global.JobType.CONSTRUCTION_MINE:
+				allocated_villagers[key] = min(max(0, assigned), 1)
+			Global.JobType.REPAIR:
+				allocated_villagers[key] = min(max(0, assigned), broken_buildings)
+	
 		total_assigned_villagers += allocated_villagers[key]
 	
-	# Scale down if over-allocated due to rounding
+	var last_type = Global.JobType.RESOURCE_FOOD
+	var last_total = total_assigned_villagers
 	if total_assigned_villagers > num_available_villagers:
-		var scale_factor = float(num_available_villagers) / total_assigned_villagers
-		for key in allocated_villagers.keys():
-			allocated_villagers[key] = int(allocated_villagers[key] * scale_factor)
-	
+		while total_assigned_villagers != num_available_villagers:
+			match last_type:
+				Global.JobType.RESOURCE_FOOD:
+					last_type = Global.JobType.RESOURCE_WOOD
+					if allocated_villagers[Global.JobType.RESOURCE_FOOD] > 0:
+						allocated_villagers[Global.JobType.RESOURCE_FOOD] -= 1
+						total_assigned_villagers -= 1
+				Global.JobType.RESOURCE_WOOD:
+					last_type = Global.JobType.RESOURCE_FOOD
+					if allocated_villagers[Global.JobType.RESOURCE_FOOD] > 0:
+						allocated_villagers[Global.JobType.RESOURCE_WOOD] -= 1
+						total_assigned_villagers -= 1
+			if last_total == total_assigned_villagers:
+				break
+			else:
+				last_total = total_assigned_villagers
+	elif total_assigned_villagers < num_available_villagers:
+		while total_assigned_villagers != num_available_villagers:
+			match last_type:
+				Global.JobType.RESOURCE_FOOD:
+					last_type = Global.JobType.RESOURCE_WOOD
+					if allocated_villagers[Global.JobType.RESOURCE_FOOD] < Global.get_total_available_slots("farm"):
+						allocated_villagers[Global.JobType.RESOURCE_FOOD] += 1
+						total_assigned_villagers += 1
+				Global.JobType.RESOURCE_WOOD:
+					last_type = Global.JobType.RESOURCE_FOOD
+					if allocated_villagers[Global.JobType.RESOURCE_FOOD] < Global.get_total_available_slots("wood"):
+						allocated_villagers[Global.JobType.RESOURCE_WOOD] += 1
+						total_assigned_villagers += 1
+			if last_total == total_assigned_villagers:
+				break
+			else:
+				last_total = total_assigned_villagers
 	return allocated_villagers
 
 
@@ -227,6 +277,7 @@ func assign_workers(priorities, villagers):
 				var job = workable.create_job(p, villagers[i])
 				i += 1
 			else:
+				priorities[p] = 0
 				print(Global.jobtype_to_string(p) + " was null")
 
 func find_best_slot(array_of_workplaces : Array, villager_ref : Villager):
@@ -244,7 +295,6 @@ func find_best_slot(array_of_workplaces : Array, villager_ref : Villager):
 		return null
 	else:
 		return array_of_workplaces[index]
-
 
 func _on_food_timer_timeout():
 	if Global.controller.state != Controller.GAME:

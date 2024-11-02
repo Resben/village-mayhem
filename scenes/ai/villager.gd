@@ -84,7 +84,6 @@ func exit_house(pos = null):
 	is_returning = false
 
 func set_job(job):
-	state = Global.VillagerState.WORKING
 	job_reference = job
 	job_reference._on_job_completion.connect(job_complete)
 
