@@ -86,6 +86,12 @@ func bye_bye():
 		"wood" : 50,
 		"materials" : 0
 	}
+	workable_references = {
+		"house" : [],
+		"farm" : [],
+		"wood" : [],
+		"mine" : []
+	}
 	population = 0
 	is_in_disaster = false
 	cpu = null
@@ -187,7 +193,3 @@ func get_dock_from_to(start_island : int, end_island: int):
 							if first_dock.data.connected_ocean_id == second_dock.data.connected_ocean_id:
 								return [first_dock, second_dock]
 	return null
-
-func get_workable_array():
-	pass
-

@@ -9,7 +9,7 @@ var num_mines = 10
 
 var id_to_atlas = {
 	"house" : Vector2i(0, 0),
-	"crop" : Vector2i(1, 0),
+	"farm" : Vector2i(1, 0),
 	"mine" : Vector2i(0, 1),
 	"tree" : Vector2i(1, 1),
 	"town_hall" : Vector2i(0, 2)
@@ -17,7 +17,7 @@ var id_to_atlas = {
 
 var atlas_to_id = {
 	Vector2i(0, 0) : "house",
-	Vector2i(1, 0) : "crop",
+	Vector2i(1, 0) : "farm",
 	Vector2i(0, 1) : "mine",
 	Vector2i(1, 1) : "tree",
 	Vector2i(0, 2) : "town_hall"
@@ -25,7 +25,7 @@ var atlas_to_id = {
 
 var id_to_scene = {
 	"house" : preload("res://scenes/level/house.tscn"),
-	"crop" : preload("res://scenes/level/farm.tscn"),
+	"farm" : preload("res://scenes/level/farm.tscn"),
 	"mine" : preload("res://scenes/level/house.tscn"),
 	"tree" : preload("res://scenes/level/wood_resource.tscn"),
 	"town_hall" : preload("res://scenes/level/town_hall.tscn"),
@@ -49,7 +49,7 @@ func on_display_setup():
 					break
 			
 		place_building("town_hall", th_location, false)
-		place_building("crop", farm_location, false)
+		place_building("farm", farm_location, false)
 		
 		for i in range(num_trees):
 			place_building("tree", get_random_valid_display_position(), false)

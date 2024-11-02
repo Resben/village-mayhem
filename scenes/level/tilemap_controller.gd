@@ -430,18 +430,27 @@ func generate_docks():
 					docks[island] = {}
 				if docks[island].has(ocean):
 					print("Island cannot have multiple docks for the same ocean")
-				var dockData = DockData.new()
-				var random_tile = shoreline_tiles[ocean][island][randi() % shoreline_tiles[ocean][island].size()]
-				dockData.map_position = random_tile
-				dockData.connected_island_id = get_island_id(display_map.map_to_local(random_tile))
-				dockData.connected_island_pos = random_tile
-				for n in neighbours.size():
-					var newPos = random_tile + neighbours[n]
-					if newPos.x >= 0 and newPos.x < Global.map_size.x and newPos.y >= 0 and newPos.y < Global.map_size.y:
-						if display_generated_map[newPos.x][newPos.y][0] == Vector2i(0, 3) && display_generated_map[newPos.x][newPos.y][1] == 1:
-							dockData.connected_ocean_pos = newPos
-							dockData.connected_ocean_id = get_ocean_id(newPos)
-				if !dockData.is_set():
-					print("Something went wrong")
+				var dockData
+				while dockData == null:
+					dockData = create_new(ocean, island)
 				docks[island][ocean] = dockData
-	print(docks)
+
+func create_new(ocean, island):
+	var found = false
+	var dockData = DockData.new()
+	var random_tile = shoreline_tiles[ocean][island][randi() % shoreline_tiles[ocean][island].size()]
+	dockData.map_position = random_tile
+	dockData.connected_island_id = get_island_id(display_map.map_to_local(random_tile))
+	dockData.connected_island_pos = random_tile
+	for n in neighbours.size():
+		var newPos = random_tile + neighbours[n]
+		if newPos.x >= 0 and newPos.x < Global.map_size.x and newPos.y >= 0 and newPos.y < Global.map_size.y:
+			if display_generated_map[newPos.x][newPos.y][0] == Vector2i(0, 3) && display_generated_map[newPos.x][newPos.y][1] == 1:
+				dockData.connected_ocean_pos = newPos
+				dockData.connected_ocean_id = get_ocean_id(newPos)
+				found = true
+	if found:
+		return dockData
+	else:
+		return null
+	

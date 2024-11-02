@@ -41,7 +41,7 @@ func construct_workable(id):
 	
 	if new_location != null:
 		if was_random && id == "house":
-			id = "town_house"
+			id = "town_hall"
 		return village_map.place_building(id, new_location, true)
 	else:
 		return null
@@ -55,7 +55,7 @@ func count_workables(location, id):
 	return count
 
 func get_next_location_in_range(location):
-	var potential_positions = get_positions_within_radius(location, 5)
+	var potential_positions = get_positions_within_radius(location, 3)
 	var next_position
 	var max_attemps = 0
 	while next_position == null || max_attemps == 30:
@@ -109,7 +109,7 @@ func _on_action_timeout():
 		Global.JobType.REPAIR: 0
 	}
 	for v in Global.villager_references:
-		if v.state != Global.VillagerState.WORKING:
+		if v.state == Global.VillagerState.IDLING:
 			available_villagers.push_back(v)
 		else:
 			current_jobs[v.job_reference.type] += 1
@@ -157,7 +157,7 @@ func calculate_priorities(current_jobs, num_available_villagers) -> Dictionary:
 		priorities[Global.JobType.CONSTRUCTION_HOUSE] = float(resources["wood"] / 50)
 	
 	if total_villagers / farms > 10:
-		priorities[Global.JobType.CONSTRUCTION_FARM] = float(total_villagers * 10 / farms * 10 / max(1, resources["wood"]))
+		priorities[Global.JobType.CONSTRUCTION_FARM] = float(total_villagers * 10 / farms / max(1, resources["wood"]))
 	
 	if resources["wood"] >= 100 and mines < farms / 5:
 		priorities[Global.JobType.CONSTRUCTION_MINE] = float(farms / 5 - mines)
@@ -172,7 +172,11 @@ func calculate_priorities(current_jobs, num_available_villagers) -> Dictionary:
 	for key in priorities.keys():
 		priorities[key] = max(priorities[key] / total_priority, min_allocation)
 	
-	print(priorities)
+	priorities[Global.JobType.CONSTRUCTION_MINE] = 0.0
+	priorities[Global.JobType.RESOURCE_MATERIALS] = 0.0
+	priorities[Global.JobType.REPAIR] = 0.0
+	
+	#print(priorities)
 	
 	# Allocate villagers proportionally
 	var allocated_villagers = {}
@@ -199,9 +203,9 @@ func assign_workers(priorities, villagers):
 			var workable
 			match p:
 				Global.JobType.RESOURCE_FOOD:
-					workable = find_best_slot(p, Global.workable_references["farm"])
+					workable = find_best_slot(Global.workable_references["farm"], villagers[i])
 				Global.JobType.RESOURCE_WOOD:
-					workable = find_best_slot(p, Global.workable_references["wood"])
+					workable = find_best_slot(Global.workable_references["wood"], villagers[i])
 				Global.JobType.RESOURCE_MATERIALS:
 					pass
 				Global.JobType.REPAIR:
@@ -225,16 +229,24 @@ func assign_workers(priorities, villagers):
 			else:
 				print(Global.jobtype_to_string(p) + " was null")
 
-func find_best_slot(job_id, array_of_workplaces : Array):
-	var num_spots = 0
+func find_best_slot(array_of_workplaces : Array, villager_ref : Villager):
 	var index = -1
 	var i = 0
+	var closet = 99999
 	for w in array_of_workplaces:
-		if w.get_available_workers() > num_spots && w.get_available_workers() > 0:
-			index = i
-			num_spots = w.get_available_workers()
-			i += 1
+		var distance = w.global_position.distance_to(villager_ref.global_position)
+		if distance < closet:
+			if w.get_available_workers() > 0:
+				closet = distance
+				index = i
+		i += 1
 	if index == -1:
 		return null
 	else:
 		return array_of_workplaces[index]
+
+
+func _on_food_timer_timeout():
+	if Global.controller.state != Controller.GAME:
+		Global.remove_resources("food", Global.villager_references.size())
+		$Yum.start(randi_range(7, 10))

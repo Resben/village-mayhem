@@ -5,6 +5,8 @@ signal _on_task_complete
 var task_type : Global.TaskType
 var required_points : int
 
+var internal_villager_state = Global.VillagerState.WORKING
+
 var current_points = 0
 var task_complete = false
 
@@ -14,6 +16,9 @@ var workable : Workable
 var villager : Villager
 
 var variables = {}
+
+func villager_state():
+	return internal_villager_state
 
 func set_up(in_workable : Workable, in_villager : Villager):
 	workable = in_workable
@@ -28,7 +33,10 @@ func add_action_point():
 		current_points += 1
 	if current_points == required_points:
 		on_task_completion()
-		_on_task_complete.emit()
+		_on_task_complete.emit(true)
+
+func throw_task_fail():
+	_on_task_complete.emit(false)
 
 func set_data(type, points):
 	task_type = type
@@ -65,7 +73,11 @@ class ActionTask extends Task:
 
 	func on_enter():
 		variables["target_position"] = workable.get_random_edge_location()
-		villager.travel_to(variables["target_position"])
+		if !villager.travel_to(variables["target_position"]):
+			throw_task_fail()
+			print("Failed task")
+		internal_villager_state = Global.VillagerState.TRAVELLING
+		villager.emotes.set_emote("none")
 
 	func on_exit():
 		villager.emotes.set_emote("none")
@@ -73,29 +85,34 @@ class ActionTask extends Task:
 	func run(delta):
 		if villager.navigation_component.get_navigation_target() == variables["target_position"] && villager.navigation_component.is_navigation_finished():
 			villager.state = Global.VillagerState.WORKING
+			internal_villager_state = Global.VillagerState.WORKING
 			villager.start_work(task_type)
 			villager.emotes.set_emote("work")
 
 class BuildTask extends Task:
-	func setup_override():
+	func set_up_override():
 		current_points = workable.health_component.current_health
 		required_points = workable.health_component.max_health
 		process_action_points = false
 	
 	func on_action_point():
 		workable.health_component.heal(1)
+		current_points = workable.health_component.current_health
 	
 	func on_enter():
 		variables["target_position"] = workable.get_random_edge_location()
-		villager.travel_to(variables["target_position"])
+		if !villager.travel_to(variables["target_position"]):
+			throw_task_fail()
+		internal_villager_state = Global.VillagerState.TRAVELLING
+		villager.emotes.set_emote("none")
 
 	func on_exit():
 		villager.emotes.set_emote("none")
 
 	func run(delta):
-		current_points = workable.health_component.current_health
 		if villager.navigation_component.get_navigation_target() == variables["target_position"] && villager.navigation_component.is_navigation_finished():
 			villager.state = Global.VillagerState.WORKING
+			internal_villager_state = Global.VillagerState.WORKING
 			villager.start_work(task_type)
 			villager.emotes.set_emote("work")
 

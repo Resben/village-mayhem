@@ -7,7 +7,9 @@ var last_state = NONE
 
 var available_work_slots = 3
 var workers = 0
-var work_radius = 30
+var work_radius = 20
+
+var world_ready = false
 
 @export var health_component : HealthComponent
 @export var hurtbox_component : HurtBoxComponent
@@ -20,6 +22,7 @@ var work_radius = 30
 @export var jobs : Array[Job]
 
 func _ready():
+	Global.setup_complete.connect(_on_world_setup)
 	if hurtbox_component:
 		hurtbox_component._on_damage.connect(_on_damage)
 	if health_component:
@@ -30,6 +33,12 @@ func _ready():
 		update_progress()
 	else:
 		$TextureProgressBar.visible = false
+	
+	if state == BUILT:
+		last_state = BUILT
+
+func _on_world_setup():
+	pass
 
 func _process(delta):
 	if state != last_state:
@@ -39,12 +48,15 @@ func _process(delta):
 func enter_state(in_state):
 	match in_state:
 		CONSTRUCTION:
+			health_component.current_health = 0
 			$Sprite2D.texture = construction_texture
 		BROKEN:
 			$Sprite2D.texture = broken_texture
 		DAMAGED:
 			$Sprite2D.texture = damaged_texture
 		BUILT:
+			if last_state != DAMAGED:
+				on_repair_complete()
 			$Sprite2D.texture = built_texture
 
 func get_random_edge_location():
@@ -67,13 +79,16 @@ func remove_worker():
 
 func update_progress():
 	if health_component:
-		if health_component.has_max_health() || health_component.has_no_health():
+		if health_component.has_max_health():
 			$TextureProgressBar.visible = false
 		else:
+			$TextureProgressBar.visible = true
 			$TextureProgressBar.value = health_component.get_health_as_percentage()
+	else:
+		$TextureProgressBar.visible = false
 
-func _on_job_complete(type):
-	if Global.is_construction_job(type):
+func _on_job_complete(type, was_successful):
+	if Global.is_construction_job(type) && was_successful:
 		state = BUILT
 	else:
 		remove_worker()

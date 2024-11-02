@@ -25,6 +25,13 @@ var dock1
 var dock2
 var target
 
+var task_type_to_animation = {
+	Global.TaskType.BUILD_HOUSE : "construction", Global.TaskType.BUILD_FARM : "construction", Global.TaskType.BUILD_MINE : "construction", Global.TaskType.REPAIR : "construction", # Construction tasks
+	Global.TaskType.ACQUIRE_HOUSE_MATERIAL : "idle", Global.TaskType.ACQUIRE_FARM_MATERIAL : "idle", Global.TaskType.ACQUIRE_MINE_MATERIAL : "idle", # Collection tasks
+	Global.TaskType.FARM_FOOD : "food", Global.TaskType.CUT_TREES : "logging", Global.TaskType.MINE_MATERIALS : "mine", # Gathering tasks
+	Global.TaskType.CHOP_WOOD : "idle", Global.TaskType.REFINE_MATERIALS : "idle" # Refining tasks
+}
+
 @onready var original_wait_time = $ActionComplete.wait_time
 
 @onready var emotes = $Emotes
@@ -69,8 +76,9 @@ func has_job():
 
 func exit_house(pos = null):
 	if pos != null:
-		if has_job():
-			state = Global.VillagerState.WORKING
+		if job_reference != null:
+			if !job_reference.is_job_complete():
+				state = job_reference.get_job_state()
 	visible = true
 	in_house = false
 	is_returning = false
@@ -84,10 +92,12 @@ func set_idle():
 	state = Global.VillagerState.IDLING
 
 func start_work(type):
+	$AnimationPlayer.play(task_type_to_animation[type])
+	
 	if $ActionComplete.is_stopped():
 		$ActionComplete.start()
 
-func job_complete(job_type):
+func job_complete(job_type, was_successful):
 	job_reference = null
 	set_idle()
 
@@ -99,10 +109,19 @@ func get_out_boat():
 
 func travel_to(target_position):
 	if navigation_component.is_navigation_possible(target_position):
-		navigation_component.force_set_target_position(target_position)
+		state = Global.VillagerState.TRAVELLING
+		dock1 = null
+		dock2 = null
+		target = target_position
 	else:
 		var current_island = Global.main_map.get_island_id(global_position)
 		var target_island = Global.main_map.get_island_id(target_position)
+		
+		print(str(self.name) + " TO: " + str(current_island) + " to " + str(target_island))
+		
+		if target_island == -1 || current_island == -1:
+			print("Tried to travel to invalid island")
+			return false
 		
 		var dock_pair = Global.get_dock_from_to(current_island, target_island)
 		if dock_pair != null:
@@ -110,6 +129,10 @@ func travel_to(target_position):
 			dock1 = dock_pair[0]
 			dock2 = dock_pair[1]
 			target = target_position
+		
+		print("dock1: " + str(dock1.data.connected_ocean_pos) + " & " + str(dock1.data.connected_island_pos))
+		print("dock2: " + str(dock2.data.connected_ocean_pos) + " & " + str(dock2.data.connected_island_pos))
+	return true
 
 func _physics_process(delta):
 	
@@ -119,6 +142,9 @@ func _physics_process(delta):
 		last_state = state
 	
 	run_state(delta, state)
+	
+	if job_reference:
+		job_reference.process_job(delta)
 	
 	if in_house:
 		return
@@ -146,7 +172,10 @@ func exit_state(in_state):
 func enter_state(in_state):
 	match in_state:
 		Global.VillagerState.TRAVELLING:
-			navigation_component.force_set_target_position(dock1.get_land_position())
+			if dock1 == null:
+				navigation_component.force_set_target_position(target)
+			else:
+				navigation_component.force_set_target_position(dock1.get_land_position())
 		Global.VillagerState.WORKING:
 			$AnimationPlayer.play("walk")
 		Global.VillagerState.IDLING:
@@ -170,6 +199,8 @@ func enter_state(in_state):
 func run_state(delta, in_state):
 	match in_state:
 		Global.VillagerState.TRAVELLING:
+			if dock1 == null:
+				return
 			if navigation_component.is_navigation_finished():
 				if navigation_component.get_target_position() == dock1.get_land_position():
 					get_in_boat()
@@ -180,8 +211,7 @@ func run_state(delta, in_state):
 					global_position = dock2.get_land_position()
 					navigation_component.force_set_target_position(target)
 		Global.VillagerState.WORKING:
-			job_reference.process_job(delta)
-			$Emotes.set_emote("work")
+			pass
 		Global.VillagerState.IDLING:
 			if navigation_component.is_navigation_finished() && $IdlePeriod.is_stopped():
 				$IdlePeriod.start()
@@ -217,11 +247,6 @@ func set_speed(value):
 	playback_speed = value
 	$AnimationPlayer.speed_scale = value
 	$ActionComplete.wait_time = original_wait_time / value
-
-func _on_yum_timeout():
-	if state != Global.VillagerState.DEMO:
-		Global.remove_resources("food", 1)
-		$Yum.start(randi_range(7, 10))
 
 func _on_idle_period_timeout():
 	if state == Global.VillagerState.DEMO:

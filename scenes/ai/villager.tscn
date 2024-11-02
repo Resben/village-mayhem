@@ -191,10 +191,6 @@ texture_progress = ExtResource("4_hij7v")
 [node name="ActionComplete" type="Timer" parent="."]
 one_shot = true
 
-[node name="Yum" type="Timer" parent="."]
-one_shot = true
-autostart = true
-
 [node name="IdlePeriod" type="Timer" parent="."]
 wait_time = 2.5
 one_shot = true
@@ -213,5 +209,4 @@ velocity_component = NodePath("../VelocityComponent")
 shape = SubResource("RectangleShape2D_rmog4")
 
 [connection signal="timeout" from="ActionComplete" to="." method="_on_action_complete_timeout"]
-[connection signal="timeout" from="Yum" to="." method="_on_yum_timeout"]
 [connection signal="timeout" from="IdlePeriod" to="." method="_on_idle_period_timeout"]
